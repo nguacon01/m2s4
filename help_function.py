@@ -1,5 +1,7 @@
 import os
 import numpy as np
+import pandas as pd
+import random
 # format of insertion positions file:
 # first column is name of chromoson
 # second column is position of insertion in this chromoson
@@ -55,6 +57,20 @@ def generate_file(insertion_pos_file, gff_file, save_file):
                     readcount += int(el[2])
             save_file.write(feat[-1][0] + " " + str(hitcount) + " " + str(readcount) + '\n')
     save_file.close()
+
+def load_df(file_name):
+    df = pd.read_csv(file_name)
+    return df
+
+def train_test_split(df, test_size):
+    if isinstance(test_size, float):
+        test_size = round(test_size * len(df))
+    indices = df.index.tolist()
+    #choose random indices
+    test_indices = random.sample(population=indices, k=test_size)
+    test_df = df.loc[test_indices]
+    train_df = df.drop(test_indices)
+    return train_df, test_df
 
 #Check purity of data
 #if input data has just one class => return True
