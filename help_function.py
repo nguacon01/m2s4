@@ -1,6 +1,5 @@
-import numpy as np
 import os
-
+import numpy as np
 # format of insertion positions file:
 # first column is name of chromoson
 # second column is position of insertion in this chromoson
@@ -9,7 +8,7 @@ def insertion_pos(insertion_pos_file):
     insertion_pos_list = []
     with open(insertion_pos_file) as ins_pos:
         for line in ins_pos:
-            sline = line.strip.split("\t")
+            sline = line.strip().split("\t")
             sline = [sline[0][10:],sline[1],sline[2]]
             insertion_pos_list.append(sline)
     return insertion_pos_list
@@ -30,11 +29,12 @@ def gene_feature_format_extract(gff_file):
     return gff_list
 
 #input: path of save file
-def generate_file(save_file):
+
+def generate_file(insertion_pos_file, gff_file, save_file):
     # save file have format: first column is name of gene, second column is number of hits, thirst is number of reads
     # insertions_pos_list contain all insertion positions of gene
-    gff_list = gene_feature_format_extract()
-    insertions_pos_list = insertion_pos()
+    gff_list = gene_feature_format_extract(gff_file)
+    insertions_pos_list = insertion_pos(insertion_pos_file)
     if not os.path.exists(save_file):
         open(save_file, 'w+').close()
     with open(save_file, 'w') as save_file:
@@ -55,3 +55,22 @@ def generate_file(save_file):
                     readcount += int(el[2])
             save_file.write(feat[-1][0] + " " + str(hitcount) + " " + str(readcount) + '\n')
     save_file.close()
+
+#Check purity of data
+#if input data has just one class => return True
+#if input data has many of classes, return False
+def check_purity(data):
+    label_column = data[:,-1]
+    unique_classes = np.unique(label_column)
+    if unique_classes == 1:
+        return True
+    else:
+        return False
+
+#find the unique class which is not mixed up by other classes
+def classify_data(data):
+    label_column = data[:,-1]
+    unique_classes,count_unique_classes = np.unique(label_column, return_counts = True)
+    index = count_unique_classes.argmax()
+    classification = unique_classes[index]
+    return classification
