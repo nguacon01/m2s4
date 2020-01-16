@@ -4,6 +4,8 @@ import pandas as pd
 
 from help_function import determine_type_of_feature
 
+print("commit from babel")
+
 #data pure?
 def check_purity(data):
     #get label column
