@@ -6,9 +6,7 @@ def main():
     #gff_file = "PourMD/Ref/all_subtracts_10kbNI_genes.bed"
     #save_file = "hits_count_per_10kbNI_genes_CLQCA20184.out"
     #generate_file(insertion_pos_file, gff_file, save_file)
-    print("check")
-
-    print(hello there)
+    print("check pull")
 
 if __name__ == "__main__":
     main()
