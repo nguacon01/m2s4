@@ -2,11 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="3a50c3ee-0a96-4aab-9d8e-ca85318e069c" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/stageM2S4_DO.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/stageM2S4_DO.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/hits_count_per_10kbNI_genes_CLQCA20184.out" beforeDir="false" afterPath="$PROJECT_DIR$/hits_count_per_10kbNI_genes_CLQCA20184.out" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
     </list>
     <list id="78fc40e2-ec36-457e-9e5a-b293522b1459" name="not commit" comment="" />
     <option name="SHOW_DIALOG" value="false" />
@@ -267,22 +264,22 @@
       <screen x="0" y="23" width="1920" height="977" />
     </state>
     <state x="621" y="446" key="Github.CreateGistDialog/0.23.1920.977@0.23.1920.977" timestamp="1579161444146" />
-    <state width="1058" height="250" key="GridCell.Tab.0.bottom" timestamp="1579184064088">
+    <state width="1899" height="250" key="GridCell.Tab.0.bottom" timestamp="1579193193848">
       <screen x="0" y="23" width="1920" height="977" />
     </state>
-    <state width="1058" height="250" key="GridCell.Tab.0.bottom/0.23.1920.977@0.23.1920.977" timestamp="1579184064088" />
-    <state width="1058" height="250" key="GridCell.Tab.0.center" timestamp="1579184064087">
+    <state width="1899" height="250" key="GridCell.Tab.0.bottom/0.23.1920.977@0.23.1920.977" timestamp="1579193193848" />
+    <state width="1899" height="250" key="GridCell.Tab.0.center" timestamp="1579193193848">
       <screen x="0" y="23" width="1920" height="977" />
     </state>
-    <state width="1058" height="250" key="GridCell.Tab.0.center/0.23.1920.977@0.23.1920.977" timestamp="1579184064087" />
-    <state width="1058" height="250" key="GridCell.Tab.0.left" timestamp="1579184064087">
+    <state width="1899" height="250" key="GridCell.Tab.0.center/0.23.1920.977@0.23.1920.977" timestamp="1579193193848" />
+    <state width="1899" height="250" key="GridCell.Tab.0.left" timestamp="1579193193847">
       <screen x="0" y="23" width="1920" height="977" />
     </state>
-    <state width="1058" height="250" key="GridCell.Tab.0.left/0.23.1920.977@0.23.1920.977" timestamp="1579184064087" />
-    <state width="1058" height="250" key="GridCell.Tab.0.right" timestamp="1579184064088">
+    <state width="1899" height="250" key="GridCell.Tab.0.left/0.23.1920.977@0.23.1920.977" timestamp="1579193193847" />
+    <state width="1899" height="250" key="GridCell.Tab.0.right" timestamp="1579193193848">
       <screen x="0" y="23" width="1920" height="977" />
     </state>
-    <state width="1058" height="250" key="GridCell.Tab.0.right/0.23.1920.977@0.23.1920.977" timestamp="1579184064088" />
+    <state width="1899" height="250" key="GridCell.Tab.0.right/0.23.1920.977@0.23.1920.977" timestamp="1579193193848" />
     <state x="469" y="150" key="SettingsEditor" timestamp="1579191910960">
       <screen x="0" y="23" width="1920" height="977" />
     </state>
