@@ -1,5 +1,6 @@
 import numpy as np
 import os
+import random
 
 # format of insertion positions file:
 # first column is name of chromoson
@@ -9,7 +10,7 @@ def insertion_pos(insertion_pos_file):
     insertion_pos_list = []
     with open(insertion_pos_file) as ins_pos:
         for line in ins_pos:
-            sline = line.strip.split("\t")
+            sline = line.strip().split("\t")
             sline = [sline[0][10:],sline[1],sline[2]]
             insertion_pos_list.append(sline)
     return insertion_pos_list
@@ -19,6 +20,7 @@ def gene_feature_format_extract(gff_file):
     with open(gff_file) as gff:
         for line in gff:
             sline = line.strip().split("\t")
+
             sline2 = [sline[-1].strip().split(';')[0][3:]]
             # sline[0][10:] number of chr
             # sline[1]: position start of gene
@@ -30,11 +32,11 @@ def gene_feature_format_extract(gff_file):
     return gff_list
 
 #input: path of save file
-def generate_file(save_file):
+def generate_file(insertions_pos_file, gff_file, save_file):
     # save file have format: first column is name of gene, second column is number of hits, thirst is number of reads
     # insertions_pos_list contain all insertion positions of gene
-    gff_list = gene_feature_format_extract()
-    insertions_pos_list = insertion_pos()
+    gff_list = gene_feature_format_extract(gff_file)
+    insertions_pos_list = insertion_pos(insertions_pos_file)
     if not os.path.exists(save_file):
         open(save_file, 'w+').close()
     with open(save_file, 'w') as save_file:
@@ -55,3 +57,42 @@ def generate_file(save_file):
                     readcount += int(el[2])
             save_file.write(feat[-1][0] + " " + str(hitcount) + " " + str(readcount) + '\n')
     save_file.close()
+
+
+# 1. Train-Test-Split
+def train_test_split(df, test_size):
+    if isinstance(test_size, float):
+        test_size = round(test_size * len(df))
+
+    indices = df.index.tolist()
+    test_indices = random.sample(population=indices, k=test_size)
+
+    test_df = df.loc[test_indices]
+    train_df = df.drop(test_indices)
+
+    return train_df, test_df
+
+
+# 2. Distinguish categorical and continuous features
+def determine_type_of_feature(df):
+    feature_types = []
+    n_unique_values_treshold = 15
+    for feature in df.columns:
+        if feature != "label":
+            unique_values = df[feature].unique()
+            example_value = unique_values[0]
+
+            if (isinstance(example_value, str)) or (len(unique_values) <= n_unique_values_treshold):
+                feature_types.append("categorical")
+            else:
+                feature_types.append("continuous")
+
+    return feature_types
+
+
+# 3. Accuracy
+def calculate_accuracy(predictions, labels):
+    predictions_correct = predictions == labels
+    accuracy = predictions_correct.mean()
+
+    return accuracy
