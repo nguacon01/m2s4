@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="3a50c3ee-0a96-4aab-9d8e-ca85318e069c" name="Default Changelist" comment="commit from mac">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-    </list>
+    <list default="true" id="3a50c3ee-0a96-4aab-9d8e-ca85318e069c" name="Default Changelist" comment="" />
     <list id="78fc40e2-ec36-457e-9e5a-b293522b1459" name="not commit" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -151,7 +149,14 @@
       <option name="project" value="LOCAL" />
       <updated>1579160809281</updated>
     </task>
-    <option name="localTasksCounter" value="8" />
+    <task id="LOCAL-00008" summary="commit from mac">
+      <created>1579160940873</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1579160940873</updated>
+    </task>
+    <option name="localTasksCounter" value="9" />
     <servers />
   </component>
   <component name="Vcs.Log.History.Properties">
@@ -189,14 +194,18 @@
       <screen x="0" y="23" width="1920" height="977" />
     </state>
     <state x="424" y="173" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.23.1920.977@0.23.1920.977" timestamp="1579090425525" />
-    <state x="593" y="114" key="CommitChangelistDialog2" timestamp="1579160809028">
+    <state x="593" y="114" key="CommitChangelistDialog2" timestamp="1579160940663">
       <screen x="0" y="23" width="1920" height="977" />
     </state>
-    <state x="593" y="114" key="CommitChangelistDialog2/0.23.1920.977@0.23.1920.977" timestamp="1579160809028" />
+    <state x="593" y="114" key="CommitChangelistDialog2/0.23.1920.977@0.23.1920.977" timestamp="1579160940663" />
     <state x="360" y="143" width="1200" height="737" key="DiffContextDialog" timestamp="1579101271785">
       <screen x="0" y="23" width="1920" height="977" />
     </state>
     <state x="360" y="143" width="1200" height="737" key="DiffContextDialog/0.23.1920.977@0.23.1920.977" timestamp="1579101271785" />
+    <state x="621" y="446" key="Github.CreateGistDialog" timestamp="1579161444146">
+      <screen x="0" y="23" width="1920" height="977" />
+    </state>
+    <state x="621" y="446" key="Github.CreateGistDialog/0.23.1920.977@0.23.1920.977" timestamp="1579161444146" />
     <state width="689" height="250" key="GridCell.Tab.0.bottom" timestamp="1579101244981">
       <screen x="0" y="23" width="1920" height="977" />
     </state>
@@ -229,9 +238,9 @@
       <screen x="0" y="23" width="1920" height="977" />
     </state>
     <state x="749" y="435" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2/0.23.1920.977@0.23.1920.977" timestamp="1579160671299" />
-    <state x="666" y="310" key="git4idea.merge.GitPullDialog" timestamp="1579160917222">
+    <state x="666" y="310" key="git4idea.merge.GitPullDialog" timestamp="1579160952954">
       <screen x="0" y="23" width="1920" height="977" />
     </state>
-    <state x="666" y="310" key="git4idea.merge.GitPullDialog/0.23.1920.977@0.23.1920.977" timestamp="1579160917222" />
+    <state x="666" y="310" key="git4idea.merge.GitPullDialog/0.23.1920.977@0.23.1920.977" timestamp="1579160952954" />
   </component>
 </project>
