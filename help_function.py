@@ -60,6 +60,7 @@ def generate_file(insertion_pos_file, gff_file, save_file):
 
 def load_df(file_name):
     df = pd.read_csv(file_name)
+    df = df.rename(columns={"variety":"label"})
     return df
 
 def train_test_split(df, test_size):
@@ -76,7 +77,7 @@ def train_test_split(df, test_size):
 #if input data has just one class => return True
 #if input data has many of classes, return False
 def check_purity(data):
-    label_column = data[:,-1]
+    label_column = data[-1]
     unique_classes = np.unique(label_column)
     if unique_classes == 1:
         return True
@@ -86,7 +87,8 @@ def check_purity(data):
 #find the unique class which is not mixed up by other classes
 def classify_data(data):
     label_column = data[:,-1]
-    unique_classes,count_unique_classes = np.unique(label_column, return_counts = True)
+    unique_classes, count_unique_classes = np.unique(label_column, return_counts = True)
     index = count_unique_classes.argmax()
+    print(index)
     classification = unique_classes[index]
     return classification
