@@ -1,12 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="3a50c3ee-0a96-4aab-9d8e-ca85318e069c" name="Default Changelist" comment="" />
+    <list default="true" id="3a50c3ee-0a96-4aab-9d8e-ca85318e069c" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/hits_count_per_10kbNI_genes_CLQCA20184.out" beforeDir="false" afterPath="$PROJECT_DIR$/hits_count_per_10kbNI_genes_CLQCA20184.out" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
+    </list>
     <list id="78fc40e2-ec36-457e-9e5a-b293522b1459" name="not commit" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FavoritesManager">
+    <favorites_list name="M2S4" />
   </component>
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
@@ -74,8 +80,39 @@
     <option name="showLibraryContents" value="true" />
   </component>
   <component name="PropertiesComponent">
+    <property name="ASKED_ADD_EXTERNAL_FILES" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
+  </component>
+  <component name="RunManager">
+    <configuration name="main" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="stageM2S4_DO" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/main.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Python.main" />
+      </list>
+    </recent_temporary>
   </component>
   <component name="ServiceViewManager">
     <option name="viewStates">
@@ -90,7 +127,7 @@
     </option>
   </component>
   <component name="SvnConfiguration">
-    <configuration />
+    <configuration>$USER_HOME$/.subversion</configuration>
   </component>
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
@@ -156,7 +193,21 @@
       <option name="project" value="LOCAL" />
       <updated>1579160940873</updated>
     </task>
-    <option name="localTasksCounter" value="9" />
+    <task id="LOCAL-00009" summary="commit from mac">
+      <created>1579186429072</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1579186429072</updated>
+    </task>
+    <task id="LOCAL-00010" summary="commit from mac">
+      <created>1579190771362</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1579190771362</updated>
+    </task>
+    <option name="localTasksCounter" value="11" />
     <servers />
   </component>
   <component name="Vcs.Log.History.Properties">
@@ -174,18 +225,25 @@
       <map>
         <entry key="MAIN">
           <value>
-            <State />
+            <State>
+              <option name="COLUMN_ORDER" />
+            </State>
           </value>
         </entry>
       </map>
     </option>
   </component>
   <component name="VcsManagerConfiguration">
+    <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
     <MESSAGE value="add some comment" />
     <MESSAGE value="commit from mac" />
     <option name="LAST_COMMIT_MESSAGE" value="commit from mac" />
   </component>
   <component name="WindowStateProjectService">
+    <state x="907" y="244" key="#Inspections" timestamp="1579175598704">
+      <screen x="0" y="23" width="1920" height="977" />
+    </state>
+    <state x="907" y="244" key="#Inspections/0.23.1920.977@0.23.1920.977" timestamp="1579175598704" />
     <state x="560" y="177" key="#Notifications" timestamp="1579090055823">
       <screen x="0" y="23" width="1920" height="977" />
     </state>
@@ -194,10 +252,10 @@
       <screen x="0" y="23" width="1920" height="977" />
     </state>
     <state x="424" y="173" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.23.1920.977@0.23.1920.977" timestamp="1579090425525" />
-    <state x="593" y="114" key="CommitChangelistDialog2" timestamp="1579160940663">
+    <state x="0" y="23" width="1920" height="977" key="CommitChangelistDialog2" timestamp="1579190770431">
       <screen x="0" y="23" width="1920" height="977" />
     </state>
-    <state x="593" y="114" key="CommitChangelistDialog2/0.23.1920.977@0.23.1920.977" timestamp="1579160940663" />
+    <state x="0" y="23" width="1920" height="977" key="CommitChangelistDialog2/0.23.1920.977@0.23.1920.977" timestamp="1579190770431" />
     <state x="360" y="143" width="1200" height="737" key="DiffContextDialog" timestamp="1579101271785">
       <screen x="0" y="23" width="1920" height="977" />
     </state>
@@ -206,41 +264,49 @@
       <screen x="0" y="23" width="1920" height="977" />
     </state>
     <state x="621" y="446" key="Github.CreateGistDialog/0.23.1920.977@0.23.1920.977" timestamp="1579161444146" />
-    <state width="689" height="250" key="GridCell.Tab.0.bottom" timestamp="1579101244981">
+    <state width="1899" height="250" key="GridCell.Tab.0.bottom" timestamp="1579193193848">
       <screen x="0" y="23" width="1920" height="977" />
     </state>
-    <state width="689" height="250" key="GridCell.Tab.0.bottom/0.23.1920.977@0.23.1920.977" timestamp="1579101244981" />
-    <state width="689" height="250" key="GridCell.Tab.0.center" timestamp="1579101244980">
+    <state width="1899" height="250" key="GridCell.Tab.0.bottom/0.23.1920.977@0.23.1920.977" timestamp="1579193193848" />
+    <state width="1899" height="250" key="GridCell.Tab.0.center" timestamp="1579193193848">
       <screen x="0" y="23" width="1920" height="977" />
     </state>
-    <state width="689" height="250" key="GridCell.Tab.0.center/0.23.1920.977@0.23.1920.977" timestamp="1579101244980" />
-    <state width="689" height="250" key="GridCell.Tab.0.left" timestamp="1579101244980">
+    <state width="1899" height="250" key="GridCell.Tab.0.center/0.23.1920.977@0.23.1920.977" timestamp="1579193193848" />
+    <state width="1899" height="250" key="GridCell.Tab.0.left" timestamp="1579193193847">
       <screen x="0" y="23" width="1920" height="977" />
     </state>
-    <state width="689" height="250" key="GridCell.Tab.0.left/0.23.1920.977@0.23.1920.977" timestamp="1579101244980" />
-    <state width="689" height="250" key="GridCell.Tab.0.right" timestamp="1579101244981">
+    <state width="1899" height="250" key="GridCell.Tab.0.left/0.23.1920.977@0.23.1920.977" timestamp="1579193193847" />
+    <state width="1899" height="250" key="GridCell.Tab.0.right" timestamp="1579193193848">
       <screen x="0" y="23" width="1920" height="977" />
     </state>
-    <state width="689" height="250" key="GridCell.Tab.0.right/0.23.1920.977@0.23.1920.977" timestamp="1579101244981" />
+    <state width="1899" height="250" key="GridCell.Tab.0.right/0.23.1920.977@0.23.1920.977" timestamp="1579193193848" />
+    <state x="469" y="150" key="SettingsEditor" timestamp="1579191910960">
+      <screen x="0" y="23" width="1920" height="977" />
+    </state>
+    <state x="469" y="150" key="SettingsEditor/0.23.1920.977@0.23.1920.977" timestamp="1579191910960" />
     <state x="812" y="434" key="VCS.ChangelistChooser" timestamp="1579099776535">
       <screen x="0" y="23" width="1920" height="977" />
     </state>
     <state x="812" y="434" key="VCS.ChangelistChooser/0.23.1920.977@0.23.1920.977" timestamp="1579099776535" />
-    <state x="560" y="240" key="Vcs.Push.Dialog.v2" timestamp="1579108521571">
+    <state x="560" y="240" key="Vcs.Push.Dialog.v2" timestamp="1579190772890">
       <screen x="0" y="23" width="1920" height="977" />
     </state>
-    <state x="560" y="240" key="Vcs.Push.Dialog.v2/0.23.1920.977@0.23.1920.977" timestamp="1579108521571" />
+    <state x="560" y="240" key="Vcs.Push.Dialog.v2/0.23.1920.977@0.23.1920.977" timestamp="1579190772890" />
     <state x="639" y="344" key="com.intellij.ide.util.TipDialog" timestamp="1579084172197">
       <screen x="0" y="23" width="1920" height="977" />
     </state>
     <state x="639" y="344" key="com.intellij.ide.util.TipDialog/0.23.1920.977@0.23.1920.977" timestamp="1579084172197" />
-    <state x="749" y="435" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2" timestamp="1579160671299">
+    <state x="749" y="435" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2" timestamp="1579167737758">
       <screen x="0" y="23" width="1920" height="977" />
     </state>
-    <state x="749" y="435" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2/0.23.1920.977@0.23.1920.977" timestamp="1579160671299" />
-    <state x="666" y="310" key="git4idea.merge.GitPullDialog" timestamp="1579160952954">
+    <state x="749" y="435" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2/0.23.1920.977@0.23.1920.977" timestamp="1579167737758" />
+    <state x="666" y="310" key="git4idea.merge.GitPullDialog" timestamp="1579190726599">
       <screen x="0" y="23" width="1920" height="977" />
     </state>
-    <state x="666" y="310" key="git4idea.merge.GitPullDialog/0.23.1920.977@0.23.1920.977" timestamp="1579160952954" />
+    <state x="666" y="310" key="git4idea.merge.GitPullDialog/0.23.1920.977@0.23.1920.977" timestamp="1579190726599" />
+    <state x="1204" y="417" key="git4idea.ui.GitStashDialog" timestamp="1579190669469">
+      <screen x="0" y="23" width="1920" height="977" />
+    </state>
+    <state x="1204" y="417" key="git4idea.ui.GitStashDialog/0.23.1920.977@0.23.1920.977" timestamp="1579190669469" />
   </component>
 </project>
