@@ -1,9 +1,10 @@
-from help_function import *
+from help_function import generate_file
+
+
 def main():
-    df = load_df("iris.csv")
-    train_df, test_df = train_test_split(df, 0.2)
-    data = train_df.values
-    classi = classify_data(data)
-    print(classi)
+    insertion_pos_file = "PourMD/data/CLQCA_20-184-all-rel_readPerPos.txt"
+    gff_file = "PourMD/Ref/all_subtracts_10kbNI_genes.bed"
+    save_file = "test.out"
+    generate_file(insertion_pos_file, gff_file, save_file)
 if __name__ == "__main__":
     main()
