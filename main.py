@@ -6,11 +6,8 @@ def main():
     #gff_file = "PourMD/Ref/all_subtracts_10kbNI_genes.bed"
     #save_file = "hits_count_per_10kbNI_genes_CLQCA20184.out"
     #generate_file(insertion_pos_file, gff_file, save_file)
-<<<<<<< HEAD
-=======
     print("check pull")
->>>>>>> 823b50c340ae58514550d20d1fe9c2fdd22448f4
 
-    print("dung qsdsqdsdqdq")   
+    print("dung qsdsqdsdqdq vscode")   
 if __name__ == "__main__":
     main()
