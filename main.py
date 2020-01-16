@@ -8,5 +8,7 @@ def main():
     #generate_file(insertion_pos_file, gff_file, save_file)
     print("check")
 
+    print(hello there)
+
 if __name__ == "__main__":
     main()
