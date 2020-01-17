@@ -81,7 +81,7 @@ def generate_file(insertions_pos_file, gff_file, save_file):
             save_file.write(feat[0] + " " + feat[-1][0] + " " + str(hitcount) + " " + str(readcount) + '\n')
     save_file.close()
 
-def gen_hits_reads_10kbNI(reading_file,save_file):
+def gen_csv_file(reading_file,save_file):
     create_file(save_file)
     df = pd.read_csv(reading_file,sep=" ",header=None)
     df.columns = ["chr","ORF","Hits_count","Reads_count"]
@@ -89,7 +89,6 @@ def gen_hits_reads_10kbNI(reading_file,save_file):
     df = df.groupby('ORF').sum()
     df.to_csv(r"hits_count_per_10kbNI_genes_CLQCA20184.csv")
     print(df.head())
-            
 
 
 
