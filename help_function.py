@@ -55,7 +55,7 @@ def generate_ORF_len(gff_file,save_file):
 
 
 #input: path of save file
-def generate_file(insertions_pos_file, gff_file, save_file):
+def generate_file_hits_reads(insertions_pos_file, gff_file, save_file):
     # save file have format: first column is name of gene, second column is number of hits, thirst is number of reads
     # insertions_pos_list contain all insertion positions of gene
     gff_list = gene_feature_format_extract(gff_file)
@@ -88,7 +88,22 @@ def gen_csv_file(reading_file,save_file):
     df = df.drop(["chr"],axis=1)
     df = df.groupby('ORF').sum()
     df.to_csv(r"hits_count_per_10kbNI_genes_CLQCA20184.csv")
-    print(df.head())
+
+def longest_distance_insertion_site(read_file,save_file):
+    with open(read_file, 'r') as insertions_sites, open(save_file, 'w') as output:
+        insertions_list=[]
+        for line in insertions_sites:
+            sline=line.strip().split('\t')
+            sline.append(sline[2])
+            sline[1], sline[4] = sline[4],sline[1]
+            distlist=[line[0],sline[1],sline[3]]
+
+            distlist.append(str(max([int(y) - int(x) for x,y in zip(sline[4:],sline[5:])])))
+            maxint=max([int(y) - int(x) for x,y in zip(sline[4:],sline[5:])])
+            orflen=int(sline[-1])-int(sline[4])
+            ratio=float(maxint)/float(orflen)
+            #print(distlist,orflen,ratio)
+            output.write('\t'.join(distlist) + '\t' + str(ratio) + '\n')
 
 
 

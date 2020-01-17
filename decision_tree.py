@@ -3,14 +3,14 @@ import numpy as np
 import random
 import pandas as pd
 
-from help_function import determine_type_of_feature
+from helper_functions import determine_type_of_feature
 
 #data pure?
 def check_purity(data):
 
     #get label column
     #label column is the last one so its index = -1
-    label_column = data[-1]
+    label_column = data[:,-1]
 
     #return unique classes store in lable column. 
     # Excludes all the replicates, just show the uniques
@@ -29,7 +29,7 @@ def check_purity(data):
 def classify_data(data):
 
     #get label column
-    label_column = data[-1]
+    label_column = data[:,-1]
 
     #get all the unique classes in label column and their number of presentation (True)
     unique_classes, counts_unique_classes = np.unique(label_column, True)
@@ -49,7 +49,7 @@ def get_potential_split(data, random_subspace):
     potential_splits = {}
 
     #get number of column in data
-    _, n_columns = data.shape()
+    _, n_columns = data.shape
 
     #get index of columns except label column - the last one
     column_indices = list(range(n_columns - 1))
@@ -68,8 +68,10 @@ def get_potential_split(data, random_subspace):
 def calculate_entropy(data):
     #select the label column
     label_column = data[:,-1]
+    
     #return labels array and an array of number of each labels
-    labels, counts = np.unique(label_column, True)
+    labels, counts = np.unique(label_column, return_counts = True)
+
     #calculate probability base on counts
     probability = counts/counts.sum()
 
@@ -94,6 +96,8 @@ def calculate_overall_entropy(data_below, data_above):
 #Then we achieve 2 parts of data after each splits, we calculate the overall entropy of splits. The split has minimum overall entropy will be chosen to be split the data
 def determine_best_split(data, potential_splits):
     overall_entropy = 9999
+    best_split_column = 1
+    best_split_value = 1
     for column_index in potential_splits:
         for value in potential_splits[column_index]:
             data_below, data_above = split_data(data, split_column=column_index, split_value=value)
@@ -110,7 +114,7 @@ def determine_best_split(data, potential_splits):
 #this function return 2 parts of data after a split
 def split_data(data, split_column, split_value):
     #get array of values of split column
-    split_column_values = data[,:split_column]
+    split_column_values = data[:,split_column]
 
     #FEATURE_TYPES of data defined in the help_function.py
     type_of_feature = FEATURE_TYPES[split_column]
