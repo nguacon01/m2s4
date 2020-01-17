@@ -1,17 +1,19 @@
+#created by DUNG
 import numpy as np
 import random
 import pandas as pd
 
 from help_function import determine_type_of_feature
 
-print("commit from babel")
-
 #data pure?
 def check_purity(data):
+
     #get label column
+    #label column is the last one so its index = -1
     label_column = data[-1]
 
-    #return unique classes store in lable column. Excludes all the replicates, just show the uniques
+    #return unique classes store in lable column. 
+    # Excludes all the replicates, just show the uniques
     unique_classes = np.unique(label_column)
 
     #if there is only one unique class, then we return true. that mean the tree has only one branch
@@ -20,11 +22,15 @@ def check_purity(data):
         return True
     else:
         return False
+
 #classify
+#this function return name of class that present the most in current condition
+#used in decision tree algorithm
 def classify_data(data):
 
     #get label column
     label_column = data[-1]
+
     #get all the unique classes in label column and their number of presentation (True)
     unique_classes, counts_unique_classes = np.unique(label_column, True)
 
@@ -41,13 +47,15 @@ def classify_data(data):
 #return an object that contain unique values in each column. These values have potential to split after.
 def get_potential_split(data, random_subspace):
     potential_splits = {}
+
     #get number of column in data
-    n_columns = data.shape()
+    _, n_columns = data.shape()
+
     #get index of columns except label column - the last one
     column_indices = list(range(n_columns - 1))
 
     if random_subspace and random_subspace <= len(column_indices):
-        #choose random column index within column_indices
+        #choose random k columns index within column_indices
         column_indices = random.sample(population=column_indices, k=random_subspace)
 
     for column_index in column_indices:
@@ -80,7 +88,10 @@ def calculate_overall_entropy(data_below, data_above):
 
     return overall_entropy
 
-
+#the best split is the one has the minimun overall entropy
+#this function return name of column which is the best to split and value to split
+#first we fetch all the potential split in each column. Each potential split has: index of column and value to split
+#Then we achieve 2 parts of data after each splits, we calculate the overall entropy of splits. The split has minimum overall entropy will be chosen to be split the data
 def determine_best_split(data, potential_splits):
     overall_entropy = 9999
     for column_index in potential_splits:
@@ -96,7 +107,7 @@ def determine_best_split(data, potential_splits):
     return best_split_column, best_split_value
 
 #split data
-#this function return 2 array of data
+#this function return 2 parts of data after a split
 def split_data(data, split_column, split_value):
     #get array of values of split column
     split_column_values = data[,:split_column]
