@@ -1,6 +1,17 @@
 import numpy as np
 import os
 import random
+import pandas as pd
+
+
+#create file and folder
+def create_file(file_path):
+    if not os.path.exists(file_path):
+        open(file_path)
+def create_folder(folder_path):
+    if not os.path.exists(folder_path):
+        os.mkdir(folder_path)
+
 
 # format of insertion positions file:
 # first column is name of chromoson
@@ -23,13 +34,25 @@ def gene_feature_format_extract(gff_file):
 
             sline2 = [sline[-1].strip().split(';')[0][3:]]
             # sline[0][10:] number of chr
-            # sline[1]: position start of gene
-            # sline[2]: position stop of gene
-            # sline[2])-int(sline[1] : length of gene
-            # sline2: ID of gene
+            # sline[1]: position start of ORF
+            # sline[2]: position stop of ORF
+            # sline[2])-int(sline[1] : length of ORF
+            # sline2: ID of ORF
             sline = [sline[0][10:], sline[1], sline[2], str(int(sline[2]) - int(sline[1])), sline2]
             gff_list.append(sline)
     return gff_list
+
+def generate_ORF_len(gff_file,save_file):
+    if not os.path.exists(save_file):
+        open(save_file,'a+')
+    data = gene_feature_format_extract(gff_file)
+    with open(save_file,'w') as OFR_len_file:
+        for d in data:
+            OFR_len_file.write(str(d[0])+'\t')
+            OFR_len_file.write(str(d[-1][0])+'\t')
+            OFR_len_file.write(str(d[-2])+'\n')
+        OFR_len_file.close()
+
 
 #input: path of save file
 def generate_file(insertions_pos_file, gff_file, save_file):
@@ -55,44 +78,18 @@ def generate_file(insertions_pos_file, gff_file, save_file):
                     # readcount is number of times that we see insertion in one position of gene
                     hitcount += 1
                     readcount += int(el[2])
-            save_file.write(feat[-1][0] + " " + str(hitcount) + " " + str(readcount) + '\n')
+            save_file.write(feat[0] + " " + feat[-1][0] + " " + str(hitcount) + " " + str(readcount) + '\n')
     save_file.close()
 
-
-# 1. Train-Test-Split
-def train_test_split(df, test_size):
-    if isinstance(test_size, float):
-        test_size = round(test_size * len(df))
-
-    indices = df.index.tolist()
-    test_indices = random.sample(population=indices, k=test_size)
-
-    test_df = df.loc[test_indices]
-    train_df = df.drop(test_indices)
-
-    return train_df, test_df
+def gen_hits_reads_10kbNI(reading_file,save_file):
+    create_file(save_file)
+    df = pd.read_csv(reading_file,sep=" ",header=None)
+    df.columns = ["ORF","Hits_count","Reads_count"]
+    df.groupby("ORF").sum()
+    df.to_csv("hits_count_per_10kbNI_genes_CLQCA20184.csv")
+    print(df.head())
+            
 
 
-# 2. Distinguish categorical and continuous features
-def determine_type_of_feature(df):
-    feature_types = []
-    n_unique_values_treshold = 15
-    for feature in df.columns:
-        if feature != "label":
-            unique_values = df[feature].unique()
-            example_value = unique_values[0]
-
-            if (isinstance(example_value, str)) or (len(unique_values) <= n_unique_values_treshold):
-                feature_types.append("categorical")
-            else:
-                feature_types.append("continuous")
-
-    return feature_types
 
 
-# 3. Accuracy
-def calculate_accuracy(predictions, labels):
-    predictions_correct = predictions == labels
-    accuracy = predictions_correct.mean()
-
-    return accuracy
