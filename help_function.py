@@ -7,7 +7,7 @@ import pandas as pd
 #create file and folder
 def create_file(file_path):
     if not os.path.exists(file_path):
-        open(file_path)
+        open(file_path,'a+')
 def create_folder(folder_path):
     if not os.path.exists(folder_path):
         os.mkdir(folder_path)
@@ -84,9 +84,10 @@ def generate_file(insertions_pos_file, gff_file, save_file):
 def gen_hits_reads_10kbNI(reading_file,save_file):
     create_file(save_file)
     df = pd.read_csv(reading_file,sep=" ",header=None)
-    df.columns = ["ORF","Hits_count","Reads_count"]
-    df.groupby("ORF").sum()
-    df.to_csv("hits_count_per_10kbNI_genes_CLQCA20184.csv")
+    df.columns = ["chr","ORF","Hits_count","Reads_count"]
+    df = df.drop(["chr"],axis=1)
+    df = df.groupby('ORF').sum()
+    df.to_csv(r"hits_count_per_10kbNI_genes_CLQCA20184.csv")
     print(df.head())
             
 
