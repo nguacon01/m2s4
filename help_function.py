@@ -42,14 +42,12 @@ def gene_feature_format_extract(gff_file):
             gff_list.append(sline)
     return gff_list
 
-def generate_ORF_len(gff_file,save_file):
-    if not os.path.exists(save_file):
-        open(save_file,'a+')
+def ORF_len(gff_file,save_file):
+    create_file(save_file)
     data = gene_feature_format_extract(gff_file)
     with open(save_file,'w') as OFR_len_file:
         for d in data:
-            OFR_len_file.write(str(d[0])+'\t')
-            OFR_len_file.write(str(d[-1][0])+'\t')
+            OFR_len_file.write(str(d[-1][0])+' ')
             OFR_len_file.write(str(d[-2])+'\n')
         OFR_len_file.close()
 
@@ -84,10 +82,10 @@ def generate_file_hits_reads(insertions_pos_file, gff_file, save_file):
 def gen_csv_file(reading_file,save_file):
     create_file(save_file)
     df = pd.read_csv(reading_file,sep=" ",header=None)
-    df.columns = ["chr","ORF","Hits_count","Reads_count"]
-    df = df.drop(["chr"],axis=1)
-    df = df.groupby('ORF').sum()
-    df.to_csv(r"hits_count_per_10kbNI_genes_CLQCA20184.csv")
+    df.columns = ["ORF","length_hits_free"]
+    
+    df = df.groupby("ORF").max()['length_hits_free']
+    print(df)
 
 def longest_distance_insertion_site(read_file,save_file):
     with open(read_file, 'r') as insertions_sites, open(save_file, 'w') as output:
@@ -103,8 +101,32 @@ def longest_distance_insertion_site(read_file,save_file):
             orflen=int(sline[-1])-int(sline[4])
             ratio=float(maxint)/float(orflen)
             #print(distlist,orflen,ratio)
-            output.write('\t'.join(distlist) + '\t' + str(ratio) + '\n')
+            output.write(' '.join(distlist) + ' ' + str(ratio) + '\n')
 
+def insertion_index(ORF_hits_file, ORF_length_file, save_file):
+    create_file(save_file)
+    insertion_index = []
+    with open(ORF_hits_file,'r') as hits, open(ORF_length_file,'r') as lengths, open(save_file,"w") as save:
+        for h in hits:
+            h_features = h.strip().split(" ")
+            for l in lengths:
+                l_features = l.strip().split(" ")
+                if h_features[0] == l_features[0]:
+                    insertion_id = int(h_features[1])/int(l_features[1])
+            save.write(str(h_features[0]) + " " + str(insertion_id) + "\n")
 
+def extract_hits_free_interval(read_file,save_file):
+
+    # create_file(save_file)
+    f = open(read_file)
+    x = f.readlines()
+    count = 0
+    with open(save_file,"w") as save:
+        while count < (len(x)-1):
+            max_val = 0
+            if(x[count].strip().split('\t')[4].split(';')[0].split('=')[1] == x[count+1].strip().split('\t')[4].split(';')[0].split('=')[1]):
+                length_hits_free = int(x[count+1].strip().split('\t')[1]) - int(x[count].strip().split('\t')[2])
+                save.write(x[count].strip().split('\t')[4].split(';')[0].split('=')[1] + " " + str(length_hits_free) + "\n")
+            count +=1
 
 
