@@ -85,7 +85,7 @@ def gen_csv_file(reading_file,save_file):
     df.columns = ["ORF","length_hits_free"]
     
     df = df.groupby("ORF").max()['length_hits_free']
-    print(df)
+    df.to_csv(save_file)
 
 def longest_distance_insertion_site(read_file,save_file):
     with open(read_file, 'r') as insertions_sites, open(save_file, 'w') as output:
