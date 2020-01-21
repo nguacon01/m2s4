@@ -1,22 +1,25 @@
 from help_function import *
-from decision_tree import decision_tree_algorithm
+from helper_functions import *
+from decision_tree import *
 import pandas as pd
 
 def main():
-    insertion_pos_file = "/home/mddo/stage/M2S4/PourMD/data/CLQCA_20-184-all-rel_readPerPos.txt"
-    reading_file = "/home/mddo/stage/M2S4/PourMD/Ref/sace_R64_annotation_genesonly_simplified.gff"
-    # # reading_file = "PourMD/Ref/all_rel_insertionsitesinORF_CLQCA20184.txt"
-    # save_file = "ouput/all_subtracts_10kbNI_genes.out"
-    # generate_file_hits_reads(insertion_pos_file,reading_file,save_file)
-    # # longest_distance_insertion_site(reading_file,save_file)
-    #generate hit by ORF 10kb neighborhood csv file
-    # gen_csv_file("ouput/longest_distances_betweenhits_rel_CLQCA20184.out","ouput/longest_distances_betweenhits_rel_CLQCA20184.csv")
-    # df = pd.read_csv("iris.csv")
-    # tree = decision_tree_algorithm(df)
-    # print(tree)
-    save_file = "output/hits_reads_per_ORF_CLQCA20184.out"
-    # extract_hits_free_interval("PourMD/Ref/all_subtracts_10kbNI_genes.bed", "output/hit_free_interval.out")
-    generate_file_hits_reads(insertion_pos_file,reading_file,save_file)
+    # hits_file = "/home/mddo/stage/M2S4/PourMD/data/CLQCA_20-184-all-rel_readPerPos.txt"
+    # ORF_hits_file = "/home/mddo/stage/M2S4/output/hits_reads_per_ORF_CLQCA20184.out"
+    # ORF_len_file = "/home/mddo/stage/M2S4/output/length_orf.out"
+    # promoter_file = "/home/mddo/stage/M2S4/PourMD/Ref/sace_R64_annotation_100bppromoters.gff"
+    # save_file = "/home/mddo/stage/M2S4/output/hits_per_100bppromoters.out"
+
+    # # length_ORF("/home/mddo/stage/M2S4/PourMD/Ref/sace_R64_annotation_genesonly_simplified.gff", "output/length_orf.out")
+    # generate_file_hits_reads(hits_file, promoter_file, save_file)
+
+    hits_reads_file = "/home/mddo/stage/M2S4/output/hits_reads_per_ORF_CLQCA20184.out"
+    hits_promoter_file = "/home/mddo/stage/M2S4/output/hits_per_100bppromoters.out"
+    ORF_length_file = "/home/mddo/stage/M2S4/output/length_orf.out"
+    insertion_index_file = "/home/mddo/stage/M2S4/output/insertion_index_rel_CLQCA20184.out"
+    non_coding_file = "/home/mddo/stage/M2S4/output/longest_hit_free_interval_in10kbNI.out"
+    NI_file = "/home/mddo/stage/M2S4/output/hitcounts_in10kbNI_CLQCA20184.out"
+    HFI_file = "/home/mddo/stage/M2S4/output/longest_distances_betweenhits_rel_CLQCA20184.out"
 
 if __name__ == "__main__":
     main()

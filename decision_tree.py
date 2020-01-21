@@ -183,3 +183,43 @@ def decision_tree_algorithm(df, counter = 0, min_samples=2, max_depth=5, random_
             sub_tree[question].append(no_answer)
         return sub_tree
 
+def classify_example(example, tree):
+    question = list(tree.keys())[0]
+    feature_name, comparison_operator, value = question.split(" ")
+
+    # ask question
+    if comparison_operator == "<=":
+        print(example[feature_name])
+        if example[feature_name] < float(value):
+            answer = tree[question][0]
+        else:
+            answer = tree[question][1]
+    
+    # feature is categorical
+    else:
+        if str(example[feature_name]) == value:
+            answer = tree[question][0]
+        else:
+            answer = tree[question][1]
+
+    # base case
+    if not isinstance(answer, dict):
+        return answer
+    
+    # recursive part
+    else:
+        residual_tree = answer
+        return classify_example(example, residual_tree)
+
+
+
+def calculate_accuracy(df, tree):
+
+    df["classification"] = df.apply(classify_example, args=(tree,), axis=1)
+    df["classification_correct"] = df["classification"] == df["label"]
+    print(df)
+    
+    accuracy = df["classification_correct"].mean()
+    
+    return accuracy
+
