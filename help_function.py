@@ -1,4 +1,3 @@
-import numpy as np
 import os
 import random
 import pandas as pd
@@ -35,10 +34,10 @@ def gene_feature_format_extract(gff_file):
 
             sline2 = [sline[-1].strip().split(';')[0][3:]]
             # sline[0][10:] number of chr
-            # sline[1]: position start of ORF
-            # sline[2]: position stop of ORF
-            # sline[2])-int(sline[1] : length of ORF
-            # sline2: ID of ORF
+            # sline[1]: position start of gene
+            # sline[2]: position stop of gene
+            # sline[2])-int(sline[1] : length of gene
+            # sline2: ID of gene
             sline = [sline[0][10:], sline[1], sline[2], str(int(sline[2]) - int(sline[1])), sline2]
             gff_list.append(sline)
     return gff_list
@@ -54,11 +53,12 @@ def gene_feature_format_extract(gff_file):
 
 
 #input: path of save file
-def generate_file_hits_reads(insertions_pos_file, gff_file, save_file):
+
+def generate_file(insertion_pos_file, gff_file, save_file):
     # save file have format: first column is name of gene, second column is number of hits, thirst is number of reads
     # insertions_pos_list contain all insertion positions of gene
     gff_list = gene_feature_format_extract(gff_file)
-    insertions_pos_list = insertion_pos(insertions_pos_file)
+    insertions_pos_list = insertion_pos(insertion_pos_file)
     if not os.path.exists(save_file):
         open(save_file, 'w+').close()
     with open(save_file, 'w') as save_file:
@@ -181,6 +181,4 @@ def merge_df(hits_reads_file, hits_promoter_file, ORF_length_file, insertion_ind
     result = pd.concat([hits_reads_df,hits_promoter_df,orf_len_df,insertion_index_df,non_coding_df,HFI_df], axis=1, sort=False)
     print(result)
 
-        
-
-
+    
