@@ -1,6 +1,12 @@
+<<<<<<< HEAD
 from help_function import *
 from helper_functions import *
 from decision_tree import *
+=======
+#%%
+from helper_functions import *
+from decision_tree import decision_tree_algorithm
+>>>>>>> 7306b8ea15fdda5fbaa7838f9f3bfb8787f0d0c3
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
