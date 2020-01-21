@@ -2,6 +2,8 @@ from help_function import *
 from helper_functions import *
 from decision_tree import *
 import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
 
 def main():
     # hits_file = "/home/mddo/stage/M2S4/PourMD/data/CLQCA_20-184-all-rel_readPerPos.txt"
@@ -23,3 +25,6 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
+# %%
