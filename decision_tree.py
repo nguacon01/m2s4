@@ -196,8 +196,6 @@ def classify_example(example, tree):
         residual_tree = answer
         return classify_example(example, residual_tree)
 
-
-
 def calculate_accuracy(df, tree):
 
     df["classification"] = df.apply(classify_example, args=(tree,), axis=1)
