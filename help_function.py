@@ -125,7 +125,7 @@ def insertion_index(ORF_hits_file, ORF_length_file, save_file):
                 l_features = l.strip().split(" ")
                 if h_features[1] == l_features[0]:
                     insertion_id = int(h_features[2])/int(l_features[1])
-            save.write(str(h_features[1]) + " " + str(insertion_id) + "\n")
+                save.write(str(h_features[1]) + " " + str(insertion_id) + "\n")
 
             
 #extract the interval of non coding regions which are 10KB upstream and downstream of ORF
