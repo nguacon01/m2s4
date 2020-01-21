@@ -42,7 +42,6 @@ def gene_feature_format_extract(gff_file):
             gff_list.append(sline)
     return gff_list
 
-<<<<<<< HEAD
 # def ORF_len(gff_file,save_file):
 #     create_file(save_file)
 #     data = gene_feature_format_extract(gff_file)
@@ -55,34 +54,11 @@ def gene_feature_format_extract(gff_file):
 
 #input: path of save file
 
-def generate_file(insertion_pos_file, gff_file, save_file):
-    # save file have format: first column is name of gene, second column is number of hits, thirst is number of reads
-    # insertions_pos_list contain all insertion positions of gene
-    gff_list = gene_feature_format_extract(gff_file)
-    insertions_pos_list = insertion_pos(insertion_pos_file)
-
-#input: path of save file
-=======
-#input: path of save file
-<<<<<<< HEAD
->>>>>>> 7306b8ea15fdda5fbaa7838f9f3bfb8787f0d0c3
-
-def generate_file(insertion_pos_file, gff_file, save_file):
-    # save file have format: first column is name of gene, second column is number of hits, thirst is number of reads
-    # insertions_pos_list contain all insertion positions of gene
-    gff_list = gene_feature_format_extract(gff_file)
-    insertions_pos_list = insertion_pos(insertion_pos_file)
-<<<<<<< HEAD
-
-=======
-=======
->>>>>>> 7306b8ea15fdda5fbaa7838f9f3bfb8787f0d0c3
 def generate_file(insertions_pos_file, gff_file, save_file):
     # save file have format: first column is name of gene, second column is number of hits, thirst is number of reads
     # insertions_pos_list contain all insertion positions of gene
     gff_list = gene_feature_format_extract(gff_file)
     insertions_pos_list = insertion_pos(insertions_pos_file)
->>>>>>> 3b141128b8532a4bc2ab3a013b3979a1fd35afc9
     if not os.path.exists(save_file):
         open(save_file, 'w+').close()
     with open(save_file, 'w') as save_file:
@@ -103,11 +79,10 @@ def generate_file(insertions_pos_file, gff_file, save_file):
                     readcount += int(el[2])
             save_file.write(feat[-1][0] + " " + str(hitcount) + " " + str(readcount) + '\n')
     save_file.close()
+
 #find longest insertion-free in each ORF and normalizes them
 #input: read_file: file of all insertion postion in each ORF
 #save_file: file to save output data
-
-<<<<<<< HEAD
 def longest_distance_insertion_free_site(read_file,save_file):
     with open(read_file, 'r') as insertions_sites, open(save_file, 'w') as output:
         insertions_list=[]
@@ -204,80 +179,3 @@ def merge_df(hits_reads_file, hits_promoter_file, ORF_length_file, insertion_ind
 
     result = pd.concat([hits_reads_df,hits_promoter_df,orf_len_df,insertion_index_df,non_coding_df,HFI_df], axis=1, sort=False)
     print(result)
-=======
-<<<<<<< HEAD
-def load_df(file_name):
-    df = pd.read_csv(file_name)
-    df = df.rename(columns={"variety":"label"})
-    return df
-
-def train_test_split(df, test_size):
-    if isinstance(test_size, float):
-        test_size = round(test_size * len(df))
-    indices = df.index.tolist()
-    #choose random indices
-    test_indices = random.sample(population=indices, k=test_size)
-    test_df = df.loc[test_indices]
-    train_df = df.drop(test_indices)
-    return train_df, test_df
-
-#Check purity of data
-#if input data has just one class => return True
-#if input data has many of classes, return False
-def check_purity(data):
-    label_column = data[-1]
-    unique_classes = np.unique(label_column)
-    if unique_classes == 1:
-        return True
-    else:
-        return False
-
-#find the unique class which is not mixed up by other classes
-def classify_data(data):
-    label_column = data[:,-1]
-    unique_classes, count_unique_classes = np.unique(label_column, return_counts = True)
-    index = count_unique_classes.argmax()
-    print(index)
-    classification = unique_classes[index]
-    return classification
-=======
-
-# 1. Train-Test-Split
-def train_test_split(df, test_size):
-    if isinstance(test_size, float):
-        test_size = round(test_size * len(df))
-
-    indices = df.index.tolist()
-    test_indices = random.sample(population=indices, k=test_size)
-
-    test_df = df.loc[test_indices]
-    train_df = df.drop(test_indices)
-
-    return train_df, test_df
-
-
-# 2. Distinguish categorical and continuous features
-def determine_type_of_feature(df):
-    feature_types = []
-    n_unique_values_treshold = 15
-    for feature in df.columns:
-        if feature != "label":
-            unique_values = df[feature].unique()
-            example_value = unique_values[0]
-
-            if (isinstance(example_value, str)) or (len(unique_values) <= n_unique_values_treshold):
-                feature_types.append("categorical")
-            else:
-                feature_types.append("continuous")
-
-    return feature_types
-
-
-# 3. Accuracy
-def calculate_accuracy(predictions, labels):
-    predictions_correct = predictions == labels
-    accuracy = predictions_correct.mean()
-
-    return accuracy
->>>>>>> 3b141128b8532a4bc2ab3a013b3979a1fd35afc9
->>>>>>> 7306b8ea15fdda5fbaa7838f9f3bfb8787f0d0c3
