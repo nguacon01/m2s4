@@ -59,6 +59,20 @@ def generate_file(insertion_pos_file, gff_file, save_file):
     # insertions_pos_list contain all insertion positions of gene
     gff_list = gene_feature_format_extract(gff_file)
     insertions_pos_list = insertion_pos(insertion_pos_file)
+
+#input: path of save file
+
+def generate_file(insertion_pos_file, gff_file, save_file):
+    # save file have format: first column is name of gene, second column is number of hits, thirst is number of reads
+    # insertions_pos_list contain all insertion positions of gene
+    gff_list = gene_feature_format_extract(gff_file)
+    insertions_pos_list = insertion_pos(insertion_pos_file)
+
+def generate_file(insertions_pos_file, gff_file, save_file):
+    # save file have format: first column is name of gene, second column is number of hits, thirst is number of reads
+    # insertions_pos_list contain all insertion positions of gene
+    gff_list = gene_feature_format_extract(gff_file)
+    insertions_pos_list = insertion_pos(insertions_pos_file)
     if not os.path.exists(save_file):
         open(save_file, 'w+').close()
     with open(save_file, 'w') as save_file:
@@ -79,7 +93,6 @@ def generate_file(insertion_pos_file, gff_file, save_file):
                     readcount += int(el[2])
             save_file.write(feat[-1][0] + " " + str(hitcount) + " " + str(readcount) + '\n')
     save_file.close()
-
 #find longest insertion-free in each ORF and normalizes them
 #input: read_file: file of all insertion postion in each ORF
 #save_file: file to save output data
@@ -180,5 +193,3 @@ def merge_df(hits_reads_file, hits_promoter_file, ORF_length_file, insertion_ind
 
     result = pd.concat([hits_reads_df,hits_promoter_df,orf_len_df,insertion_index_df,non_coding_df,HFI_df], axis=1, sort=False)
     print(result)
-
-    
