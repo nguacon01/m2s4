@@ -156,26 +156,65 @@ def extract_hits_free_interval(read_file,save_file):
 
 def merge_df(hits_reads_file, hits_promoter_file, ORF_length_file, insertion_index_file, non_coding_file, NI_file, HFI_file):
     hits_reads_df = pd.read_csv(hits_reads_file, sep=" ", header=None)
-    hits_reads_df.columns(["chr","orf","hits_count","read_count"])
+    hits_reads_df.columns = ["chr","orf","hits_count","read_count"] 
     hits_reads_df = hits_reads_df.drop(columns=["chr"])
 
     hits_promoter_df = pd.read_csv(hits_promoter_file,sep=" ", header=None)
-    hits_promoter_df.columns(["orf","hits_count_pro","reads_count_pro"])
+    hits_promoter_df.columns = ["orf","hits_count_pro","reads_count_pro"]
 
     orf_len_df = pd.read_csv(ORF_length_file,sep=" ", header=None)
-    orf_len_df.columns(["orf","orf_len"])
+    orf_len_df.columns = ["orf","orf_len"]
 
     insertion_index_df = pd.read_csv(insertion_index_file,sep=" ",header=None)
-    insertion_index_df.columns(["orf","insertion_index"])
+    insertion_index_df.columns = ["orf","insertion_index"]
 
     non_coding_df = pd.read_csv(non_coding_file,sep=" ",header=None)
-    non_coding_df.columns(["orf","10kb_hits_free"])
+    non_coding_df.columns = ["orf","10kb_hits_free"]
 
     NI_df = pd.read_csv(NI_file,sep = " ", header=None)
-    NI_df.columns(["orf","NI_index"])
+    NI_df.columns = ["chr","orf","NI_index","reads_count"]
+    NI_df = NI_df.drop(columns=["chr"])
 
     HFI_df = pd.read_csv(HFI_file,sep=" ",header=None)
-    HFI_df.columns(["orf","HFI"])
+    HFI_df.columns = ["orf","HFI","HFI_normalized"]
 
-    result = pd.concat([hits_reads_df,hits_promoter_df,orf_len_df,insertion_index_df,non_coding_df,HFI_df], axis=1, sort=False)
-    print(result)
+    hits_reads_df["hits_count_pro"] = hits_reads_df.orf.map(hits_promoter_df.set_index("orf")["hits_count_pro"].to_dict())
+    hits_reads_df["reads_count_pro"] = hits_reads_df.orf.map(hits_promoter_df.set_index("orf")["reads_count_pro"].to_dict())
+
+    hits_reads_df["orf_len"] = hits_reads_df.orf.map(orf_len_df.set_index("orf")["orf_len"].to_dict())
+
+    # hits_reads_df["insertion_index"] = hits_reads_df.orf.map(insertion_index_df.set_index("orf")["insertion_index"].to_dict())
+
+    # hits_reads_df["10kb_hits_free"] = hits_reads_df.orf.map(non_coding_df.set_index("orf")["10kb_hits_free"].to_dict())
+
+    hits_reads_df["NI_index"] = hits_reads_df.orf.map(NI_df.set_index("orf")["NI_index"].to_dict())
+
+    hits_reads_df["HFI_normalized"] = hits_reads_df.orf.map(HFI_df.set_index("orf")["HFI_normalized"].to_dict())
+
+    ess_file = "/home/mddo/stage/M2S4/output/ess_orf.txt"
+    non_ess_file = "/home/mddo/stage/M2S4/output/non_ess_file.txt"
+
+    ess_df = pd.read_csv(ess_file,sep = " ", header=None)
+    ess_df.columns = ["orf","label"]
+
+    non_ess_df = pd.read_csv(ess_file,sep = " ", header=None)
+    non_ess_df.columns = ["orf","label"]
+    print(ess_df)
+
+    ess_df = ess_df.append([non_ess_df])
+    print(ess_df)
+
+    hits_reads_df["label"] = hits_reads_df.orf.map(ess_df.set_index("orf")["label"].to_dict())
+
+    # hits_reads_df["label"] = hits_reads_df.orf.map(ess_df.set_index("orf")["label"].to_dict())
+
+
+    # with open(ess_file,"r") as ess, open("output/ess_orf.txt","w") as ess_output:
+    #     for e in ess:
+    #         ess_output.write(e.strip().split("\n")[0]+" ess\n")
+
+    # with open(non_ess_file,"r") as non_ess, open("output/non_ess_file.txt","w") as none_ess_output:
+    #     for non_e in non_ess:
+    #         none_ess_output.write(non_e.strip().split("\n")[0]+" non_ess\n")
+
+    hits_reads_df.to_csv("output/df_df.csv")

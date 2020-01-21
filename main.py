@@ -20,7 +20,7 @@ def main():
     non_coding_file = "/home/mddo/stage/M2S4/output/longest_hit_free_interval_in10kbNI.out"
     NI_file = "/home/mddo/stage/M2S4/output/hitcounts_in10kbNI_CLQCA20184.out"
     HFI_file = "/home/mddo/stage/M2S4/output/longest_distances_betweenhits_rel_CLQCA20184.out"
-
+    
     merge_df(hits_reads_file, hits_promoter_file, ORF_length_file, insertion_index_file, non_coding_file, NI_file, HFI_file)
 
 if __name__ == "__main__":
