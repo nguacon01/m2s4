@@ -159,17 +159,14 @@ def insertion_index(ORF_hits_file, ORF_length_file, save_file):
 def total_hits_count_10kb(read_file,save_file):
     df = pd.read_csv(read_file,sep = " ",header=None)
     df.columns = ["ORF","hits","reads"]
-    df = df.groupby(["ORF"]).sum()
-    df.insert(loc=0,column="orf",value=df.index)
+    df = df.groupby(["ORF"],sort=False,as_index=False).sum()
+
+    data = df.to_string(header=False,index=False)
 
     with open(save_file,"w") as save:
-        save.write(df.to_string(header=False,index=False))
-
-def format_text_data(read_file):
-    with open(read_file) as read, open(read_file+"_formated.out","w") as save:
-        for data in read:
-            d = " ".join(data.split())
-            save.write(d+"\n")
+        for line in data.strip().split("\n"):
+            data = " ".join(line.split())
+            save.write(data+"\n")
 
 #calculate non coding windows
 #input hits_file:total hits per ORF
@@ -226,8 +223,7 @@ def neightborhood_index(insertion_index_file,non_coding_windows_file,save_file):
 
 def merge_df(hits_reads_file, hits_promoter_file, ORF_length_file, insertion_index_file, non_coding_file, NI_file, HFI_file):
     hits_reads_df = pd.read_csv(hits_reads_file, sep=" ", header=None)
-    hits_reads_df.columns = ["chr","orf","hits_count","read_count"] 
-    hits_reads_df = hits_reads_df.drop(columns=["chr"])
+    hits_reads_df.columns = ["orf","hits_count","read_count"] 
 
     hits_promoter_df = pd.read_csv(hits_promoter_file,sep=" ", header=None)
     hits_promoter_df.columns = ["orf","hits_count_pro","reads_count_pro"]
@@ -238,12 +234,11 @@ def merge_df(hits_reads_file, hits_promoter_file, ORF_length_file, insertion_ind
     insertion_index_df = pd.read_csv(insertion_index_file,sep=" ",header=None)
     insertion_index_df.columns = ["orf","insertion_index"]
 
-    # non_coding_df = pd.read_csv(non_coding_file,sep=" ",header=None)
-    # non_coding_df.columns = ["orf","10kb_hits_free"]
+    non_coding_df = pd.read_csv(non_coding_file,sep=" ",header=None)
+    non_coding_df.columns = ["orf","noncoding_10kb"]
 
     NI_df = pd.read_csv(NI_file,sep = " ", header=None)
-    NI_df.columns = ["chr","orf","NI_index","reads_count"]
-    NI_df = NI_df.drop(columns=["chr"])
+    NI_df.columns = ["orf","NI_index"]
 
     HFI_df = pd.read_csv(HFI_file,sep=" ",header=None)
     HFI_df.columns = ["orf","HFI","HFI_normalized"]
@@ -254,11 +249,12 @@ def merge_df(hits_reads_file, hits_promoter_file, ORF_length_file, insertion_ind
     ess_df = pd.read_csv(ess_file,sep = " ", header=None)
     ess_df.columns = ["orf","label"]
 
-    non_ess_df = pd.read_csv(ess_file,sep = " ", header=None)
+    non_ess_df = pd.read_csv(non_ess_file,sep = " ", header=None)
     non_ess_df.columns = ["orf","label"]
 
-    ess_df = ess_df.append([non_ess_df])
-    print(ess_df)
+    dframe = [ess_df,non_ess_df]
+    label_df = pd.concat(dframe)
+    label_df.columns = ['orf','label']
 
     hits_reads_df["hits_count_pro"] = hits_reads_df.orf.map(hits_promoter_df.set_index("orf")["hits_count_pro"].to_dict())
     hits_reads_df["reads_count_pro"] = hits_reads_df.orf.map(hits_promoter_df.set_index("orf")["reads_count_pro"].to_dict())
@@ -267,15 +263,13 @@ def merge_df(hits_reads_file, hits_promoter_file, ORF_length_file, insertion_ind
 
     hits_reads_df["insertion_index"] = hits_reads_df.orf.map(insertion_index_df.set_index("orf")["insertion_index"].to_dict())
 
-    # hits_reads_df["10kb_hits_free"] = hits_reads_df.orf.map(non_coding_df.set_index("orf")["10kb_hits_free"].to_dict())
+    hits_reads_df["nonCoding_windows"] = hits_reads_df.orf.map(non_coding_df.set_index("orf")["noncoding_10kb"].to_dict())
 
     hits_reads_df["NI_index"] = hits_reads_df.orf.map(NI_df.set_index("orf")["NI_index"].to_dict())
 
     hits_reads_df["HFI_normalized"] = hits_reads_df.orf.map(HFI_df.set_index("orf")["HFI_normalized"].to_dict())
 
-    hits_reads_df["label"] = hits_reads_df.orf.map(ess_df.set_index("orf")["label"].to_dict())
-
-    # hits_reads_df["label"] = hits_reads_df.orf.map(ess_df.set_index("orf")["label"].to_dict())
+    hits_reads_df["label"] = hits_reads_df.orf.map(label_df.set_index("orf")["label"].to_dict())
 
 
     # with open(ess_file,"r") as ess, open("output/ess_orf.txt","w") as ess_output:
@@ -285,5 +279,8 @@ def merge_df(hits_reads_file, hits_promoter_file, ORF_length_file, insertion_ind
     # with open(non_ess_file,"r") as non_ess, open("output/non_ess_file.txt","w") as none_ess_output:
     #     for non_e in non_ess:
     #         none_ess_output.write(non_e.strip().split("\n")[0]+" non_ess\n")
-
+    #drop all the row which have NaN in label
+    hits_reads_df = hits_reads_df.dropna()
+    hits_reads_df.reset_index(drop = True)
     hits_reads_df.to_csv("output/df_df.csv")
+    
