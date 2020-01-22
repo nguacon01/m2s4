@@ -223,7 +223,6 @@ def neightborhood_index(insertion_index_file,non_coding_windows_file,save_file):
                     NI = float(ii_value) / float(nonc_value)
                     save.write(ii_orf+ " " + str(NI) + "\n")
                     break
-            continue
 
 def merge_df(hits_reads_file, hits_promoter_file, ORF_length_file, insertion_index_file, non_coding_file, NI_file, HFI_file):
     hits_reads_df = pd.read_csv(hits_reads_file, sep=" ", header=None)
