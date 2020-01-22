@@ -35,6 +35,8 @@ def classify_data(data):
 
 
 # 1.3 Potential splits?
+#input: data - values from dataframe
+# random_subspace - number of random indices of columns in the train_df. Based on input train_df, we can choose random features to create new df. That make random forest less bias
 def get_potential_splits(data, random_subspace):
     
     potential_splits = {}

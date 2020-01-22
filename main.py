@@ -27,21 +27,22 @@ def main():
     
     # merge_df(hits_reads_file, hits_promoter_file, ORF_length_file, insertion_index_file, non_coding_file, NI_file, HFI_file)
 
-    df = pd.read_csv("/home/mddo/stage/M2S4/output/df_df.csv")
+    df = pd.read_csv("output\df_df.csv")
+    df = df.drop(columns=['orf','Unnamed: 0'])
     train_df, test_df = train_test_split(df,0.2)
 
-    # tree = decision_tree_algorithm(df = train_df)
+    tree = decision_tree_algorithm(df = train_df, random_subspace=5)
 
-    # prediction = decision_tree_predictions(test_df,tree)
+    predictions = decision_tree_predictions(test_df,tree)
 
-    # data_test = test_df.values
-    # labels = data_test[:,-1]
-    # print(prediction)
+    data_test = test_df.values
+    labels = data_test[:,-1]
+    print(predictions)
 
-    # accuracy = calculate_accuracy(prediction,labels)
-    # print(accuracy)
+    accuracy = calculate_accuracy(predictions,labels)
+    print(accuracy)
 
-    sns.heatmap([train_df.hits_count,train_df.read_count],annot=True,fmt="d")
+    # sns.heatmap([train_df.hits_count,train_df.read_count],annot=True,fmt="d")
     
 
 if __name__ == "__main__":
