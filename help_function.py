@@ -284,6 +284,10 @@ def merge_df(hits_reads_file, hits_promoter_file, ORF_length_file, insertion_ind
     #drop all the row which have NaN in label
     hits_reads_df = hits_reads_df.dropna()
     hits_reads_df.reset_index(drop = True)
-    print(hits_reads_df.columns)
+
+    cols = hits_reads_df.columns.tolist()
+    cols.insert(-1, cols.pop(cols.index("orf")))
+    hits_reads_df = hits_reads_df.reindex(columns = cols)
+    
     hits_reads_df.to_csv("output/df_df.csv",index=False)
     

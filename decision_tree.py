@@ -45,7 +45,7 @@ def get_potential_splits(data, random_subspace):
     
     potential_splits = {}
     _, n_columns = data.shape
-    column_indices = list(range(n_columns - 1))    # excluding the last column which is the label
+    column_indices = list(range(n_columns - 2))    # excluding the 2 last columns which are the label and ORF
     
     if random_subspace and random_subspace <= len(column_indices):
         column_indices = random.sample(population=column_indices, k=random_subspace)
