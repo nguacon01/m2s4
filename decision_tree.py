@@ -11,6 +11,9 @@ from helper_functions import determine_type_of_feature
 # (see "decision tree algorithm flow chart.png")
 
 # 1.1 Data pure?
+# check if data have one class or more
+# input: values of dataframe
+# output: True/False
 def check_purity(data):
     
     label_column = data[:, -1]
@@ -23,6 +26,7 @@ def check_purity(data):
 
     
 # 1.2 Classify
+# define which class the input data is in. The class defined is the class which presents the most times
 def classify_data(data):
     
     label_column = data[:, -1]
@@ -54,8 +58,10 @@ def get_potential_splits(data, random_subspace):
     
     return potential_splits
 
-
 # 1.4 Lowest Overall Entropy?
+
+#calculate entropy information of columns
+#the smaller entropy, the richer information of columns
 def calculate_entropy(data):
     
     label_column = data[:, -1]
@@ -96,6 +102,8 @@ def determine_best_split(data, potential_splits):
 
 
 # 1.5 Split data
+# split the input data based on split column and the better value in this column to split
+#return 2 parts of data: data below the splitting value and data above the splitting value
 def split_data(data, split_column, split_value):
     
     split_column_values = data[:, split_column]
@@ -207,6 +215,8 @@ def predict_example(example, tree):
 
     
 # 3.2 All examples of the test data
+#input: test dataframe and the tree that buitl by decision tree algorithm
+#output: list of classes or labels predicted
 def decision_tree_predictions(test_df, tree):
     predictions = test_df.apply(predict_example, args=(tree,), axis=1)
     return predictions
