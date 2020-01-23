@@ -256,6 +256,8 @@ def merge_df(hits_reads_file, hits_promoter_file, ORF_length_file, insertion_ind
     label_df = pd.concat(dframe)
     label_df.columns = ['orf','label']
 
+
+    #join the columns from different dataframes which have same column ORF
     hits_reads_df["hits_count_pro"] = hits_reads_df.orf.map(hits_promoter_df.set_index("orf")["hits_count_pro"].to_dict())
     hits_reads_df["reads_count_pro"] = hits_reads_df.orf.map(hits_promoter_df.set_index("orf")["reads_count_pro"].to_dict())
 
@@ -282,5 +284,6 @@ def merge_df(hits_reads_file, hits_promoter_file, ORF_length_file, insertion_ind
     #drop all the row which have NaN in label
     hits_reads_df = hits_reads_df.dropna()
     hits_reads_df.reset_index(drop = True)
-    hits_reads_df.to_csv("output/df_df.csv")
+    print(hits_reads_df.columns)
+    hits_reads_df.to_csv("output/df_df.csv",index=False)
     

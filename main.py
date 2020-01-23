@@ -17,30 +17,31 @@ def main():
     # save_file = "/home/mddo/stage/M2S4/output/neightborhood_index.out"
     # neightborhood_index(insertion_index_file,non_coding_windows_file,save_file)
 
-    # hits_reads_file = "/home/mddo/stage/M2S4/output/hits_reads_per_ORF_CLQCA20184.out"
-    # hits_promoter_file = "/home/mddo/stage/M2S4/output/hits_per_100bppromoters.out"
-    # ORF_length_file = "/home/mddo/stage/M2S4/output/length_orf.out"
-    # insertion_index_file = "/home/mddo/stage/M2S4/output/insertion_index_rel_CLQCA20184.out"
-    # non_coding_file = "/home/mddo/stage/M2S4/output/non_coding_windows_10kb.out"
-    # NI_file = "/home/mddo/stage/M2S4/output/neightborhood_index.out"
-    # HFI_file = "/home/mddo/stage/M2S4/output/longest_distances_betweenhits_rel_CLQCA20184.out"
+    hits_reads_file = "/home/mddo/stage/M2S4/output/hits_reads_per_ORF_CLQCA20184.out"
+    hits_promoter_file = "/home/mddo/stage/M2S4/output/hits_per_100bppromoters.out"
+    ORF_length_file = "/home/mddo/stage/M2S4/output/length_orf.out"
+    insertion_index_file = "/home/mddo/stage/M2S4/output/insertion_index_rel_CLQCA20184.out"
+    non_coding_file = "/home/mddo/stage/M2S4/output/non_coding_windows_10kb.out"
+    NI_file = "/home/mddo/stage/M2S4/output/neightborhood_index.out"
+    HFI_file = "/home/mddo/stage/M2S4/output/longest_distances_betweenhits_rel_CLQCA20184.out"
     
-    # merge_df(hits_reads_file, hits_promoter_file, ORF_length_file, insertion_index_file, non_coding_file, NI_file, HFI_file)
+    merge_df(hits_reads_file, hits_promoter_file, ORF_length_file, insertion_index_file, non_coding_file, NI_file, HFI_file)
 
-    df = pd.read_csv("output\df_df.csv")
-    df = df.drop(columns=['orf','Unnamed: 0'])
-    train_df, test_df = train_test_split(df,0.2)
+    # df = pd.read_csv("output/df_df.csv")
+    # df = df.drop(columns=['orf','Unnamed: 0'])
+    # train_df, test_df = train_test_split(df,0.2)
+    # print(train_df)
 
-    tree = decision_tree_algorithm(df = train_df, random_subspace=5)
+    # tree = decision_tree_algorithm(df = train_df, random_subspace=5)
 
-    predictions = decision_tree_predictions(test_df,tree)
+    # predictions = decision_tree_predictions(test_df,tree)
 
-    data_test = test_df.values
-    labels = data_test[:,-1]
-    print(predictions)
+    # data_test = test_df.values
+    # labels = data_test[:,-1]
+    # print(predictions)
 
-    accuracy = calculate_accuracy(predictions,labels)
-    print(accuracy)
+    # accuracy = calculate_accuracy(predictions,labels)
+    # print(accuracy)
 
     # sns.heatmap([train_df.hits_count,train_df.read_count],annot=True,fmt="d")
     
