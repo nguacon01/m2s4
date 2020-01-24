@@ -23,14 +23,14 @@ plt.show()
 # sns.heatmap([train_df.hits_count,train_df.read_count],annot=True,fmt="d")
 
 # %%
-sns.scatterplot(x='nonCoding_windows', y='insertion_index', data = df, hue='label')
+sns.scatterplot(y='insertion_index', x='nonCoding_windows', data = df, hue='label')
 
 # %%
-df = pd.read_csv("output/output_predictions_epoche_9.csv")
+df = pd.read_csv("output/output_predictions_epoche_1.csv")
 confusion_matrix = pd.crosstab(df['label'],df['predictions'], rownames = ['Actual'], colnames=['Predict'])
-sns.heatmap(confusion_matrix,annot=True)
+sns.heatmap(confusion_matrix,annot=True,annot_kws={"size": 16,"color":"red"})
+plt.show()
 
-# %%
 
 
 # %%

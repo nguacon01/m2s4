@@ -85,7 +85,7 @@ def hits_read_count(insertions_pos_file, gff_file, save_file):
 #find longest insertion-free in each ORF and normalizes them
 #input: read_file: file of all insertion positions in each ORF
 #save_file: file to save output data
-def longest_distance_insertion_free_site(read_file,save_file):
+def hit_free_interval(insertion_position_file,save_file):
     with open(read_file, 'r') as insertions_sites, open(save_file, 'w') as output:
         insertions_list=[]
         for line in insertions_sites:
@@ -137,25 +137,7 @@ def insertion_index(ORF_hits_file, ORF_length_file, save_file):
                     save.write(str(h_orf) + " " + str(insertion_id) + "\n")
                     break
 
-            
-# def total_hits_count_10kb(read_file,save_file):
-#     create_file(save_file)
-#     f = open(read_file,'r')
-#     x = f.readlines()
-#     count =0
-#     hits_count = 0
-#     with open (save_file,"w") as save:
-#         while count < (len(x) -1):
-#             current_orf = x[count].strip().split(" ")[0]
-#             current_hit = x[count].strip().split(" ")[1]
-#             next_orf = x[count].strip().split(" ")[0]
-#             next_hit = x[count].strip().split(" ")[1]
-#             hits_count += int(current_hit)
-#             if current_orf == next_orf:
-#                 hits_count += int(next_hit)
-#             else:
-#                 save.write(current_orf + " " + hits_count)
-#                 hits_count = 0
+
 def total_hits_count_10kb(read_file,save_file):
     df = pd.read_csv(read_file,sep = " ",header=None)
     df.columns = ["ORF","hits","reads"]
@@ -217,7 +199,10 @@ def neightborhood_index(insertion_index_file,non_coding_windows_file,save_file):
                 nonc_orf = nonc_features[0]
                 nonc_value = nonc_features[1]
                 if ii_orf == nonc_orf:
-                    NI = float(ii_value) / float(nonc_value)
+                    if float(nonc_value) == 0:
+                        NI = 0
+                    else:
+                        NI = float(ii_value) / float(nonc_value)
                     save.write(ii_orf+ " " + str(NI) + "\n")
                     break
 
@@ -281,13 +266,17 @@ def merge_df(hits_reads_file, hits_promoter_file, ORF_length_file, insertion_ind
     # with open(non_ess_file,"r") as non_ess, open("output/non_ess_file.txt","w") as none_ess_output:
     #     for non_e in non_ess:
     #         none_ess_output.write(non_e.strip().split("\n")[0]+" non_ess\n")
+
     #drop all the row which have NaN in label
-    hits_reads_df = hits_reads_df.dropna()
+    hits_reads_df['label'].replace(' ', np.nan, inplace=True)
+    hits_reads_df = hits_reads_df.dropna(subset=['label'])
     hits_reads_df.reset_index(drop = True)
 
+    #move orf column to the end of df
     cols = hits_reads_df.columns.tolist()
     cols.insert(-1, cols.pop(cols.index("orf")))
     hits_reads_df = hits_reads_df.reindex(columns = cols)
     
+    #generate csv file
     hits_reads_df.to_csv("output/df_df.csv",index=False)
     

@@ -55,9 +55,5 @@ def training_RF(df, epoches, n_tree, n_bootstrap, n_feature, dt_max_depth):
         accuracy_arr.append(accuracy)
         print("Epoche " + str(epoche) + " - accuracy = " + str(accuracy))
     
-    for acc in accuracy_arr:
-        mean_acc += acc[1]/epoches
-    
-    print("accuracy is: {}".format(mean_acc))
     return accuracy_arr
 
