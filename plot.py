@@ -1,12 +1,15 @@
 #%%
 import numpy as numpy
+import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
+from sklearn.metrics import confusion_matrix
+from helper_functions import train_test_split
 
 df = pd.read_csv("output/df_df.csv")
-
-print(df['label'].value_counts())
-data = df['label'].value_counts()
+df.shape
+train_df, test_df = train_test_split(df, 0.2)
+data = test_df['label'].value_counts()
 print(data)
 data.plot(kind="bar")
 plt.ylabel("numbers of gene")
@@ -21,5 +24,13 @@ plt.show()
 
 # %%
 sns.scatterplot(x='nonCoding_windows', y='insertion_index', data = df, hue='label')
+
+# %%
+df = pd.read_csv("output/output_predictions_epoche_9.csv")
+confusion_matrix = pd.crosstab(df['label'],df['predictions'], rownames = ['Actual'], colnames=['Predict'])
+sns.heatmap(confusion_matrix,annot=True)
+
+# %%
+
 
 # %%

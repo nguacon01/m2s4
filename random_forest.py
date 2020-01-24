@@ -7,6 +7,7 @@ from decision_tree import decision_tree_algorithm, decision_tree_predictions
 
 df = pd.read_csv("iris.csv")
 train_df, test_df = train_test_split(df, 0.2)
+forest = []
 
 #randomly create sub dataframes based on train_df
 #input: train_df
@@ -18,7 +19,6 @@ def bootstrapping(train_df, n_bootstrap):
     return df_bootstrapped
 
 def random_forest_algorithm(train_df, n_tree, n_bootstrap, n_feature, dt_max_depth):
-    forest = []
     for i in range(n_tree):
         df_bootstrapped = bootstrapping(train_df, n_bootstrap)
         tree = decision_tree_algorithm(df_bootstrapped, max_depth=dt_max_depth, random_subspace=n_feature)
@@ -52,7 +52,7 @@ def training_RF(df, epoches, n_tree, n_bootstrap, n_feature, dt_max_depth):
         test_df.to_csv("output/output_predictions_epoche_"+ str(epoche) +".csv",index=False)
 
         accuracy = calculate_accuracy(predictions,test_df.label)
-        accuracy_arr.append([epoche,accuracy])
+        accuracy_arr.append(accuracy)
         print("Epoche " + str(epoche) + " - accuracy = " + str(accuracy))
     
     for acc in accuracy_arr:

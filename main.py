@@ -1,9 +1,8 @@
 #%%
-from help_function import *
+from help_function import merge_df
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
-from helper_functions import *
 from random_forest import training_RF
 
 def main():
@@ -18,17 +17,19 @@ def main():
     # save_file = "/home/mddo/stage/M2S4/output/neightborhood_index.out"
     # neightborhood_index(insertion_index_file,non_coding_windows_file,save_file)
 
-    # hits_reads_file = "/home/mddo/stage/M2S4/output/hits_reads_per_ORF_CLQCA20184.out"
-    # hits_promoter_file = "/home/mddo/stage/M2S4/output/hits_per_100bppromoters.out"
-    # ORF_length_file = "/home/mddo/stage/M2S4/output/length_orf.out"
-    # insertion_index_file = "/home/mddo/stage/M2S4/output/insertion_index_rel_CLQCA20184.out"
-    # non_coding_file = "/home/mddo/stage/M2S4/output/non_coding_windows_10kb.out"
-    # NI_file = "/home/mddo/stage/M2S4/output/neightborhood_index.out"
-    # HFI_file = "/home/mddo/stage/M2S4/output/longest_distances_betweenhits_rel_CLQCA20184.out"
+    # hits_reads_file = "output/hits_reads_per_ORF_CLQCA20184.out"
+    # hits_promoter_file = "output/hits_per_100bppromoters.out"
+    # ORF_length_file = "output/length_orf.out"
+    # insertion_index_file = "output/insertion_index_rel_CLQCA20184.out"
+    # non_coding_file = "output/non_coding_windows_10kb.out"
+    # NI_file = "output/neightborhood_index.out"
+    # HFI_file = "output/longest_distances_betweenhits_rel_CLQCA20184.out"
     
     # merge_df(hits_reads_file, hits_promoter_file, ORF_length_file, insertion_index_file, non_coding_file, NI_file, HFI_file)
 
-    result = training_RF(df, epoches=3, n_tree = 7, n_bootstrap = 1300, n_feature = 7, dt_max_depth = 5)
+    # df = pd.read_csv("output\df_df.csv")
+    # training_RF(df, epoches=30, n_tree = 5, n_bootstrap = 1500, n_feature = 4, dt_max_depth = 5)
+    # print(df.info)
     
 
 if __name__ == "__main__":
