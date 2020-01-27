@@ -6,7 +6,7 @@ import seaborn as sns
 from sklearn.metrics import confusion_matrix
 from helper_functions import train_test_split
 
-df = pd.read_csv("output/df_df.csv")
+df = pd.read_csv("output/FY/dataframe.csv")
 df.shape
 train_df, test_df = train_test_split(df, 0.2)
 data = test_df['label'].value_counts()
@@ -23,7 +23,7 @@ plt.show()
 # sns.heatmap([train_df.hits_count,train_df.read_count],annot=True,fmt="d")
 
 # %%
-sns.scatterplot(y='insertion_index', x='nonCoding_windows', data = df, hue='label')
+sns.scatterplot(y='hits_count_pro', x='hits_count', data = df, hue='label')
 
 # %%
 df = pd.read_csv("output/output_predictions_epoche_1.csv")
@@ -32,5 +32,8 @@ sns.heatmap(confusion_matrix,annot=True,annot_kws={"size": 16,"color":"red"})
 plt.show()
 
 
+
+# %%
+df['hits_count'].plot(kind='bar')
 
 # %%

@@ -2,7 +2,7 @@ import os
 import random
 import pandas as pd
 import numpy as np
-from sklearn.preprocessing import MinMaxScaler
+from sklearn.preprocessing import MinMaxScaler, StandardScaler
 
 
 #create file and folder
@@ -42,17 +42,6 @@ def gene_feature_format_extract(gff_file):
             sline = [sline[0][10:], sline[1], sline[2], str(int(sline[2]) - int(sline[1])), sline2]
             gff_list.append(sline)
     return gff_list
-
-# def ORF_len(gff_file,save_file):
-#     create_file(save_file)
-#     data = gene_feature_format_extract(gff_file)
-#     with open(save_file,'w') as OFR_len_file:
-#         for d in data:
-#             OFR_len_file.write(str(d[-1][0])+' ')
-#             OFR_len_file.write(str(d[-2])+'\n')
-#         OFR_len_file.close()
-
-
 
 #Hits - Reads - Hits_in_promoteur
 def hits_read_count(insertions_pos_file, gff_file, save_file):
@@ -210,24 +199,39 @@ def neightborhood_index(insertion_index_file,non_coding_windows_file,save_file):
                     break
 
 def merge_df(hits_reads_file, hits_promoter_file, ORF_length_file, insertion_index_file, NI_file, HFI_file):
-    hits_reads_df = pd.read_csv(hits_reads_file, sep=" ", header=None)
-    hits_reads_df.columns = ["orf","hits_count","read_count"] 
+    min_max_scaler = MinMaxScaler()
 
+    #hits count and reads count
+    hits_reads_df = pd.read_csv(hits_reads_file, sep=" ", header=None)
+    hits_reads_df.columns = ["orf","hits_count","reads_count"]
+    #normalizes values for hits count and reads count
+    norm_cols_hits_reads = ["hits_count","reads_count"]
+    hits_reads_df[norm_cols_hits_reads]  = StandardScaler().fit_transform(hits_reads_df[norm_cols_hits_reads])
+
+    #hits per promoter
     hits_promoter_df = pd.read_csv(hits_promoter_file,sep=" ", header=None)
     hits_promoter_df.columns = ["orf","hits_count_pro","reads_count_pro"]
 
+    #orf length
     orf_len_df = pd.read_csv(ORF_length_file,sep=" ", header=None)
     orf_len_df.columns = ["orf","orf_len"]
+    #normalizes values for orf length
+    norm_cols_orf_len = ["orf_len"]
+    orf_len_df[norm_cols_orf_len]  = StandardScaler().fit_transform(orf_len_df[norm_cols_orf_len])
 
+    #insertion index
     insertion_index_df = pd.read_csv(insertion_index_file,sep=" ",header=None)
     insertion_index_df.columns = ["orf","insertion_index"]
 
+    #Neighborhood index
     NI_df = pd.read_csv(NI_file,sep = " ", header=None)
     NI_df.columns = ["orf","NI_index"]
 
+    #Hit free interval
     HFI_df = pd.read_csv(HFI_file,sep=" ",header=None)
     HFI_df.columns = ["orf","HFI","HFI_normalized"]
 
+    #label join
     ess_file = "PourMD/ref_data/ess_orf.txt"
     non_ess_file = "PourMD/ref_data/non_ess_file.txt"
 
@@ -243,8 +247,9 @@ def merge_df(hits_reads_file, hits_promoter_file, ORF_length_file, insertion_ind
     label_df.columns = ['orf','label']
 
     #join the columns from different dataframes which have same column ORF
-    hits_reads_df["hits_count_pro"] = hits_reads_df.orf.map(hits_promoter_df.set_index("orf")["hits_count_pro"].to_dict())
-    hits_reads_df["reads_count_pro"] = hits_reads_df.orf.map(hits_promoter_df.set_index("orf")["reads_count_pro"].to_dict())
+    # final_df = hits_reads_df
+
+    hits_reads_df["hits_count_pro"] = hits_promoter_df.orf.map(hits_promoter_df.set_index("orf")["hits_count_pro"].to_dict())
 
     hits_reads_df["orf_len"] = hits_reads_df.orf.map(orf_len_df.set_index("orf")["orf_len"].to_dict())
 
@@ -255,15 +260,6 @@ def merge_df(hits_reads_file, hits_promoter_file, ORF_length_file, insertion_ind
     hits_reads_df["HFI_normalized"] = hits_reads_df.orf.map(HFI_df.set_index("orf")["HFI_normalized"].to_dict())
 
     hits_reads_df["label"] = hits_reads_df.orf.map(label_df.set_index("orf")["label"].to_dict())
-
-
-    # with open(ess_file,"r") as ess, open("output/ess_orf.txt","w") as ess_output:
-    #     for e in ess:
-    #         ess_output.write(e.strip().split("\n")[0]+" ess\n")
-
-    # with open(non_ess_file,"r") as non_ess, open("output/non_ess_file.txt","w") as none_ess_output:
-    #     for non_e in non_ess:
-    #         none_ess_output.write(non_e.strip().split("\n")[0]+" non_ess\n")
 
     #drop all the row which have NaN in label
     hits_reads_df['label'].replace(' ', np.nan, inplace=True)
