@@ -228,8 +228,8 @@ def merge_df(hits_reads_file, hits_promoter_file, ORF_length_file, insertion_ind
     HFI_df = pd.read_csv(HFI_file,sep=" ",header=None)
     HFI_df.columns = ["orf","HFI","HFI_normalized"]
 
-    ess_file = "/home/mddo/stage/M2S4/output/ess_orf.txt"
-    non_ess_file = "/home/mddo/stage/M2S4/output/non_ess_file.txt"
+    ess_file = "PourMD/ref_data/ess_orf.txt"
+    non_ess_file = "PourMD/ref_data/non_ess_file.txt"
 
     ess_df = pd.read_csv(ess_file,sep = " ", header=None)
     ess_df.columns = ["orf","label"]
@@ -237,10 +237,10 @@ def merge_df(hits_reads_file, hits_promoter_file, ORF_length_file, insertion_ind
     non_ess_df = pd.read_csv(non_ess_file,sep = " ", header=None)
     non_ess_df.columns = ["orf","label"]
 
+    #merge data of 2 files essential and non essential genes
     dframe = [ess_df,non_ess_df]
     label_df = pd.concat(dframe)
     label_df.columns = ['orf','label']
-
 
     #join the columns from different dataframes which have same column ORF
     hits_reads_df["hits_count_pro"] = hits_reads_df.orf.map(hits_promoter_df.set_index("orf")["hits_count_pro"].to_dict())
@@ -276,5 +276,5 @@ def merge_df(hits_reads_file, hits_promoter_file, ORF_length_file, insertion_ind
     hits_reads_df = hits_reads_df.reindex(columns = cols)
     
     #generate csv file
-    hits_reads_df.to_csv("output/df_df.csv",index=False)
+    hits_reads_df.to_csv("output/FY/dataframe.csv",index=False)
     
