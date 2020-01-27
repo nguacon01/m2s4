@@ -84,9 +84,10 @@ def hits_read_count(insertions_pos_file, gff_file, save_file):
 #HFI
 #find longest insertion-free in each ORF and normalizes them
 #input: read_file: file of all insertion positions in each ORF
+# all_rel_insertionsitesinORF_CLQCA20184.txt
 #save_file: file to save output data
-def hit_free_interval(insertion_position_file,save_file):
-    with open(read_file, 'r') as insertions_sites, open(save_file, 'w') as output:
+def hit_free_interval(insertion_sites_file,save_file):
+    with open(insertion_sites_file, 'r') as insertions_sites, open(save_file, 'w') as output:
         insertions_list=[]
         for line in insertions_sites:
             sline=line.strip().split('\t')
@@ -100,12 +101,13 @@ def hit_free_interval(insertion_position_file,save_file):
             distlist=[sline[1]]
 
             #append max value of length between 2 insertion positions of each ORF in array
-            distlist.append(str(max([int(y) - int(x) for x,y in zip(sline[4:],sline[5:])])))
-            maxint=max([int(y) - int(x) for x,y in zip(sline[4:],sline[5:])])
+            max_insertion_free=max([int(y) - int(x) for x,y in zip(sline[4:],sline[5:])])
+            distlist.append(str(max_insertion_free))
+            
             #calculate ORF length
             orflen=int(sline[-1])-int(sline[4])
             #normalizes max value of length of ORF
-            ratio=float(maxint)/float(orflen)
+            ratio=float(max_insertion_free)/float(orflen)
             output.write(' '.join(distlist) + ' ' + str(ratio) + '\n')
 
 #ORF length
@@ -165,7 +167,7 @@ def non_coding_windows(hits_file,len_file,save_file):
     while count < (len(x)-1):
         current_ORF = x[count].strip().split('\t')[4].split(';')[0].split('=')[1]
         next_ORF = x[count+1].strip().split('\t')[4].split(';')[0].split('=')[1]
-        total_non_coding_length += int(x[count].strip().split('\t')[2]) - int(x[count].strip().split('\t')[1])
+        total_non_coding_length += (int(x[count].strip().split('\t')[2]) - int(x[count].strip().split('\t')[1]))
 
         if current_ORF==next_ORF :
             total_non_coding_length += int(x[count+1].strip().split('\t')[2]) - int(x[count+1].strip().split('\t')[1])
@@ -173,13 +175,14 @@ def non_coding_windows(hits_file,len_file,save_file):
             non_coding_len_arr.append([current_ORF,total_non_coding_length])
             total_non_coding_length = 0
         count +=1
-
+    count_check = 0
     with open(hits_file) as hits, open(save_file,'w') as save:
         for h in hits:
-            h_features = h.strip().split(" ")
-            h_orf = h_features[0]
-            h_count = h_features[1]
+            count += 1
             for nonc_len in non_coding_len_arr:
+                h_features = h.strip().split(" ")
+                h_orf = h_features[0]
+                h_count = h_features[1]
                 l_orf = nonc_len[0]
                 l_value = nonc_len[1]
                 if l_orf == h_orf:
@@ -206,7 +209,7 @@ def neightborhood_index(insertion_index_file,non_coding_windows_file,save_file):
                     save.write(ii_orf+ " " + str(NI) + "\n")
                     break
 
-def merge_df(hits_reads_file, hits_promoter_file, ORF_length_file, insertion_index_file, non_coding_file, NI_file, HFI_file):
+def merge_df(hits_reads_file, hits_promoter_file, ORF_length_file, insertion_index_file, NI_file, HFI_file):
     hits_reads_df = pd.read_csv(hits_reads_file, sep=" ", header=None)
     hits_reads_df.columns = ["orf","hits_count","read_count"] 
 
@@ -218,9 +221,6 @@ def merge_df(hits_reads_file, hits_promoter_file, ORF_length_file, insertion_ind
 
     insertion_index_df = pd.read_csv(insertion_index_file,sep=" ",header=None)
     insertion_index_df.columns = ["orf","insertion_index"]
-
-    non_coding_df = pd.read_csv(non_coding_file,sep=" ",header=None)
-    non_coding_df.columns = ["orf","noncoding_10kb"]
 
     NI_df = pd.read_csv(NI_file,sep = " ", header=None)
     NI_df.columns = ["orf","NI_index"]
@@ -249,8 +249,6 @@ def merge_df(hits_reads_file, hits_promoter_file, ORF_length_file, insertion_ind
     hits_reads_df["orf_len"] = hits_reads_df.orf.map(orf_len_df.set_index("orf")["orf_len"].to_dict())
 
     hits_reads_df["insertion_index"] = hits_reads_df.orf.map(insertion_index_df.set_index("orf")["insertion_index"].to_dict())
-
-    hits_reads_df["nonCoding_windows"] = hits_reads_df.orf.map(non_coding_df.set_index("orf")["noncoding_10kb"].to_dict())
 
     hits_reads_df["NI_index"] = hits_reads_df.orf.map(NI_df.set_index("orf")["NI_index"].to_dict())
 
