@@ -64,7 +64,7 @@ def main():
     # merge_df(save_hits_reads_file, save_hits_per_promoter_file, save_orf_length_file, save_insertion_index_file, save_neighborhood_index_file, save_free_hit_interval_file)
 
     df = pd.read_csv("output/FY/dataframe.csv")
-    training_RF(df, epoches=5, n_tree = 5, n_bootstrap = 1800, n_feature = 5, dt_max_depth = 5)
+    training_RF(df, epoches=10, n_tree = 99, n_bootstrap = 1800, n_feature = 5, dt_max_depth = 5)
     print(df.info)
     
 
