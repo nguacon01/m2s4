@@ -153,18 +153,22 @@ def non_coding_windows(hits_file,len_file,save_file):
     total_non_coding_length = 0
     non_coding_len_arr = []
     #calculate total length at non coding region of each orf
-    while count < (len(x)-1):
-        current_ORF = x[count].strip().split('\t')[4].split(';')[0].split('=')[1]
-        next_ORF = x[count+1].strip().split('\t')[4].split(';')[0].split('=')[1]
-        total_non_coding_length += (int(x[count].strip().split('\t')[2]) - int(x[count].strip().split('\t')[1]))
+    with open("output/FY/nonCoding_len.out","w") as nonCoding_10kb_len:
+        while count < (len(x)-1):
+            current_ORF = x[count].strip().split('\t')[4].split(';')[0].split('=')[1]
+            next_ORF = x[count+1].strip().split('\t')[4].split(';')[0].split('=')[1]
+            total_non_coding_length = total_non_coding_length + (int(x[count].strip().split('\t')[2]) - int(x[count].strip().split('\t')[1]))
+            print(current_ORF)
+            print(x[count].strip().split('\t')[1])
+            print(x[count].strip().split('\t')[2])
+            print("sum " + str(total_non_coding_length))
 
-        if current_ORF==next_ORF :
-            total_non_coding_length += int(x[count+1].strip().split('\t')[2]) - int(x[count+1].strip().split('\t')[1])
-        else:
-            non_coding_len_arr.append([current_ORF,total_non_coding_length])
-            total_non_coding_length = 0
-        count +=1
-    count_check = 0
+            if current_ORF!=next_ORF :
+                non_coding_len_arr.append([current_ORF,total_non_coding_length])
+                nonCoding_10kb_len.write(current_ORF + " " + str(total_non_coding_length) + "\n")
+                total_non_coding_length = 0
+            count +=1
+        count_check = 0
     with open(hits_file) as hits, open(save_file,'w') as save:
         for h in hits:
             count += 1
@@ -204,7 +208,7 @@ def merge_df(hits_reads_file, hits_promoter_file, ORF_length_file, insertion_ind
     #hits count and reads count
     hits_reads_df = pd.read_csv(hits_reads_file, sep=" ", header=None)
     hits_reads_df.columns = ["orf","hits_count","reads_count"]
-    #normalizes values for hits count and reads count
+    #normalizes values of hits count and reads count
     norm_cols_hits_reads = ["hits_count","reads_count"]
     hits_reads_df[norm_cols_hits_reads]  = StandardScaler().fit_transform(hits_reads_df[norm_cols_hits_reads])
 
