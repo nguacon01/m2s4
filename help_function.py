@@ -3,6 +3,9 @@ import random
 import pandas as pd
 import numpy as np
 from sklearn.preprocessing import MinMaxScaler, StandardScaler
+import glob
+
+false_positive_file_path = "output/false_positive.out"
 
 
 #create file and folder
@@ -215,11 +218,14 @@ def merge_df(hits_reads_file, hits_promoter_file, ORF_length_file, insertion_ind
     #hits per promoter
     hits_promoter_df = pd.read_csv(hits_promoter_file,sep=" ", header=None)
     hits_promoter_df.columns = ["orf","hits_count_pro","reads_count_pro"]
+    #normalize values of hits per promoter
+    # norm_cols_hits_per_pro = ["hits_count_pro"]
+    # hits_promoter_df[norm_cols_hits_per_pro]  = StandardScaler().fit_transform(hits_promoter_df[norm_cols_hits_per_pro])
 
     #orf length
     orf_len_df = pd.read_csv(ORF_length_file,sep=" ", header=None)
     orf_len_df.columns = ["orf","orf_len"]
-    #normalizes values for orf length
+    #normalizes values of orf length
     norm_cols_orf_len = ["orf_len"]
     orf_len_df[norm_cols_orf_len]  = StandardScaler().fit_transform(orf_len_df[norm_cols_orf_len])
 
@@ -277,4 +283,24 @@ def merge_df(hits_reads_file, hits_promoter_file, ORF_length_file, insertion_ind
     
     #generate csv file
     hits_reads_df.to_csv("output/FY/dataframe.csv",index=False)
-    
+
+#this function find the genes frequenly have false positive results after prediction   
+def find_false_positive():
+    files_path = glob.glob("/home/mddo/stage/M2S4/output/output_predictions/*.csv")
+    with open(false_positive_file_path,"a") as fp:
+        for file in files_path:
+            with open(file,"r") as content:
+                for data in content:
+                    data_features = data.strip().split(",")
+                    real_label = data_features[8]
+                    predicted_label = data_features[9]
+                    orf = data_features[7]
+                    if real_label == 'ess' and real_label != predicted_label:
+                        fp.write(orf+"\n")
+
+def frequency_false_positive():
+    df = pd.read_csv("output/false_positive.out",sep = " ", header = None)
+    df.columns = ["ORF"]
+    df = df.groupby(["ORF"],sort=False,as_index=False).size()
+    df.sort_values(ascending=False)
+    print(df.head(10))

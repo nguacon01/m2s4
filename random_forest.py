@@ -4,6 +4,8 @@ import random
 import pandas as pd
 from helper_functions import train_test_split, calculate_accuracy
 from decision_tree import decision_tree_algorithm, decision_tree_predictions
+from help_function import create_file,find_false_positive,frequency_false_positive
+import json
 
 df = pd.read_csv("iris.csv")
 train_df, test_df = train_test_split(df, 0.2)
@@ -36,8 +38,8 @@ def random_forest_predictions(test_df, forest):
     
     return random_forest_predictions
 
-def training_RF(df, epoches, n_tree, n_bootstrap, n_feature, dt_max_depth):
-    train_df, test_df = train_test_split(df, 0.2)
+def training_RF(df, epoches, n_tree, n_bootstrap, n_feature, dt_max_depth,test_size):
+    train_df, test_df = train_test_split(df, test_size)
     accuracy_arr = []
     mean_acc = 0.0
 
@@ -49,11 +51,21 @@ def training_RF(df, epoches, n_tree, n_bootstrap, n_feature, dt_max_depth):
 
         test_df["predictions"] = predictions_array
 
-        test_df.to_csv("output/output_predictions_epoche_"+ str(epoche) +".csv",index=False)
+        test_df.to_csv("output/output_predictions/output_predictions_epoche_"+ str(epoche) +".csv",index=False)
 
         accuracy = calculate_accuracy(predictions,test_df.label)
         accuracy_arr.append(accuracy)
         print("Epoche " + str(epoche) + " - accuracy = " + str(accuracy))
+
+        #save forest - save environment
+        save_tree_path = "output/FY/tree_{}.json".format(epoche)
+        save_file = create_file(save_tree_path)
+        with open(save_tree_path,"w") as save_tree:
+            save_tree.write(json.dumps(forest))
     
+    find_false_positive()
+    fp = frequency_false_positive()
+    print(fp)
+
     return accuracy_arr
 

@@ -9,12 +9,14 @@ from helper_functions import train_test_split
 df = pd.read_csv("output/FY/dataframe.csv")
 df.shape
 train_df, test_df = train_test_split(df, 0.2)
-data = train_df['label'].value_counts()
+data = test_df['label'].value_counts()
 print(data)
 data.plot(kind="bar",color = ["blue","orange"])
-plt.ylabel("numbers of gene")
+plt.xticks(rotation=0,size=16)
+plt.yticks(size=14)
+plt.ylabel("numbers of gene",size=14)
 plt.show()
-# ax = sns.barplot(df['label'].value_counts())
+ax = sns.barplot(df['label'].value_counts())
 
 
 
@@ -26,7 +28,7 @@ plt.show()
 sns.scatterplot(y='hits_count_pro', x='hits_count', data = df, hue='label')
 
 # %%
-df = pd.read_csv("output/output_predictions_epoche_8.csv")
+df = pd.read_csv("output/output_predictions_epoche_0.csv")
 confusion_matrix = pd.crosstab(df['label'],df['predictions'], rownames = ['Actual'], colnames=['Predict'])
 sns.heatmap(confusion_matrix,annot=True,annot_kws={"size": 16,"color":"white"})
 plt.show()
