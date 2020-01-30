@@ -238,8 +238,8 @@ def merge_df(hits_reads_file, hits_promoter_file, ORF_length_file, insertion_ind
     NI_df.columns = ["orf","NI_index"]
 
     #Hit free interval
-    HFI_df = pd.read_csv(HFI_file,sep=" ",header=None)
-    HFI_df.columns = ["orf","HFI","HFI_normalized"]
+    # HFI_df = pd.read_csv(HFI_file,sep=" ",header=None)
+    # HFI_df.columns = ["orf","HFI","HFI_normalized"]
 
     #label join
     ess_file = "PourMD/ref_data/ess_orf.txt"
@@ -267,7 +267,7 @@ def merge_df(hits_reads_file, hits_promoter_file, ORF_length_file, insertion_ind
 
     hits_reads_df["NI_index"] = hits_reads_df.orf.map(NI_df.set_index("orf")["NI_index"].to_dict())
 
-    hits_reads_df["HFI_normalized"] = hits_reads_df.orf.map(HFI_df.set_index("orf")["HFI_normalized"].to_dict())
+    # hits_reads_df["HFI_normalized"] = hits_reads_df.orf.map(HFI_df.set_index("orf")["HFI_normalized"].to_dict())
 
     hits_reads_df["label"] = hits_reads_df.orf.map(label_df.set_index("orf")["label"].to_dict())
 
@@ -292,10 +292,10 @@ def find_false_positive():
             with open(file,"r") as content:
                 for data in content:
                     data_features = data.strip().split(",")
-                    real_label = data_features[8]
-                    predicted_label = data_features[9]
-                    orf = data_features[7]
-                    if real_label == 'ess' and real_label != predicted_label:
+                    real_label = data_features[7]
+                    predicted_label = data_features[8]
+                    orf = data_features[6]
+                    if real_label == 'non-ess' and real_label != predicted_label:
                         fp.write(orf+"\n")
 
 def frequency_false_positive():
@@ -303,4 +303,3 @@ def frequency_false_positive():
     df.columns = ["ORF"]
     df = df.groupby(["ORF"],sort=False,as_index=False).size()
     df.sort_values(ascending=False)
-    print(df.head(10))

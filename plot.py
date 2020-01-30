@@ -25,7 +25,7 @@ ax = sns.barplot(df['label'].value_counts())
 # sns.heatmap([train_df.hits_count,train_df.read_count],annot=True,fmt="d")
 
 # %%
-sns.scatterplot(y='hits_count_pro', x='hits_count', data = df, hue='label')
+sns.scatterplot(y='HFI_normalized', x='hits_count', data = df, hue='label')
 
 # %%
 df = pd.read_csv("output/output_predictions_epoche_0.csv")
