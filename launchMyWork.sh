@@ -6,5 +6,5 @@
 #SBATCH -o /home/mddo/stage/M2S4/logs/slurmPools.%N.%j.out   ###position du log d'output
 #SBATCH -e /home/mddo/stage/M2S4/logs/slurmPools.%N.%j.err   ###position du log d'erreur
 
-python /home/mddo/stage/M2S4/main.py
+python /home/mddo/stage/M2S4/code/main.py
 
