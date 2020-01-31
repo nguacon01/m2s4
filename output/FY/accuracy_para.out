@@ -1,0 +1,9 @@
+num_tree = 200 - num_features = 2 - n_bootstrap = 1800 - max_depth = 500 - accuracy = 0.8450704225352113
+num_tree = 200 - num_features = 4 - n_bootstrap = 1000 - max_depth = 100 - accuracy = 0.8430583501006036
+num_tree = 200 - num_features = 4 - n_bootstrap = 1400 - max_depth = 100 - accuracy = 0.8430583501006036
+num_tree = 200 - num_features = 4 - n_bootstrap = 1800 - max_depth = 100 - accuracy = 0.8430583501006036
+num_tree = 200 - num_features = 4 - n_bootstrap = 1000 - max_depth = 300 - accuracy = 0.8450704225352113
+num_tree = 200 - num_features = 4 - n_bootstrap = 1400 - max_depth = 300 - accuracy = 0.8430583501006036
+num_tree = 200 - num_features = 4 - n_bootstrap = 1800 - max_depth = 300 - accuracy = 0.8450704225352113
+num_tree = 200 - num_features = 4 - n_bootstrap = 1000 - max_depth = 500 - accuracy = 0.8450704225352113
+num_tree = 200 - num_features = 4 - n_bootstrap = 1400 - max_depth = 500 - accuracy = 0.8450704225352113

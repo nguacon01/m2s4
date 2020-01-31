@@ -39,3 +39,29 @@ plt.show()
 df['hits_count'].plot(kind='bar')
 
 # %%
+ver2_df = pd.read_csv("/home/mddo/stage/M2S4/output/FY/dataframe.csv")
+
+print(ver2_df.head(10))# %%
+
+
+# %%
+
+
+# %%
+sns.scatterplot(y='insertion_index', x='ratio_hits_prom', data = ver2_df, hue='label')
+plt.yticks(size = 14)
+plt.xticks(size = 14)
+plt.xlabel("ratio hits prom", size = 16)
+plt.ylabel("hits count in 100 bp prom", size = 16)
+plt.rcParams["figure.figsize"] = (30,4)
+
+# %%
+dataFrame = pd.read_csv("/home/mddo/stage/M2S4/output/FY/accuracy_para.csv")
+# %%
+data = pd.DataFrame(dataFrame["accuracy"])
+# %%
+sns.lineplot(data=data, palette="tab10", linewidth=2.5)
+plt.rcParams["figure.figsize"] = (30,4)
+sns.set(style="whitegrid")
+
+# %%

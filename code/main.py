@@ -1,10 +1,10 @@
 #%%
+from help_function import *
 from help_function import merge_df
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
 from random_forest import training_RF
-from help_function import *
 import glob
 
 def main():
@@ -25,12 +25,18 @@ def main():
     save_neighborhood_index_file = "output/FY/NI.out"
     save_free_hit_interval_file = "output/FY/HFI.out"
     save_total_hits_count_10kb_NI = "output/FY/total_hits_count_10kb_NI.out"
+    save_annotation_500bp_promoter_file = "/home/mddo/stage/M2S4/output/FY/annotation_500bppromoters.out"
+    save_hits_between_100_500bpprom = "/home/mddo/stage/M2S4/output/FY/hits_between_100_500bppromoter.out"
+    save_ratio_hits_in_promoter_file = "/home/mddo/stage/M2S4/output/FY/ratio_hits_between_100_500bppromoter.out"
 
     # #hits count reads count generate
     # hits_read_count(insertion_position_read_file,annotation_genesonly_simplified_file,save_hits_reads_file)
 
     # #promoter hits count
     # hits_read_count(insertion_position_read_file,annotation_100bpPromoters_file,save_hits_per_promoter_file)
+
+    # hits count between 500 and 100 bp promoter
+    # hits_read_count(insertion_position_read_file,save_annotation_500bp_promoter_file,save_hits_between_100_500bpprom)
 
     # #10kb NI hits count
     # hits_read_count(insertion_position_read_file,annotation_noncoding_10kb_NI_file,save_hits_per_10kbNI_file)
@@ -62,10 +68,30 @@ def main():
     # NI_file:  save_neighborhood_index_file
     # HFI_file: save_free_hit_interval_file
     
-    # merge_df(save_hits_reads_file, save_hits_per_promoter_file, save_orf_length_file, save_insertion_index_file, save_neighborhood_index_file, save_free_hit_interval_file)
+    # merge_df(save_hits_reads_file, save_hits_per_promoter_file, save_orf_length_file, save_insertion_index_file, save_neighborhood_index_file, save_free_hit_interval_file,save_ratio_hits_in_promoter_file)
 
-    # df = pd.read_csv("output/FY/dataframe.csv")
-    # training_RF(df, epoches=1, n_tree = 13, n_bootstrap = 1400, n_feature = 6, dt_max_depth = 13,test_size = 0.2)
+
+    df = pd.read_csv("/home/mddo/stage/M2S4/output/FY/dataframe.csv")
+    n_columns = len(df.columns) - 2
+
+    #create search grid<
+    n_tree = [int(x) for x in np.linspace(start = 9, stop = 13, num=4)]
+    n_feature = [int(x) for x in np.linspace(start = 4, stop = n_columns, num = 3)]
+    n_max_depth = [int(x) for x in np.linspace(start = 10, stop = 15, num = 5)]
+    n_bootstrap = [int(x) for x in np.linspace(start = 1400,stop = 1800, num = 4)]
+
+    grid= {
+        'n_tree' : n_tree,
+        'n_feature' : n_feature,
+        'n_max_depth' : n_max_depth,
+        'n_bootstrap' : n_bootstrap
+    }
+
+    training_RF(df, epoches=1000, test_size = 0.2, grid_search = grid)
+
+
+
+    # cal_ratio_100_and_500_bppromoter(save_hits_per_promoter_file,save_hits_between_100_500bpprom,save_ratio_hits_in_promoter_file)
     
 
 if __name__ == "__main__":

@@ -205,7 +205,7 @@ def neightborhood_index(insertion_index_file,non_coding_windows_file,save_file):
                     save.write(ii_orf+ " " + str(NI) + "\n")
                     break
 
-def merge_df(hits_reads_file, hits_promoter_file, ORF_length_file, insertion_index_file, NI_file, HFI_file):
+def merge_df(hits_reads_file, hits_promoter_file, ORF_length_file, insertion_index_file, NI_file, HFI_file, ratio_hits_prom_file):
     min_max_scaler = MinMaxScaler()
 
     #hits count and reads count
@@ -221,6 +221,10 @@ def merge_df(hits_reads_file, hits_promoter_file, ORF_length_file, insertion_ind
     #normalize values of hits per promoter
     # norm_cols_hits_per_pro = ["hits_count_pro"]
     # hits_promoter_df[norm_cols_hits_per_pro]  = StandardScaler().fit_transform(hits_promoter_df[norm_cols_hits_per_pro])
+
+    #ratio hits in promoter
+    ratio_hits_prom_df = pd.read_csv(ratio_hits_prom_file, sep = " ", header= None)
+    ratio_hits_prom_df.columns = ["orf","ratio_hits_prom"]
 
     #orf length
     orf_len_df = pd.read_csv(ORF_length_file,sep=" ", header=None)
@@ -238,8 +242,8 @@ def merge_df(hits_reads_file, hits_promoter_file, ORF_length_file, insertion_ind
     NI_df.columns = ["orf","NI_index"]
 
     #Hit free interval
-    # HFI_df = pd.read_csv(HFI_file,sep=" ",header=None)
-    # HFI_df.columns = ["orf","HFI","HFI_normalized"]
+    HFI_df = pd.read_csv(HFI_file,sep=" ",header=None)
+    HFI_df.columns = ["orf","HFI","HFI_normalized"]
 
     #label join
     ess_file = "PourMD/ref_data/ess_orf.txt"
@@ -261,13 +265,15 @@ def merge_df(hits_reads_file, hits_promoter_file, ORF_length_file, insertion_ind
 
     hits_reads_df["hits_count_pro"] = hits_promoter_df.orf.map(hits_promoter_df.set_index("orf")["hits_count_pro"].to_dict())
 
+    # hits_reads_df["ratio_hits_prom"] = hits_promoter_df.orf.map(ratio_hits_prom_df.set_index("orf")["ratio_hits_prom"].to_dict())
+
     hits_reads_df["orf_len"] = hits_reads_df.orf.map(orf_len_df.set_index("orf")["orf_len"].to_dict())
 
     hits_reads_df["insertion_index"] = hits_reads_df.orf.map(insertion_index_df.set_index("orf")["insertion_index"].to_dict())
 
     hits_reads_df["NI_index"] = hits_reads_df.orf.map(NI_df.set_index("orf")["NI_index"].to_dict())
 
-    # hits_reads_df["HFI_normalized"] = hits_reads_df.orf.map(HFI_df.set_index("orf")["HFI_normalized"].to_dict())
+    hits_reads_df["HFI_normalized"] = hits_reads_df.orf.map(HFI_df.set_index("orf")["HFI_normalized"].to_dict())
 
     hits_reads_df["label"] = hits_reads_df.orf.map(label_df.set_index("orf")["label"].to_dict())
 
@@ -303,3 +309,85 @@ def frequency_false_positive():
     df.columns = ["ORF"]
     df = df.groupby(["ORF"],sort=False,as_index=False).size()
     df.sort_values(ascending=False)
+
+def generate_file_anno_500_promoter(genes_anno_file, save_file):
+    prom_start = 0
+    prom_stop = 0
+    with open(genes_anno_file) as genes_info, open(save_file,"w") as save:
+        for gene_inf in genes_info:
+            gene_features = gene_inf.strip().split("\t")
+            gene_id = gene_features[4].split(";")[0].split("=")[1]
+            gene_start = int(gene_features[1])
+            gene_stop = int(gene_features[2])
+            signal = gene_features[3]
+            chro = gene_features[0]
+            anno = gene_features[4]
+            if signal == "+":
+                prom_stop = gene_start - 100
+                if gene_start <= 500:
+                    prom_start = 0
+                else:
+                    prom_start = gene_start - 500
+            else:
+                prom_start = gene_stop + 100
+                prom_stop = gene_stop + 500
+            save.write(chro + "\t" + str(prom_start) + "\t" + str(prom_stop) + "\t" + signal + "\t" + anno + "\n")
+                    
+def validate_file_500bppromoter(file_500bppromoter):
+    print("dung")
+    f = open(file_500bppromoter)
+    x = f.readlines()
+    count = 1
+    with open(file_500bppromoter) as content, open (file_500bppromoter + "_new.out","w") as save:
+        while count <= (len(x) - 1):
+            data_features_current = x[count].strip().split(" ")
+            orf = data_features_current[0]
+            prom_start = data_features_current[1]
+            prom_stop = data_features_current[2]
+            signal = data_features_current[3]
+            if count == (len(x) - 1) and signal == "-":
+                save.write(x[count])
+                break
+
+            if signal == "+" :
+                data_features_pre = x[count-1].strip().split(" ")
+                orf_pre = data_features_pre[0]
+                prom_start_pre = data_features_pre[1]
+                prom_stop_pre = data_features_pre[2]
+                signal_pre = data_features_pre[3]
+                if prom_start < prom_stop_pre:
+                    save.write(orf + " " + prom_stop_pre + " " + prom_stop + signal + "\n")
+                    print(orf + " " + prom_stop_pre + " " + prom_stop + signal + "\n")
+                    break
+                else: save.write(x[count])
+            else:
+                data_features_next = x[count+1].strip().split(" ")
+                orf_next = data_features_next[0]
+                prom_start_next = data_features_next[1]
+                prom_stop_next = data_features_next[2]
+                signal_next = data_features_next[3]
+                if prom_stop > prom_start_next : 
+                    save.write(orf + " " + prom_start + " " + prom_start_next + signal + "\n")
+                else : save.write(x[count])
+    print("done")
+
+def cal_ratio_100_and_500_bppromoter(hits_100bppromoter_file,hits_100_500bppromoter_file,save_file):
+    with open(hits_100bppromoter_file) as hits_100_prom, open(hits_100_500bppromoter_file) as hits_interval_prom, open(save_file,"w") as save:
+        for hits_100 in hits_100_prom:
+            hits_100_features = hits_100.strip().split(" ")
+            hits_100_orf = hits_100_features[0]
+            n_hits_100 = hits_100_features[1]
+            for hits_interval in hits_interval_prom:
+                hits_interval_features = hits_interval.strip().split(" ")
+                hits_interval_orf = hits_interval_features[0]
+                n_hits_interval = hits_interval_features[1]
+                if hits_100_orf == hits_interval_orf:
+                    if int(n_hits_interval) != 0:
+                        ratio = int(n_hits_100) / int(n_hits_interval)
+                    else:
+                        ratio = 0
+                    save.write(hits_100_orf + " " + str(ratio) + "\n")
+                    break
+                
+            
+
