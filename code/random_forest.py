@@ -6,9 +6,7 @@ from helper_functions import train_test_split, calculate_accuracy
 from decision_tree import decision_tree_algorithm, decision_tree_predictions
 from help_function import create_file,find_false_positive,frequency_false_positive
 import json
-
 forest = []
-
 #randomly create sub dataframes based on train_df
 #input: train_df
 #n_bootstrap: number of rows within sub dataframe
@@ -19,6 +17,7 @@ def bootstrapping(train_df, n_bootstrap):
     return df_bootstrapped
 
 def random_forest_algorithm(train_df, n_tree, n_bootstrap, n_feature, dt_max_depth):
+    
     for i in range(n_tree):
         df_bootstrapped = bootstrapping(train_df, n_bootstrap)
         tree = decision_tree_algorithm(df_bootstrapped, max_depth=dt_max_depth, random_subspace=n_feature)
@@ -64,7 +63,7 @@ def training_RF(df, epoches, test_size, grid_search):
                         print("Epoche " + str(epoche) + " - accuracy = " + str(accuracy))
 
                         #save forest - save environment
-                        save_tree_path = "output/FY/tree_{}.json".format(epoche)
+                        save_tree_path = "/home/mddo/stage/M2S4/output/FY/trees/tree_{}.json".format(epoche)
                         save_file = create_file(save_tree_path)
                         with open(save_tree_path,"w") as save_tree:
                             save_tree.write(json.dumps(forest))

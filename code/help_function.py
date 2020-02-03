@@ -265,7 +265,7 @@ def merge_df(hits_reads_file, hits_promoter_file, ORF_length_file, insertion_ind
 
     hits_reads_df["hits_count_pro"] = hits_promoter_df.orf.map(hits_promoter_df.set_index("orf")["hits_count_pro"].to_dict())
 
-    # hits_reads_df["ratio_hits_prom"] = hits_promoter_df.orf.map(ratio_hits_prom_df.set_index("orf")["ratio_hits_prom"].to_dict())
+    hits_reads_df["ratio_hits_prom"] = hits_promoter_df.orf.map(ratio_hits_prom_df.set_index("orf")["ratio_hits_prom"].to_dict())
 
     hits_reads_df["orf_len"] = hits_reads_df.orf.map(orf_len_df.set_index("orf")["orf_len"].to_dict())
 
@@ -388,6 +388,23 @@ def cal_ratio_100_and_500_bppromoter(hits_100bppromoter_file,hits_100_500bppromo
                         ratio = 0
                     save.write(hits_100_orf + " " + str(ratio) + "\n")
                     break
+def generate_random_diploid_insertion_position(diploid_insertion_position_read_file, number_of_files, number_of_lines_generated):
+    diplo_ins_pos = open(diploid_insertion_position_read_file)
+    data = diplo_ins_pos.readlines()
+    num_lines = len(data)
+    index_array = []
+    indices = list(range(num_lines))
+    
+    for i in range(number_of_files):
+        picked_line = random.sample(population=indices, k=number_of_lines_generated)
+        picked_line.sort()
+        print(picked_line)
+        print(len(picked_line))
+        with open("/home/mddo/stage/M2S4/output/FY/diploid/file_{}_diploid_insertion_positions.out".format(i),"w") as save:
+            for line in picked_line:
+                save.write(data[line])
+
+
                 
             
 
