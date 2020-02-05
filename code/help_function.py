@@ -205,6 +205,15 @@ def neightborhood_index(insertion_index_file,non_coding_windows_file,save_file):
                     save.write(ii_orf+ " " + str(NI) + "\n")
                     break
 
+
+#---------------merge data--------------#
+    # merge_df(hits_reads_file, hits_promoter_file, ORF_length_file, insertion_index_file, non_coding_file, NI_file, HFI_file)
+    # hits_reads_file:  save_hits_reads_file
+    # hits_promoter_file:  save_hits_per_promoter_file
+    # ORF_length_file:  save_orf_length_file
+    # insertion_index_file:  save_insertion_index_file
+    # NI_file:  save_neighborhood_index_file
+    # HFI_file: save_free_hit_interval_file
 def merge_df(hits_reads_file, hits_promoter_file, ratio_promoter_file, ORF_length_file, insertion_index_file, NI_file, NI_ratio_file, HFI_file, label_file, save_file_dataframe):
     min_max_scaler = MinMaxScaler()
 
@@ -413,20 +422,25 @@ def generate_all_insertion_site_by_orf(insertion_position_file,orf_annotation_fi
             orf_signal = orf_annotation_features[3]
             orf = orf_annotation_features[4].split(";")[0].split("=")[1]
             num_chr_anno = orf_annotation_features[0][10:]
-            save.write(orf_start + "\t" + str(orf_stop) + "\t" + str(orf_signal) + "\t" + orf)
+            save.write(num_chr_anno + "\t" + orf_start + "\t" + str(orf_stop) + "\t" + str(orf_signal) + "\t" + orf)
             for insertion_pos in insertion_pos_content:
                 insertion_pos_features = insertion_pos.strip().split("\t")
                 insertion_site = insertion_pos_features[1]
-                print(insertion_site)
                 num_chr_insertion_site = insertion_pos_features[0][10:]
-                if int(num_chr_anno) <= int(num_chr_insertion_site):
-                    save.write("\n")
-                    break
+                if int(num_chr_anno) == int(num_chr_insertion_site):
+                    if int(orf_start) < int(insertion_site) < int(orf_stop):
+                        save.write("\t" + str(insertion_site))
+                    elif int(orf_start) > int(insertion_site):
+                        continue
+                    else:
+                        save.write("\n")
+                        break
+
                 elif int(num_chr_anno) > int(num_chr_insertion_site):
                     continue
-                if int(orf_start) < int(insertion_site) < int(orf_stop):
-                    print("vaay")
-                    save.write("\t" + str(insertion_site))
+                else:
+                    save.write("\n")
+                    break
                     
                     
                 
