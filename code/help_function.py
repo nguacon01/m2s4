@@ -205,7 +205,7 @@ def neightborhood_index(insertion_index_file,non_coding_windows_file,save_file):
                     save.write(ii_orf+ " " + str(NI) + "\n")
                     break
 
-def merge_df(hits_reads_file, hits_promoter_file, ORF_length_file, insertion_index_file, NI_file, HFI_file, ratio_hits_prom_file):
+def merge_df(hits_reads_file, hits_promoter_file, ratio_promoter_file, ORF_length_file, insertion_index_file, NI_file, NI_ratio_file, HFI_file, label_file, save_file_dataframe):
     min_max_scaler = MinMaxScaler()
 
     #hits count and reads count
@@ -222,8 +222,8 @@ def merge_df(hits_reads_file, hits_promoter_file, ORF_length_file, insertion_ind
     # norm_cols_hits_per_pro = ["hits_count_pro"]
     # hits_promoter_df[norm_cols_hits_per_pro]  = StandardScaler().fit_transform(hits_promoter_df[norm_cols_hits_per_pro])
 
-    #ratio hits in promoter
-    ratio_hits_prom_df = pd.read_csv(ratio_hits_prom_file, sep = " ", header= None)
+    #ratio hits in the interval 100 - 500 bp promoter between haploide and diploide
+    ratio_hits_prom_df = pd.read_csv(ratio_promoter_file, sep = " ", header= None)
     ratio_hits_prom_df.columns = ["orf","ratio_hits_prom"]
 
     #orf length
@@ -239,25 +239,30 @@ def merge_df(hits_reads_file, hits_promoter_file, ORF_length_file, insertion_ind
 
     #Neighborhood index
     NI_df = pd.read_csv(NI_file,sep = " ", header=None)
-    NI_df.columns = ["orf","NI_index"]
+    NI_df.columns = ["orf","NI"]
+
+    #Neighborhood index between haploide and diploide
+    NI_ratio_df = pd.read_csv(NI_ratio_file,sep = " ", header=None)
+    NI_ratio_df.columns = ["orf","NI_ratio"]
 
     #Hit free interval
     HFI_df = pd.read_csv(HFI_file,sep=" ",header=None)
     HFI_df.columns = ["orf","HFI","HFI_normalized"]
 
-    #label join
-    ess_file = "PourMD/ref_data/ess_orf.txt"
-    non_ess_file = "PourMD/ref_data/non_ess_file.txt"
+    # #label join
+    # ess_file = "PourMD/ref_data/ess_orf.txt"
+    # non_ess_file = "PourMD/ref_data/non_ess_file.txt"
 
-    ess_df = pd.read_csv(ess_file,sep = " ", header=None)
-    ess_df.columns = ["orf","label"]
+    # ess_df = pd.read_csv(ess_file,sep = " ", header=None)
+    # ess_df.columns = ["orf","label"]
 
-    non_ess_df = pd.read_csv(non_ess_file,sep = " ", header=None)
-    non_ess_df.columns = ["orf","label"]
+    # non_ess_df = pd.read_csv(non_ess_file,sep = " ", header=None)
+    # non_ess_df.columns = ["orf","label"]
 
-    #merge data of 2 files essential and non essential genes
-    dframe = [ess_df,non_ess_df]
-    label_df = pd.concat(dframe)
+    ##merge data of 2 files essential and non essential genes
+    # dframe = [ess_df,non_ess_df]
+    # label_df = pd.concat(dframe)
+    label_df = pd.read_csv(label_file)
     label_df.columns = ['orf','label']
 
     #join the columns from different dataframes which have same column ORF
@@ -271,7 +276,9 @@ def merge_df(hits_reads_file, hits_promoter_file, ORF_length_file, insertion_ind
 
     hits_reads_df["insertion_index"] = hits_reads_df.orf.map(insertion_index_df.set_index("orf")["insertion_index"].to_dict())
 
-    hits_reads_df["NI_index"] = hits_reads_df.orf.map(NI_df.set_index("orf")["NI_index"].to_dict())
+    hits_reads_df["NI"] = hits_reads_df.orf.map(NI_df.set_index("orf")["NI"].to_dict())
+
+    hits_reads_df["NI_ratio"] = hits_reads_df.orf.map(NI_ratio_df.set_index("orf")["NI_ratio"].to_dict())
 
     hits_reads_df["HFI_normalized"] = hits_reads_df.orf.map(HFI_df.set_index("orf")["HFI_normalized"].to_dict())
 
@@ -288,7 +295,7 @@ def merge_df(hits_reads_file, hits_promoter_file, ORF_length_file, insertion_ind
     hits_reads_df = hits_reads_df.reindex(columns = cols)
     
     #generate csv file
-    hits_reads_df.to_csv("output/FY/dataframe.csv",index=False)
+    hits_reads_df.to_csv(save_file_dataframe,index=False)
 
 #this function find the genes frequenly have false positive results after prediction   
 def find_false_positive():
@@ -332,44 +339,6 @@ def generate_file_anno_500_promoter(genes_anno_file, save_file):
                 prom_start = gene_stop + 100
                 prom_stop = gene_stop + 500
             save.write(chro + "\t" + str(prom_start) + "\t" + str(prom_stop) + "\t" + signal + "\t" + anno + "\n")
-                    
-def validate_file_500bppromoter(file_500bppromoter):
-    print("dung")
-    f = open(file_500bppromoter)
-    x = f.readlines()
-    count = 1
-    with open(file_500bppromoter) as content, open (file_500bppromoter + "_new.out","w") as save:
-        while count <= (len(x) - 1):
-            data_features_current = x[count].strip().split(" ")
-            orf = data_features_current[0]
-            prom_start = data_features_current[1]
-            prom_stop = data_features_current[2]
-            signal = data_features_current[3]
-            if count == (len(x) - 1) and signal == "-":
-                save.write(x[count])
-                break
-
-            if signal == "+" :
-                data_features_pre = x[count-1].strip().split(" ")
-                orf_pre = data_features_pre[0]
-                prom_start_pre = data_features_pre[1]
-                prom_stop_pre = data_features_pre[2]
-                signal_pre = data_features_pre[3]
-                if prom_start < prom_stop_pre:
-                    save.write(orf + " " + prom_stop_pre + " " + prom_stop + signal + "\n")
-                    print(orf + " " + prom_stop_pre + " " + prom_stop + signal + "\n")
-                    break
-                else: save.write(x[count])
-            else:
-                data_features_next = x[count+1].strip().split(" ")
-                orf_next = data_features_next[0]
-                prom_start_next = data_features_next[1]
-                prom_stop_next = data_features_next[2]
-                signal_next = data_features_next[3]
-                if prom_stop > prom_start_next : 
-                    save.write(orf + " " + prom_start + " " + prom_start_next + signal + "\n")
-                else : save.write(x[count])
-    print("done")
 
 def cal_ratio_100_and_500_bppromoter(hits_100bppromoter_file,hits_100_500bppromoter_file,save_file):
     with open(hits_100bppromoter_file) as hits_100_prom, open(hits_100_500bppromoter_file) as hits_interval_prom, open(save_file,"w") as save:
@@ -388,23 +357,78 @@ def cal_ratio_100_and_500_bppromoter(hits_100bppromoter_file,hits_100_500bppromo
                         ratio = 0
                     save.write(hits_100_orf + " " + str(ratio) + "\n")
                     break
+# from diploid file of insertion positions, we get randomly some positions to create data which is equivalent with data of haploide
+# the input data are: diploid_insertion_position_read_file - containt all insertion positions of diploide
+# number of files - how many files we want to generate
+# number of lines - number of lines in each file (in general, number of lines is number of lines in haploide data file)
 def generate_random_diploid_insertion_position(diploid_insertion_position_read_file, number_of_files, number_of_lines_generated):
+    #read data from diploide file
     diplo_ins_pos = open(diploid_insertion_position_read_file)
     data = diplo_ins_pos.readlines()
+    #total line number in read file
     num_lines = len(data)
-    index_array = []
+    #create a list of numbers of line
     indices = list(range(num_lines))
     
     for i in range(number_of_files):
+        #randomly pick a numner of line in read file to create new data file
         picked_line = random.sample(population=indices, k=number_of_lines_generated)
+        #sort new data
         picked_line.sort()
-        print(picked_line)
-        print(len(picked_line))
+        #create new file data and write it
         with open("/home/mddo/stage/M2S4/output/FY/diploid/file_{}_diploid_insertion_positions.out".format(i),"w") as save:
             for line in picked_line:
                 save.write(data[line])
 
+# Calculate ratio of NI, HFI, insertion index between haploide and diploide
+# 3 input files: haploide file; diploide file and save file
+# return a file with name of ORF, ratio of HFI or NI or Insertion index between haploide and diploide
+def ratio_haploid_diploid(haploid_file, diploid_file, save_file):
+    with open(haploid_file) as haploid_content, open(diploid_file) as diploid_content, open (save_file,"w") as save:
+        for data_haplo in haploid_content:
+            data_haplo_features = data_haplo.strip().split(" ")
+            orf_haplo = data_haplo_features[0]
+            figure_haplo = float(data_haplo_features[1])
+            for data_diplo in diploid_content:
+                data_diplo_features = data_diplo.strip().split(" ")
+                orf_diplo = data_diplo_features[0]
+                figure_diplo = float(data_diplo_features[1])
+                if orf_haplo == orf_diplo:
+                    # prevent from divise by 0
+                    if figure_diplo != 0:
+                        ratio = figure_haplo/figure_diplo
+                    else:
+                        ratio = 0
+                    save.write(orf_haplo + " " + str(ratio) + "\n")
+                    break
 
+def generate_all_insertion_site_by_orf(insertion_position_file,orf_annotation_file, save_file):
+    create_file(save_file)
+    with open(insertion_position_file) as insertion_pos_content, open(orf_annotation_file) as orf_annotation_content, open(save_file,"w") as save:
+        
+        for orf_annotation in orf_annotation_content:
+            orf_annotation_features = orf_annotation.strip().split("\t")
+            orf_start = orf_annotation_features[1]
+            orf_stop = orf_annotation_features[2]
+            orf_signal = orf_annotation_features[3]
+            orf = orf_annotation_features[4].split(";")[0].split("=")[1]
+            num_chr_anno = orf_annotation_features[0][10:]
+            save.write(orf_start + "\t" + str(orf_stop) + "\t" + str(orf_signal) + "\t" + orf)
+            for insertion_pos in insertion_pos_content:
+                insertion_pos_features = insertion_pos.strip().split("\t")
+                insertion_site = insertion_pos_features[1]
+                print(insertion_site)
+                num_chr_insertion_site = insertion_pos_features[0][10:]
+                if int(num_chr_anno) <= int(num_chr_insertion_site):
+                    save.write("\n")
+                    break
+                elif int(num_chr_anno) > int(num_chr_insertion_site):
+                    continue
+                if int(orf_start) < int(insertion_site) < int(orf_stop):
+                    print("vaay")
+                    save.write("\t" + str(insertion_site))
+                    
+                    
                 
             
 
