@@ -17,7 +17,7 @@ def bootstrapping(train_df, n_bootstrap):
     return df_bootstrapped
 
 def random_forest_algorithm(train_df, n_tree, n_bootstrap, n_feature, dt_max_depth):
-    
+    print(n_tree)
     for i in range(n_tree):
         df_bootstrapped = bootstrapping(train_df, n_bootstrap)
         tree = decision_tree_algorithm(df_bootstrapped, max_depth=dt_max_depth, random_subspace=n_feature)
@@ -39,40 +39,38 @@ def training_RF(df, epoches, test_size, grid_search):
     train_df, test_df = train_test_split(df, test_size)
     accuracy_arr = []
     mean_acc = 0.0
-    n_trees = grid_search['n_tree'] 
-    n_features = grid_search['n_feature'] 
-    n_max_depths = grid_search['n_max_depth'] 
-    n_bootstraps = grid_search['n_bootstrap'] 
+    n_tree = grid_search['n_tree'] 
+    n_feature = grid_search['n_feature'] 
+    n_max_depth = grid_search['n_max_depth'] 
+    n_bootstrap = grid_search['n_bootstrap'] 
 
     for epoche in range(epoches):
-        for n_t in n_trees:
-            for n_f in n_features:
-                for n_m in n_max_depths:
-                    for n_b in n_bootstraps:
-                        forest = random_forest_algorithm(train_df, n_tree = n_t, n_bootstrap = n_b, n_feature = n_t, dt_max_depth = n_m)
-                        predictions = random_forest_predictions(test_df, forest)
+        
+        forest = random_forest_algorithm(train_df, n_tree = n_tree, n_bootstrap = n_bootstrap, n_feature = n_feature, dt_max_depth = n_max_depth)
+        print(type(forest))
+        predictions = random_forest_predictions(test_df, forest)
 
-                        predictions_array = np.asanyarray(predictions)
+        predictions_array = np.asanyarray(predictions)
 
-                        test_df["predictions"] = predictions_array
+        test_df["predictions"] = predictions_array
 
-                        test_df.to_csv("/home/mddo/stage/M2S4/output/output_predictions/output_predictions_epoche_"+ str(epoche) +".csv",index=False)
+        accuracy = calculate_accuracy(predictions,test_df.label)
+        accuracy_arr.append(accuracy)
+        print("Epoche " + str(epoche) + " - accuracy = " + str(accuracy))
 
-                        accuracy = calculate_accuracy(predictions,test_df.label)
-                        accuracy_arr.append(accuracy)
-                        print("Epoche " + str(epoche) + " - accuracy = " + str(accuracy))
+        test_df.to_csv("/home/mddo/stage/M2S4/output/output_predictions/output_predictions_{}_{}_{}_{}_{}.csv".format(n_tree, n_feature, n_max_depth, n_bootstrap,round(accuracy*100)),index=False)
 
-                        #save forest - save environment
-                        save_tree_path = "/home/mddo/stage/M2S4/output/FY/trees/tree_{}.json".format(epoche)
-                        save_file = create_file(save_tree_path)
-                        with open(save_tree_path,"w") as save_tree:
-                            save_tree.write(json.dumps(forest))
-                        
-                        #save hyper parametres and accuracy associated
-                        save_acc_hyper_para_path = "output/FY/accuracy_para_2.csv"
-                        create_file(save_acc_hyper_para_path)
-                        with open(save_acc_hyper_para_path,"a") as save_hyper:
-                            save_hyper.write("{},{},{},{},{}\n".format(n_t, n_f, n_b, n_m, accuracy))
+        #save forest - save environment
+        save_tree_path = "/home/mddo/stage/M2S4/output/FY/trees/tree_{}_{}_{}_{}_{}.json".format(n_tree, n_feature, n_max_depth, n_bootstrap,round(accuracy*100))
+        save_file = create_file(save_tree_path)
+        with open(save_tree_path,"w") as save_tree:
+            save_tree.write(json.dumps(forest))
+        
+        #save hyper parametres and accuracy associated
+        save_acc_hyper_para_path = "output/FY/accuracy_para_3.csv"
+        create_file(save_acc_hyper_para_path)
+        with open(save_acc_hyper_para_path,"a") as save_hyper:
+            save_hyper.write("{},{},{},{},{}\n".format(n_tree, n_feature, n_max_depth, n_bootstrap, accuracy))
                     
     # find_false_positive()
     # fp = frequency_false_positive()
