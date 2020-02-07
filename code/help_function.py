@@ -100,7 +100,7 @@ def hit_free_interval(insertion_sites_file,save_file):
             orflen=int(sline[-1])-int(sline[4])
             #normalizes max value of length of ORF
             ratio=float(max_insertion_free)/float(orflen)
-            output.write(' '.join(distlist) + ' ' + str(ratio) + '\n')
+            output.write(sline[1] + ' ' + str(ratio) + ' ' + str(max_insertion_free) + '\n')
 
 #ORF length
 def length_ORF(input_file,save_file):
@@ -214,7 +214,7 @@ def neightborhood_index(insertion_index_file,non_coding_windows_file,save_file):
     # insertion_index_file:  save_insertion_index_file
     # NI_file:  save_neighborhood_index_file
     # HFI_file: save_free_hit_interval_file
-def merge_df(hits_reads_file, hits_promoter_file, ratio_promoter_file, ORF_length_file, insertion_index_file, NI_file, NI_ratio_file, HFI_file, label_file, save_file_dataframe):
+def merge_df(hits_reads_file, hits_promoter_file, ratio_promoter_file, ORF_length_file, insertion_index_file, NI_file, NI_ratio_file, HFI_file, HFI_ratio_file,label_file, save_file_dataframe):
     min_max_scaler = MinMaxScaler()
 
     #hits count and reads count
@@ -256,7 +256,10 @@ def merge_df(hits_reads_file, hits_promoter_file, ratio_promoter_file, ORF_lengt
 
     #Hit free interval
     HFI_df = pd.read_csv(HFI_file,sep=" ",header=None)
-    HFI_df.columns = ["orf","HFI","HFI_normalized"]
+    HFI_df.columns = ["orf","HFI_normalized","HFI"]
+
+    HFI_ratio_df = pd.read_csv(HFI_ratio_file,sep=" ",header=None)
+    HFI_ratio_df.columns = ["orf","HFI_ratio"]
 
     # #label join
     # ess_file = "PourMD/ref_data/ess_orf.txt"
@@ -268,9 +271,10 @@ def merge_df(hits_reads_file, hits_promoter_file, ratio_promoter_file, ORF_lengt
     # non_ess_df = pd.read_csv(non_ess_file,sep = " ", header=None)
     # non_ess_df.columns = ["orf","label"]
 
-    ##merge data of 2 files essential and non essential genes
+    # #merge data of 2 files essential and non essential genes
     # dframe = [ess_df,non_ess_df]
     # label_df = pd.concat(dframe)
+    # label_df.to_csv("/home/mddo/stage/M2S4/data/FY/file_label_trainning.txt", index=False)
     label_df = pd.read_csv(label_file)
     label_df.columns = ['orf','label']
 
@@ -287,9 +291,11 @@ def merge_df(hits_reads_file, hits_promoter_file, ratio_promoter_file, ORF_lengt
 
     hits_reads_df["NI"] = hits_reads_df.orf.map(NI_df.set_index("orf")["NI"].to_dict())
 
-    hits_reads_df["NI_ratio"] = hits_reads_df.orf.map(NI_ratio_df.set_index("orf")["NI_ratio"].to_dict())
+    # hits_reads_df["NI_ratio"] = hits_reads_df.orf.map(NI_ratio_df.set_index("orf")["NI_ratio"].to_dict())
 
     hits_reads_df["HFI_normalized"] = hits_reads_df.orf.map(HFI_df.set_index("orf")["HFI_normalized"].to_dict())
+
+    # hits_reads_df["HFI_ratio"] = hits_reads_df.orf.map(HFI_ratio_df.set_index("orf")["HFI_ratio"].to_dict())
 
     hits_reads_df["label"] = hits_reads_df.orf.map(label_df.set_index("orf")["label"].to_dict())
 
@@ -404,8 +410,8 @@ def ratio_haploid_diploid(haploid_file, diploid_file, save_file):
                 figure_diplo = float(data_diplo_features[1])
                 if orf_haplo == orf_diplo:
                     # prevent from divise by 0
-                    if figure_diplo != 0:
-                        ratio = figure_haplo/figure_diplo
+                    if figure_haplo != 0:
+                        ratio = figure_diplo/figure_haplo
                     else:
                         ratio = 0
                     save.write(orf_haplo + " " + str(ratio) + "\n")
