@@ -125,7 +125,7 @@ def main():
         # ratio_haploid_diploid(haploid_file, diploid_file, save_file_ratio)
 
 
-        save_file_dataframe = "/home/mddo/stage/M2S4/output/FY/diploid/diploid_{}/dataframe_PROM_NI_for_testing.csv".format(i)
+        save_file_dataframe = "/home/mddo/stage/M2S4/output/FY/diploid/diploid_{}/dataframe.csv".format(i)
 
 
         # label_df = "/home/mddo/stage/M2S4/data/FY/new_df.csv"
@@ -165,12 +165,14 @@ def main():
 
         training_RF(df, epoches=1, test_size = 0.2, grid_search = grid)
 
-        ##testing_session
-        # list_forest = glob.glob("/home/mddo/stage/M2S4/output/FY/trees/forest_PROM_NI/*.json")
+        #testing_session
+        # list_forest = glob.glob("/home/mddo/stage/M2S4/output/FY/trees/forest/*.json")
+        # save_file_report = "/home/mddo/stage/M2S4/output/FY/accuracy/report_trainning_3k_gene_Fy.out"
+        # create_file(save_file_report)
         # for tree_path in list_forest:
-        #     with open(tree_path) as json_data:
+        #     with open(tree_path) as json_data, open(save_file_report,"w") as save:
         #         parametre_info = tree_path.strip().split("/")[-1].split(".")[0]
-        #         test_df = pd.read_csv("/home/mddo/stage/M2S4/output/FY/diploid/diploid_{}/dataframe_PROM_NI_for_testing.csv".format(i))
+        #         test_df = pd.read_csv("/home/mddo/stage/M2S4/output/FY/diploid/diploid_{}/dataframe_for_testing.csv".format(i))
         #         forest = json.load(json_data)
 
         #         predictions = random_forest_predictions(test_df, forest)
@@ -179,7 +181,8 @@ def main():
         #         test_df["predictions"] = predictions_array
 
         #         accuracy = calculate_accuracy(predictions,test_df.label)
-        #         print(str(accuracy) + "," + parametre_info)
+        #         print(str(accuracy) + "," + parametre_info+"\n")
+        #         save.write(str(accuracy) + "," + parametre_info+"\n")
     
     # predicted_files = glob.glob("/home/mddo/stage/M2S4/output/output_predictions/HFI_NI/*.csv")
     # for pre_file in predicted_files:
