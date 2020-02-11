@@ -35,7 +35,7 @@ def random_forest_predictions(test_df, forest):
     
     return random_forest_predictions
 
-def training_RF(df, epoches, test_size, grid_search):
+def training_RF(df, test_size, grid_search):
     train_df, test_df = train_test_split(df, test_size)
     accuracy_arr = []
     mean_acc = 0.0
@@ -44,36 +44,30 @@ def training_RF(df, epoches, test_size, grid_search):
     n_max_depth = grid_search['n_max_depth'] 
     n_bootstrap = grid_search['n_bootstrap'] 
 
-    for epoche in range(epoches):
-        
-        forest = random_forest_algorithm(train_df, n_tree = n_tree, n_bootstrap = n_bootstrap, n_feature = n_feature, dt_max_depth = n_max_depth)
-        predictions = random_forest_predictions(test_df, forest)
+    forest = random_forest_algorithm(train_df, n_tree = n_tree, n_bootstrap = n_bootstrap, n_feature = n_feature, dt_max_depth = n_max_depth)
+    predictions = random_forest_predictions(test_df, forest)
 
-        predictions_array = np.asanyarray(predictions)
+    predictions_array = np.asanyarray(predictions)
 
-        test_df["predictions"] = predictions_array
+    test_df["predictions"] = predictions_array
 
-        accuracy = calculate_accuracy(predictions,test_df.label)
-        accuracy_arr.append(accuracy)
-        print("Epoche " + str(epoche) + " - accuracy = " + str(accuracy))
+    accuracy = calculate_accuracy(predictions,test_df.label)
+    accuracy_arr.append(accuracy)
 
-        test_df.to_csv("/home/mddo/stage/M2S4/output/output_predictions/normal/output_predictions_{}_{}_{}_{}_{}.csv".format(n_tree, n_feature, n_max_depth, n_bootstrap,round(accuracy*100)),index=False)
+    #save report of predictions
+    test_df.to_csv("output/output_predictions/full_5k/training/normal/output_predictions_{}_{}_{}_{}_{}.csv".format(n_tree, n_feature, n_max_depth, n_bootstrap,round(accuracy*100)),index=False)
 
-        #save forest - save environment
-        save_tree_path = "/home/mddo/stage/M2S4/output/FY/trees/forest/tree_{}_{}_{}_{}_{}.json".format(n_tree, n_feature, n_max_depth, n_bootstrap,round(accuracy*100))
-        save_file = create_file(save_tree_path)
-        with open(save_tree_path,"w") as save_tree:
-            save_tree.write(json.dumps(forest))
-        
-        #save hyper parametres and accuracy associated
-        save_acc_hyper_para_path = "/home/mddo/stage/M2S4/output/FY/accuracy/accuracy_normal.out"
-        create_file(save_acc_hyper_para_path)
-        with open(save_acc_hyper_para_path,"a") as save_hyper:
-            save_hyper.write("{},{},{},{},{}\n".format(n_tree, n_feature, n_max_depth, n_bootstrap, accuracy))
-                    
-    # find_false_positive()
-    # fp = frequency_false_positive()
-    # print(fp)
+    #save forest - save environment
+    save_tree_path = "output/FY/trees/full_5k/normal/tree_{}_{}_{}_{}_{}.json".format(n_tree, n_feature, n_max_depth, n_bootstrap,round(accuracy*100))
+    save_file = create_file(save_tree_path)
+    with open(save_tree_path,"w") as save_tree:
+        save_tree.write(json.dumps(forest))
+    
+    #save hyper parametres and accuracy associated
+    save_acc_hyper_para_path = "output/FY/accuracy/full_5k/training/normal/accuracy_normal.out"
+    create_file(save_acc_hyper_para_path)
+    with open(save_acc_hyper_para_path,"a") as save_hyper:
+        save_hyper.write("{},{},{},{},{}\n".format(n_tree, n_feature, n_max_depth, n_bootstrap, accuracy))
 
     return accuracy_arr
 
