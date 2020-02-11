@@ -70,22 +70,25 @@ sns.set(style="whitegrid")
 
 # %%
 
-df_HFI_NI = pd.read_csv("/home/mddo/stage/M2S4/logs/report.out",sep=" ",header=None)
-df_HFI_NI.columns = ["accuracy_HFI_NI","forest"]
-df_NI_PROM = pd.read_csv("/home/mddo/stage/M2S4/logs/slurmPools.morpheus.47259.out")
-
-# merge_df = pd.concat([df_HFI_NI["accuracy_HFI_NI"],df_NI_PROM["accuracy_NI_PROM"]],axis=1)
-print(df_HFI_NI.columns)
-
-# %%
-df_HFI_NI = df_HFI_NI.drop(columns=["forest"])
+df_HFI_NI = pd.read_csv("/home/mddo/stage/M2S4/output/FY/accuracy/full_5k/training/HFI_NI/accuracy_HFI_NI.out")
+df_HFI_NI.columns = ["n_tree", "n_feature", "n_max_depth", "n_bootstrap", "accuracy"]
+df_HFI_NI_PROM = pd.read_csv("/home/mddo/stage/M2S4/output/FY/accuracy/full_5k/training/HFI_NI_PROM/accuracy_HFI_NI_PROM.out")
+df_HFI_NI_PROM.columns = ["n_tree", "n_feature", "n_max_depth", "n_bootstrap", "accuracy"]
+df_normal = pd.read_csv("/home/mddo/stage/M2S4/output/FY/accuracy/accuracy_normal.out")
+df_normal.columns = ["n_tree", "n_feature", "n_max_depth", "n_bootstrap", "accuracy"]
 
 # %%
-df_NI_PROM = df_NI_PROM.drop(columns = ["forest"])
+df_HFI_NI_acc = pd.DataFrame(df_HFI_NI["accuracy"])
 
 # %%
+df_HFI_NI_PROM_acc = pd.DataFrame(df_HFI_NI_PROM["accuracy"])
 
-merge_df = pd.concat([df_HFI_NI,df_NI_PROM],axis=1, join='inner')
+# %%
+df_normal_acc = pd.DataFrame(df_normal["accuracy"])
+
+#%%
+merge_df = pd.concat([df_HFI_NI_acc,df_HFI_NI_PROM_acc,df_normal_acc],axis=1, join='inner')
+merge_df.columns = ["acc_HFI_NI","acc_HFI_NI_PROM","acc_normal"]
 # %%
 print(merge_df)
 
@@ -93,4 +96,7 @@ merge_df.plot(kind="line")
 plt.rcParams["figure.figsize"] = (40,5)
 plt.ylabel("accuracy")
 plt.xlabel("epoches")
+# %%
+
+
 # %%
