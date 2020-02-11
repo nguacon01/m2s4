@@ -261,20 +261,6 @@ def merge_df(hits_reads_file, hits_promoter_file, ratio_promoter_file, ORF_lengt
     HFI_ratio_df = pd.read_csv(HFI_ratio_file,sep=" ",header=None)
     HFI_ratio_df.columns = ["orf","HFI_ratio"]
 
-    # #label join
-    # ess_file = "PourMD/ref_data/ess_orf.txt"
-    # non_ess_file = "PourMD/ref_data/non_ess_file.txt"
-
-    # ess_df = pd.read_csv(ess_file,sep = " ", header=None)
-    # ess_df.columns = ["orf","label"]
-
-    # non_ess_df = pd.read_csv(non_ess_file,sep = " ", header=None)
-    # non_ess_df.columns = ["orf","label"]
-
-    # #merge data of 2 files essential and non essential genes
-    # dframe = [ess_df,non_ess_df]
-    # label_df = pd.concat(dframe)
-    # label_df.to_csv("/home/mddo/stage/M2S4/data/FY/file_label_trainning.txt", index=False)
     label_df = pd.read_csv(label_file)
     label_df.columns = ['orf','label']
 
@@ -283,7 +269,7 @@ def merge_df(hits_reads_file, hits_promoter_file, ratio_promoter_file, ORF_lengt
 
     hits_reads_df["hits_count_pro"] = hits_promoter_df.orf.map(hits_promoter_df.set_index("orf")["hits_count_pro"].to_dict())
 
-    hits_reads_df["ratio_hits_prom"] = hits_promoter_df.orf.map(ratio_hits_prom_df.set_index("orf")["ratio_hits_prom"].to_dict())
+    # hits_reads_df["ratio_hits_prom"] = hits_promoter_df.orf.map(ratio_hits_prom_df.set_index("orf")["ratio_hits_prom"].to_dict())
 
     hits_reads_df["orf_len"] = hits_reads_df.orf.map(orf_len_df.set_index("orf")["orf_len"].to_dict())
 
@@ -291,11 +277,11 @@ def merge_df(hits_reads_file, hits_promoter_file, ratio_promoter_file, ORF_lengt
 
     hits_reads_df["NI"] = hits_reads_df.orf.map(NI_df.set_index("orf")["NI"].to_dict())
 
-    # hits_reads_df["NI_ratio"] = hits_reads_df.orf.map(NI_ratio_df.set_index("orf")["NI_ratio"].to_dict())
+    hits_reads_df["NI_ratio"] = hits_reads_df.orf.map(NI_ratio_df.set_index("orf")["NI_ratio"].to_dict())
 
     hits_reads_df["HFI_normalized"] = hits_reads_df.orf.map(HFI_df.set_index("orf")["HFI_normalized"].to_dict())
 
-    # hits_reads_df["HFI_ratio"] = hits_reads_df.orf.map(HFI_ratio_df.set_index("orf")["HFI_ratio"].to_dict())
+    hits_reads_df["HFI_ratio"] = hits_reads_df.orf.map(HFI_ratio_df.set_index("orf")["HFI_ratio"].to_dict())
 
     hits_reads_df["label"] = hits_reads_df.orf.map(label_df.set_index("orf")["label"].to_dict())
 
@@ -447,8 +433,7 @@ def generate_all_insertion_site_by_orf(insertion_position_file,orf_annotation_fi
                 else:
                     save.write("\n")
                     break
-                    
-                    
+                                       
                 
             
 
