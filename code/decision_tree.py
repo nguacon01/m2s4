@@ -122,7 +122,7 @@ def split_data(data, split_column, split_value):
 
 
 # 2. Decision Tree Algorithm
-def decision_tree_algorithm(df, counter=0, min_samples=20, max_depth=10, random_subspace=None):
+def decision_tree_algorithm(df, counter=0, min_samples=4, max_depth=10, random_subspace=None):
     
     # data preparations
     if counter == 0:
