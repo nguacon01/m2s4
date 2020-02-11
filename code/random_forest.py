@@ -55,16 +55,16 @@ def training_RF(df, test_size, grid_search):
     accuracy_arr.append(accuracy)
 
     #save report of predictions
-    test_df.to_csv("output/output_predictions/full_5k/training/normal/output_predictions_{}_{}_{}_{}_{}.csv".format(n_tree, n_feature, n_max_depth, n_bootstrap,round(accuracy*100)),index=False)
+    test_df.to_csv("output/output_predictions/full_5k/43/training/HFI_NI/output_predictions_{}_{}_{}_{}_{}.csv".format(n_tree, n_feature, n_max_depth, n_bootstrap,round(accuracy*100)),index=False)
 
     #save forest - save environment
-    save_tree_path = "output/FY/trees/full_5k/normal/tree_{}_{}_{}_{}_{}.json".format(n_tree, n_feature, n_max_depth, n_bootstrap,round(accuracy*100))
+    save_tree_path = "output/FY/trees/full_5k/43/HFI_NI/tree_{}_{}_{}_{}_{}.json".format(n_tree, n_feature, n_max_depth, n_bootstrap,round(accuracy*100))
     save_file = create_file(save_tree_path)
     with open(save_tree_path,"w") as save_tree:
         save_tree.write(json.dumps(forest))
     
     #save hyper parametres and accuracy associated
-    save_acc_hyper_para_path = "output/FY/accuracy/full_5k/training/normal/accuracy_normal.out"
+    save_acc_hyper_para_path = "output/FY/accuracy/full_5k/43/training/HFI_NI/accuracy_HFI_NI.out"
     create_file(save_acc_hyper_para_path)
     with open(save_acc_hyper_para_path,"a") as save_hyper:
         save_hyper.write("{},{},{},{},{}\n".format(n_tree, n_feature, n_max_depth, n_bootstrap, accuracy))

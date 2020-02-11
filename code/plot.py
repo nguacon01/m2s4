@@ -70,11 +70,11 @@ sns.set(style="whitegrid")
 
 # %%
 
-df_HFI_NI = pd.read_csv("/home/mddo/stage/M2S4/output/FY/accuracy/full_5k/training/HFI_NI/accuracy_HFI_NI.out")
+df_HFI_NI = pd.read_csv("/home/mddo/stage/M2S4/output/FY/accuracy/full_5k/50/training/HFI_NI/accuracy_HFI_NI.out")
 df_HFI_NI.columns = ["n_tree", "n_feature", "n_max_depth", "n_bootstrap", "accuracy"]
-df_HFI_NI_PROM = pd.read_csv("/home/mddo/stage/M2S4/output/FY/accuracy/full_5k/training/HFI_NI_PROM/accuracy_HFI_NI_PROM.out")
+df_HFI_NI_PROM = pd.read_csv("/home/mddo/stage/M2S4/output/FY/accuracy/full_5k/50/training/HFI_NI_PROM/accuracy_HFI_NI_PROM.out")
 df_HFI_NI_PROM.columns = ["n_tree", "n_feature", "n_max_depth", "n_bootstrap", "accuracy"]
-df_normal = pd.read_csv("/home/mddo/stage/M2S4/output/FY/accuracy/accuracy_normal.out")
+df_normal = pd.read_csv("/home/mddo/stage/M2S4/output/FY/accuracy/full_5k/50/training/normal/accuracy_normal.out")
 df_normal.columns = ["n_tree", "n_feature", "n_max_depth", "n_bootstrap", "accuracy"]
 
 # %%
@@ -92,8 +92,9 @@ merge_df.columns = ["acc_HFI_NI","acc_HFI_NI_PROM","acc_normal"]
 # %%
 print(merge_df)
 
+sns.set(style="whitegrid")
 merge_df.plot(kind="line")
-plt.rcParams["figure.figsize"] = (40,5)
+plt.rcParams["figure.figsize"] = (20,5)
 plt.ylabel("accuracy")
 plt.xlabel("epoches")
 # %%
