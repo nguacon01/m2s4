@@ -1,6 +1,7 @@
 #%%
 import numpy as numpy
 import pandas as pd
+import matplotlib
 import matplotlib.pyplot as plt
 import seaborn as sns
 from sklearn.metrics import confusion_matrix
@@ -77,6 +78,65 @@ df_HFI_NI_PROM.columns = ["n_tree", "n_feature", "n_max_depth", "n_bootstrap", "
 df_normal = pd.read_csv("/home/mddo/stage/M2S4/output/FY/accuracy/full_5k/50/training/normal/accuracy_normal.out")
 df_normal.columns = ["n_tree", "n_feature", "n_max_depth", "n_bootstrap", "accuracy"]
 
+#%%
+
+fig = matplotlib.pyplot.gcf()
+fig.set_size_inches(18.5, 10.5)
+df_normal["accuracy"].plot()
+plt.rcParams["figure.figsize"] = (40,6)
+# %%
+
+df_HFI_NI_acc = pd.DataFrame(df_HFI_NI["accuracy"])
+
+# %%
+df_HFI_NI_PROM_acc = pd.DataFrame(df_HFI_NI_PROM["accuracy"])
+
+# %%
+df_normal_acc = pd.DataFrame(df_normal["accuracy"])
+
+#%%
+merge_df = pd.concat([df_HFI_NI_PROM_acc,df_normal_acc],axis=1, join='inner')
+merge_df.columns = ["acc_HFI_NI_PROM","acc_normal"]
+# %%
+print(merge_df)
+
+sns.set(style="whitegrid")
+merge_df.plot(kind="line")
+fig = matplotlib.pyplot.gcf()
+fig.set_size_inches(18.5, 10.5)
+plt.rcParams["figure.figsize"] = (20,2)
+plt.ylabel("accuracy")
+# %%
+
+
+# %%
+df = pd.read_csv("/home/mddo/stage/M2S4/output/FY/diploid/diploid_0/df/HFI_NI_PROM.csv")
+
+# %%
+sns.boxplot(y = df["label"], x = df["ratio_hits_prom"])
+
+fig = matplotlib.pyplot.gcf()
+fig.set_size_inches(10.5, 5.5)
+plt.rcParams["figure.figsize"] = (20,3)
+
+# %%
+
+df = pd.read_csv("/home/mddo/stage/M2S4/output/FY/accuracy/full_5k/43/training/normal/accuracy_normal.out")
+
+# %%
+df.columns = ["n_tree", "n_feature", "n_max_depth", "n_bootstrap", "accuracy"]
+
+# %%
+df["accuracy"].plot()
+
+# %%
+df_HFI_NI = pd.read_csv("/home/mddo/stage/M2S4/output/FY/accuracy/full_5k/43/testing/HFI_NI/HFI_NI.csv")
+df_HFI_NI.columns = ["accuracy","tree"]
+df_HFI_NI_PROM = pd.read_csv("/home/mddo/stage/M2S4/output/FY/accuracy/full_5k/43/testing/HFI_NI_PROM/HFI_NI_PROM.csv")
+df_HFI_NI_PROM.columns = ["accuracy","tree"]
+df_normal = pd.read_csv("/home/mddo/stage/M2S4/output/FY/accuracy/full_5k/43/testing/normal/normal.csv")
+df_normal.columns = ["accuracy","tree"]
+
 # %%
 df_HFI_NI_acc = pd.DataFrame(df_HFI_NI["accuracy"])
 
@@ -87,17 +147,15 @@ df_HFI_NI_PROM_acc = pd.DataFrame(df_HFI_NI_PROM["accuracy"])
 df_normal_acc = pd.DataFrame(df_normal["accuracy"])
 
 #%%
-merge_df = pd.concat([df_HFI_NI_acc,df_HFI_NI_PROM_acc,df_normal_acc],axis=1, join='inner')
-merge_df.columns = ["acc_HFI_NI","acc_HFI_NI_PROM","acc_normal"]
-# %%
-print(merge_df)
+merge_df = pd.concat([df_HFI_NI_PROM_acc,df_normal_acc,df_HFI_NI_acc],axis=1, join='inner')
+merge_df.columns = ["acc_HFI_NI_PROM","acc_normal","HFI_NI"]
 
+# %%
 sns.set(style="whitegrid")
 merge_df.plot(kind="line")
-plt.rcParams["figure.figsize"] = (20,5)
+fig = matplotlib.pyplot.gcf()
+fig.set_size_inches(18.5, 10.5)
+plt.rcParams["figure.figsize"] = (20,2)
 plt.ylabel("accuracy")
-plt.xlabel("epoches")
-# %%
-
 
 # %%

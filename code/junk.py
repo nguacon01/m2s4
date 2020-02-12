@@ -461,3 +461,156 @@ if __name__ == "__main__":
         print(grid)
 
         training_RF(df, test_size = 0.2, grid_search = grid)
+
+
+
+
+
+
+
+
+
+    #--------------------#diploid begin#--------------------#
+
+    annotation_100bpPromoters_file = "PourMD/ref_data/sace_R64_annotation_100bppromoters.gff" #positions of promoters
+    annotation_genesonly_simplified_file = "PourMD/ref_data/sace_R64_annotation_genesonly_simplified.gff" #positions of orfs
+    annotation_noncoding_10kb_NI_file = "PourMD/ref_data/all_subtracts_noncoding_10kbNI_genes.bed" #positions of 10kb non coding regions around orfs
+    # annotation_insertionsitesinORF_file = "PourMD/ref_data/all_rel_insertionsitesinORF_CLQCA20184.txt" #all insertion positions in orfs
+    annotation_100_500bppromoters_file = "/home/mddo/stage/M2S4/data/FY/annotation/annotation_100-500bppromoters.out" #insertion positions in 100-500bp promoter interval of orfs
+    
+    # diploid_files_data = glob.glob("/home/mddo/stage/M2S4/data/diploid/*.out")
+    # # ratio_type = "ratio_hits_between_100_500bppromoter"
+    # we need 3 ratio between haploide and diploide: ratio_hits_between_100_500bppromoter, Neighborhood index (NI) and Hit free interval (HFI). It's ratio_type variable
+    
+    # for i in range(len(diploid_files_data)):
+    i=4
+    # insertion postions file or hits reads file generated 
+    insertion_position_diploid_read_file = "/home/mddo/stage/M2S4/data/diploid/file_{}_diploid_insertion_positions.out".format(i)
+
+    #--------------------#define diploide save files#--------------------#
+    #diploid save files reference to the insertion positions files generated 
+    save_diploid_hits_reads_file = "/home/mddo/stage/M2S4/output/FY/diploid_/diploid_{}/diplo_hits_reads_per_orf.out".format(i)
+    save_diploid_hits_per_promoter_file = "/home/mddo/stage/M2S4/output/FY/diploid_/diploid_{}/diplo_hits_per_promoter.out".format(i)
+    save_diploid_hits_per_10kbNI_file = "/home/mddo/stage/M2S4/output/FY/diploid_/diploid_{}/diplo_hits_per_10kbNI.out".format(i)
+    save_diploid_orf_length_file = "/home/mddo/stage/M2S4/output/FY/diploid_/diploid_{}/diplo_orf_length.out".format(i)
+    save_diploid_insertion_index_file = "/home/mddo/stage/M2S4/output/FY/diploid_/diploid_{}/diplo_insertion_index.out".format(i)
+    save_diploid_non_coding_windows_file = "/home/mddo/stage/M2S4/output/FY/diploid_/diploid_{}/diplo_non_coding_windows.out".format(i)
+    save_diploid_neighborhood_index_file = "/home/mddo/stage/M2S4/output/FY/diploid_/diploid_{}/diplo_NI.out".format(i)
+    save_diploid_hit_free_interval_file = "/home/mddo/stage/M2S4/output/FY/diploid_/diploid_{}/diplo_HFI.out".format(i)
+    save_diploid_total_hits_count_10kb_NI = "/home/mddo/stage/M2S4/output/FY/diploid_/diploid_{}/diplo_total_hits_count_10kb_NI.out".format(i)
+    save_diploid_annotation_500bp_promoter_file = "/home/mddo/stage/M2S4/output/FY/diploid_/diploid_{}/diplo_annotation_500bppromoters.out".format(i)
+    save_diploid_hits_between_100_500bpprom = "/home/mddo/stage/M2S4/output/FY/diploid_/diploid_{}/diplo_hits_between_100_500bppromoter.out".format(i)
+    save_diploid_ratio_hits_in_100_500bppromoter_file = "/home/mddo/stage/M2S4/output/FY/diploid_/diploid_{}/diplo_ratio_hits_between_100_500bppromoter.out".format(i)
+
+    
+    save_hits_in_100_500bppromoter_ratio_haplo_diplo = "/home/mddo/stage/M2S4/output/FY/diploid_/diploid_{}/diplo_hits_between_100_500bppromoter_ratio_haplo_diplo.out".format(i)
+    save_NI_ratio_haplo_diplo = "/home/mddo/stage/M2S4/output/FY/diploid_/diploid_{}/diplo_NI_ratio.out".format(i)
+    save_HFI_ratio_haplo_diplo = "/home/mddo/stage/M2S4/output/FY/diploid_/diploid_{}/diplo_HFI_ratio_haplo_diplo.out".format(i)
+
+
+    #---------------number insertion position between 100 and 500bp promoter--------------#
+    # hits_read_count(insertion_position_diploid_read_file, annotation_100_500bppromoters_file, save_diploid_hits_between_100_500bpprom)
+    # cal_ratio_100_and_500_bppromoter(save_diploid_hits_per_promoter_file, save_diploid_hits_between_100_500bpprom, save_diploid_ratio_hits_in_100_500bppromoter_file)
+
+
+    ratio_type = ["HFI","NI","hits_between_100_500bppromoter"]
+    for r  in ratio_type:
+        #---------------Generate ratio file: NI, HFI, hits_between_100_500bppromoter between haploid and diploid--------------#
+        #--a small note: because the HFI in haploide is alway smaller than diploide, so instead of calculating HFI_haplo/HFI_diplo, we calculate ratio HFI_diplo/HFI_haplo
+        #--we will obtain a ratio which is less than 1. So it take less calculation for the downstream analyses
+        save_file_ratio = "/home/mddo/stage/M2S4/output/FY/diploid_/diploid_{}/diplo_{}_ratio_haplo_diplo.out".format(i,r)
+        haploid_file = "/home/mddo/stage/M2S4/output/FY/haploid/{}.out".format(r)
+        diploid_file = "/home/mddo/stage/M2S4/output/FY/diploid_/diploid_{}/diplo_{}.out".format(i,r)
+        ratio_haploid_diploid(haploid_file, diploid_file, save_file_ratio)
+
+
+
+
+
+
+
+
+
+    diploid_files_data = glob.glob("/home/mddo/stage/M2S4/data/diploid/*.out")
+    for i in range(len(diploid_files_data)):
+        save_hits_reads_file = "/home/mddo/stage/M2S4/output/FY/haploid/hits_reads_per_orf.out"
+        save_hits_per_promoter_file = "/home/mddo/stage/M2S4/output/FY/haploid/hits_per_promoter.out"
+        save_hits_per_10kbNI_file = "/home/mddo/stage/M2S4/output/FY/haploid/hits_per_10kbNI.out"
+        save_orf_length_file = "/home/mddo/stage/M2S4/output/FY/haploid/orf_length.out"
+        save_insertion_index_file = "/home/mddo/stage/M2S4/output/FY/haploid/insertion_index.out"
+        save_non_coding_windows_file = "/home/mddo/stage/M2S4/output/FY/haploid/non_coding_windows.out"
+        save_neighborhood_index_file = "/home/mddo/stage/M2S4/output/FY/haploid/NI.out"
+        save_hit_free_interval_file = "/home/mddo/stage/M2S4/output/FY/haploid/HFI.out"
+        save_total_hits_count_10kb_NI = "/home/mddo/stage/M2S4/output/FY/haploid/total_hits_count_10kb_NI.out"
+        save_annotation_500bp_promoter_file = "/home/mddo/stage/M2S4/output/FY/haploid/annotation_500bppromoters.out"
+        save_hits_between_100_500bpprom = "/home/mddo/stage/M2S4/output/FY/haploid/hits_between_100_500bppromoter.out"
+        save_ratio_hits_in_100_500bppromoter_file = "/home/mddo/stage/M2S4/output/FY/haploid/ratio_hits_between_100_500bppromoter.out"
+
+        save_hits_in_100_500bppromoter_ratio_haplo_diplo = "/home/mddo/stage/M2S4/output/FY/diploid/diploid_{}/diplo_hits_between_100_500bppromoter_ratio_haplo_diplo.out".format(i)
+        save_NI_ratio_haplo_diplo = "/home/mddo/stage/M2S4/output/FY/diploid/diploid_{}/diplo_NI_ratio_haplo_diplo.out".format(i)
+        save_HFI_ratio_haplo_diplo = "/home/mddo/stage/M2S4/output/FY/diploid/diploid_{}/diplo_HFI_ratio_haplo_diplo.out".format(i)
+
+        label_df = "/home/mddo/stage/M2S4/data/FY/FY_genes_label.csv"
+        save_file_dataframe = "/home/mddo/stage/M2S4/output/FY/diploid_/diploid_{}/df/HFI_NI.csv".format(i)
+        # # #---------------merge data file--------------#
+        merge_df(
+            save_hits_reads_file, 
+            save_hits_per_promoter_file, 
+            save_hits_in_100_500bppromoter_ratio_haplo_diplo,
+            save_orf_length_file, 
+            save_insertion_index_file, 
+            save_neighborhood_index_file,
+            save_NI_ratio_haplo_diplo, 
+            save_hit_free_interval_file,
+            save_HFI_ratio_haplo_diplo,
+            label_df,
+            save_file_dataframe
+        )
+
+
+
+
+#generate database
+diploid_files_data = glob.glob("/home/mddo/stage/M2S4/data/diploid/*.out")
+for i in range(len(diploid_files_data)):
+    df_path = "/home/mddo/stage/M2S4/output/FY/diploid_/diploid_{}/df/df.csv".format(i)
+    df = pd.read_csv(df_path)
+    test_size = 0.43
+    if isinstance(test_size, float):
+        test_size = round(test_size * len(df))
+
+    indices = df.index.tolist()
+    test_indices = random.sample(population=indices, k=test_size)
+
+    test_df = df.loc[test_indices]
+    test_df.to_csv("/home/mddo/stage/M2S4/output/FY/diploid_/diploid_{}/df/test/df.csv".format(i),index=False)
+    train_df = df.drop(test_indices)
+    train_df.to_csv("/home/mddo/stage/M2S4/output/FY/diploid_/diploid_{}/df/train/df.csv".format(i),index=False)
+
+
+
+
+#train
+diploid_files_data = glob.glob("/home/mddo/stage/M2S4/data/diploid/*.out")
+for i in range(len(diploid_files_data)):
+    #type_df = ["HFI_NI_PROM","normal", "HFI_PROM", "NI_PROM", "HFI_NI"]
+    type_df = "NI_PROM"
+    save_file_dataframe = "/home/mddo/stage/M2S4/output/FY/diploid_/diploid_{}/df/train/{}.csv".format(i, type_df)
+    df = pd.read_csv(save_file_dataframe)
+    n_columns = len(df.columns) - 2
+
+    #create search grid
+    n_tree = random.sample(population = list(range(3,30)), k = 1)
+    n_feature = random.sample(population = list(range(4,n_columns)), k = 1)
+    n_max_depth = random.sample(population = list(range(3,20)), k = 1)
+    n_bootstrap = random.sample(population = list(range(1000,2900)), k = 1)
+
+    grid= {
+        'n_tree' : n_tree[0],
+        'n_feature' : n_feature[0],
+        'n_max_depth' : n_max_depth[0],
+        'n_bootstrap' : n_bootstrap[0]
+    }
+    print(grid)
+
+    training_RF(df, test_size = 0.2, grid_search = grid, type_df = type_df)
