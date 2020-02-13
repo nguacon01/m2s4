@@ -397,7 +397,7 @@ def ratio_haploid_diploid(haploid_file, diploid_file, save_file):
                 if orf_haplo == orf_diplo:
                     # prevent from divise by 0
                     if figure_haplo != 0:
-                        ratio = figure_diplo/figure_haplo
+                        ratio = figure_haplo/figure_diplo
                     else:
                         ratio = 0
                     save.write(orf_haplo + " " + str(ratio) + "\n")

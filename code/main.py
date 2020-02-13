@@ -13,7 +13,7 @@ def main():
     # diploid_files_data = glob.glob("/home/mddo/stage/M2S4/data/diploid/*.out")
     # # for i in range(len(diploid_files_data)):
     #     #type_df = ["HFI_NI_PROM","normal", "HFI_PROM", "NI_PROM", "HFI_NI"]
-    type_df = "HFI_NI"
+    type_df = "NI_PROM"
     # save_file_dataframe = "/home/mddo/stage/M2S4/output/FY/haploid/df/train/normal.csv"
     # df = pd.read_csv(save_file_dataframe)
     # n_columns = len(df.columns) - 2
@@ -34,36 +34,23 @@ def main():
 
     # training_RF(df, test_size = 0.2, grid_search = grid, type_df = type_df)
 
-    list_forest = glob.glob("/home/mddo/stage/M2S4/output/forest/{}/*.json".format(type_df))
-    #create file report
-    save_file_report = "/home/mddo/stage/M2S4/output/accuracy/test/accuracy_{}.csv".format(type_df)
-    create_file(save_file_report)
-    with open(save_file_report,"a") as save:
-        #fetch all trained forests
-        for tree_path in list_forest:
-            with open(tree_path) as json_data:
-                #get forest attributes
-                parametre_info = tree_path.strip().split("/")[-1].split(".")[0]
+    diploid_files_data = glob.glob("/home/mddo/stage/M2S4/data/diploid/*.out")
+    for i in range(len(diploid_files_data)):
+        df_path = "/home/mddo/stage/M2S4/output/FY/diploid_/diploid_{}/df/{}.csv".format(i, type_df)
+        df = pd.read_csv(df_path)
+        test_size = 0.57
+        if isinstance(test_size, float):
+            test_size = round(test_size * len(df))
 
-                #load forest
-                forest = json.load(json_data)
+        indices = df.index.tolist()
+        test_indices = random.sample(population=indices, k=test_size)
 
-                diploid_files_data = glob.glob("/home/mddo/stage/M2S4/data/diploid/*.out")
-                for i in range(len(diploid_files_data)):
-                    #define test data
-                    test_df = pd.read_csv("/home/mddo/stage/M2S4/output/FY/diploid_/diploid_{}/df/test/{}.csv".format(i, type_df))
+        test_df = df.loc[test_indices]
+        test_df.to_csv("/home/mddo/stage/M2S4/output/FY/diploid_/diploid_{}/df/test/{}.csv".format(i, type_df),index=False)
+        train_df = df.drop(test_indices)
+        train_df.to_csv("/home/mddo/stage/M2S4/output/FY/diploid_/diploid_{}/df/train/{}.csv".format(i, type_df),index=False)
 
-                    predictions = random_forest_predictions(test_df, forest)
-                    predictions_array = np.asanyarray(predictions)
-
-                    accuracy = calculate_accuracy(predictions,test_df.label)
-
-                    test_df["predictions"] = predictions_array
-                    # save predictions output
-                    test_df.to_csv("/home/mddo/stage/M2S4/output/predictions/test/{}/output_predictions_{}_{}.csv".format(type_df, parametre_info, round(accuracy*100)),index=False)
-
-                    print(str(accuracy) + "," + parametre_info+"\n")
-                    save.write(parametre_info + "," + str(accuracy) + "\n")
+    
 
 if __name__ == "__main__":
     main()

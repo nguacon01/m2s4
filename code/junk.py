@@ -402,35 +402,7 @@ if __name__ == "__main__":
 
 
 
-    list_forest = glob.glob("/home/mddo/stage/M2S4/output/FY/trees/forest/*.json")
-    #create file report
-    save_file_report = "/home/mddo/stage/M2S4/output/FY/accuracy/normal_3k.out"
-    create_file(save_file_report)
-    with open(save_file_report,"a") as save:
-        #fetch all trained forests
-        for tree_path in list_forest:
-            with open(tree_path) as json_data:
-                #get forest attributes
-                parametre_info = tree_path.strip().split("/")[-1].split(".")[0]
-                #define test data
-                test_df = pd.read_csv("/home/mddo/stage/M2S4/output/FY/diploid/diploid_0/dataframe_for_testing.csv")
-
-                #load forest
-                forest = json.load(json_data)
-
-                predictions = random_forest_predictions(test_df, forest)
-                predictions_array = np.asanyarray(predictions)
-
-                accuracy = calculate_accuracy(predictions,test_df.label)
-
-                test_df["predictions"] = predictions_array
-
-                test_df.to_csv("output/output_predictions/normal_3k/output_predictions_{}_{}.csv".format(parametre_info,round(accuracy*100)),index=False)
-
-                accuracy = calculate_accuracy(predictions,test_df.label)
-                print(str(accuracy) + "," + parametre_info+"\n")
-                save.write(str(accuracy) + "," + parametre_info+"\n")
-
+    
 
 
 
@@ -530,7 +502,7 @@ if __name__ == "__main__":
 
 
 
-
+    #CREATE ORIGINAL DATA
     diploid_files_data = glob.glob("/home/mddo/stage/M2S4/data/diploid/*.out")
     for i in range(len(diploid_files_data)):
         save_hits_reads_file = "/home/mddo/stage/M2S4/output/FY/haploid/hits_reads_per_orf.out"
@@ -570,7 +542,7 @@ if __name__ == "__main__":
 
 
 
-#generate database
+#GENERATE DATA BASE ON RATIO TRAINING AND TESTING
 diploid_files_data = glob.glob("/home/mddo/stage/M2S4/data/diploid/*.out")
 for i in range(len(diploid_files_data)):
     df_path = "/home/mddo/stage/M2S4/output/FY/diploid_/diploid_{}/df/df.csv".format(i)
@@ -590,7 +562,7 @@ for i in range(len(diploid_files_data)):
 
 
 
-#train
+#TRAINING SESSION
 diploid_files_data = glob.glob("/home/mddo/stage/M2S4/data/diploid/*.out")
 for i in range(len(diploid_files_data)):
     #type_df = ["HFI_NI_PROM","normal", "HFI_PROM", "NI_PROM", "HFI_NI"]
@@ -614,3 +586,41 @@ for i in range(len(diploid_files_data)):
     print(grid)
 
     training_RF(df, test_size = 0.2, grid_search = grid, type_df = type_df)
+
+
+
+
+
+##TESTING SESSION
+list_forest = glob.glob("/home/mddo/stage/M2S4/output/forest/{}/*.json".format(type_df))
+#create file report
+#type_df = ["HFI_NI_PROM","normal", "HFI_PROM", "NI_PROM", "HFI_NI"]
+type_df = "NI_PROM"
+save_file_report = "/home/mddo/stage/M2S4/output/accuracy/test/accuracy_{}.csv".format(type_df)
+create_file(save_file_report)
+with open(save_file_report,"a") as save:
+    #fetch all trained forests
+    for tree_path in list_forest:
+        with open(tree_path) as json_data:
+            #get forest attributes
+            parametre_info = tree_path.strip().split("/")[-1].split(".")[0]
+
+            #load forest
+            forest = json.load(json_data)
+
+            diploid_files_data = glob.glob("/home/mddo/stage/M2S4/data/diploid/*.out")
+            for i in range(len(diploid_files_data)):
+                #define test data
+                test_df = pd.read_csv("/home/mddo/stage/M2S4/output/FY/diploid_/diploid_{}/df/test/{}.csv".format(i, type_df))
+
+                predictions = random_forest_predictions(test_df, forest)
+                predictions_array = np.asanyarray(predictions)
+
+                accuracy = calculate_accuracy(predictions,test_df.label)
+
+                test_df["predictions"] = predictions_array
+                # save predictions output
+                test_df.to_csv("/home/mddo/stage/M2S4/output/predictions/test/{}/output_predictions_{}_{}.csv".format(type_df, parametre_info, round(accuracy*100)),index=False)
+
+                print(str(accuracy) + "," + parametre_info+"\n")
+                save.write(parametre_info + "," + str(accuracy) + "\n")

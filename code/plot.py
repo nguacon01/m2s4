@@ -50,26 +50,36 @@ plt.rcParams["figure.figsize"] = (20,2)
 
 #PLOT TESTING ACCURACY
 report_HFI_NI_PROM_path = "/home/mddo/stage/M2S4/output/accuracy/test/accuracy_HFI_NI_PROM.csv"
+report_HFI_NI_path = "/home/mddo/stage/M2S4/output/accuracy/test/accuracy_HFI_NI.csv"
+report_HFI_PROM_path = "/home/mddo/stage/M2S4/output/accuracy/test/accuracy_HFI_PROM.csv"
+report_NI_PROM_path = "/home/mddo/stage/M2S4/output/accuracy/test/accuracy_NI_PROM.csv"
 report_normal_path = "/home/mddo/stage/M2S4/output/accuracy/test/accuracy_normal.csv"
 
 # %%
 df_acc_HFI_NI_PROM = pd.read_csv(report_HFI_NI_PROM_path).sort_values(by=["accuracy"])
 df_acc_HFI_NI_PROM.reset_index(inplace=True)
-print(df_acc_HFI_NI_PROM)
+# %%
+df_acc_HFI_NI = pd.read_csv(report_HFI_NI_path).sort_values(by=["accuracy"])
+df_acc_HFI_NI.reset_index(inplace=True)
+# %%
+df_acc_HFI_PROM = pd.read_csv(report_HFI_PROM_path).sort_values(by=["accuracy"])
+df_acc_HFI_PROM.reset_index(inplace=True)
+# %%
+df_acc_NI_PROM = pd.read_csv(report_NI_PROM_path).sort_values(by=["accuracy"])
+df_acc_NI_PROM.reset_index(inplace=True)
+# %%
+df_acc_normal = pd.read_csv(report_normal_path).sort_values(by=["accuracy"])
+df_acc_normal.reset_index(inplace=True)
 
 # %%
-df_acc_normal_test = pd.read_csv(report_normal_path).sort_values(by=["accuracy"])
-df_acc_normal_test.reset_index(inplace=True)
-
-# %%
-merge_df_test = pd.concat([df_acc_normal["accuracy"],df_acc_HFI_NI_PROM["accuracy"]], axis = 1, join="inner")
-merge_df_test.columns = ["acc_normal","acc_HFI_NI_PROM"]
+merge_df_test = pd.concat([df_acc_HFI_NI_PROM["accuracy"],df_acc_HFI_NI["accuracy"],df_acc_HFI_PROM["accuracy"],df_acc_NI_PROM["accuracy"]], axis = 1, join="inner")
+merge_df_test.columns = ["acc_HFI_NI_PROM","acc_HFI_NI","acc_HFI_PROM","acc_NI_PROM"]
 #%%
 print(merge_df_test)
 
 # %%
 sns.set(style="whitegrid")
-df_acc_normal_test["accuracy"].plot(kind="line")
+merge_df_test.plot(kind="line")
 fig = matplotlib.pyplot.gcf()
 fig.set_size_inches(18.5, 10.5)
 plt.rcParams["figure.figsize"] = (20,2)
