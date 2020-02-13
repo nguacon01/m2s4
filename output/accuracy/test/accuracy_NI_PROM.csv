@@ -1,4 +1,4 @@
-n_tree,n_feature,n_max_depth,n_bootstrap,accuracy
+tree,accuracy
 tree_3_6_13_2035_85,0.8465496368038741
 tree_3_6_13_2035_85,0.8825665859564165
 tree_3_6_13_2035_85,0.8619854721549637
