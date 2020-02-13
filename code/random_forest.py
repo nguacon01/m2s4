@@ -64,7 +64,7 @@ def training_RF(df, test_size, grid_search, type_df):
         save_tree.write(json.dumps(forest))
     
     #save hyper parametres and accuracy associated
-    save_acc_hyper_para_path = "output/accuracy/train/{}/accuracy_{}.csv".format(type_df,type_df)
+    save_acc_hyper_para_path = "output/accuracy/train/accuracy_{}.csv".format(type_df)
     create_file(save_acc_hyper_para_path)
     with open(save_acc_hyper_para_path,"a") as save_hyper:
         save_hyper.write("{},{},{},{},{}\n".format(n_tree, n_feature, n_max_depth, n_bootstrap, accuracy))
