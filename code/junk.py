@@ -518,12 +518,12 @@ if __name__ == "__main__":
         save_hits_between_100_500bpprom = "/home/mddo/stage/M2S4/output/FY/haploid/hits_between_100_500bppromoter.out"
         save_ratio_hits_in_100_500bppromoter_file = "/home/mddo/stage/M2S4/output/FY/haploid/ratio_hits_between_100_500bppromoter.out"
 
-        save_hits_in_100_500bppromoter_ratio_haplo_diplo = "/home/mddo/stage/M2S4/output/FY/diploid/diploid_{}/diplo_hits_between_100_500bppromoter_ratio_haplo_diplo.out".format(i)
-        save_NI_ratio_haplo_diplo = "/home/mddo/stage/M2S4/output/FY/diploid/diploid_{}/diplo_NI_ratio_haplo_diplo.out".format(i)
-        save_HFI_ratio_haplo_diplo = "/home/mddo/stage/M2S4/output/FY/diploid/diploid_{}/diplo_HFI_ratio_haplo_diplo.out".format(i)
+        save_hits_in_100_500bppromoter_ratio_haplo_diplo = "/home/mddo/stage/M2S4/output/FY/diploid_/diploid_{}/diplo_hits_between_100_500bppromoter_ratio_haplo_diplo.out".format(i)
+        save_NI_ratio_haplo_diplo = "/home/mddo/stage/M2S4/output/FY/diploid_/diploid_{}/diplo_NI_ratio_haplo_diplo.out".format(i)
+        save_HFI_ratio_haplo_diplo = "/home/mddo/stage/M2S4/output/FY/diploid_/diploid_{}/diplo_HFI_ratio_haplo_diplo.out".format(i)
 
         label_df = "/home/mddo/stage/M2S4/data/FY/FY_genes_label.csv"
-        save_file_dataframe = "/home/mddo/stage/M2S4/output/FY/diploid_/diploid_{}/df/HFI_NI.csv".format(i)
+        save_file_dataframe = "/home/mddo/stage/M2S4/output/FY/diploid_/diploid_{}/df/HFI_NI_PROM.csv".format(i)
         # # #---------------merge data file--------------#
         merge_df(
             save_hits_reads_file, 
@@ -562,7 +562,7 @@ for i in range(len(diploid_files_data)):
 
 
 
-#TRAINING SESSION
+#TRAINING SESSION - non normal
 diploid_files_data = glob.glob("/home/mddo/stage/M2S4/data/diploid/*.out")
 for i in range(len(diploid_files_data)):
     #type_df = ["HFI_NI_PROM","normal", "HFI_PROM", "NI_PROM", "HFI_NI"]
@@ -586,6 +586,32 @@ for i in range(len(diploid_files_data)):
     print(grid)
 
     training_RF(df, test_size = 0.2, grid_search = grid, type_df = type_df)
+
+
+#TRAINING SESSION - normal
+# diploid_files_data = glob.glob("/home/mddo/stage/M2S4/data/diploid/*.out")
+# # for i in range(len(diploid_files_data)):
+#     #type_df = ["HFI_NI_PROM","normal", "HFI_PROM", "NI_PROM", "HFI_NI"]
+type_df = "normal"
+save_file_dataframe = "/home/mddo/stage/M2S4/output/FY/haploid/df/train/normal.csv"
+df = pd.read_csv(save_file_dataframe)
+n_columns = len(df.columns) - 2
+
+#create search grid
+n_tree = random.sample(population = list(range(3,30)), k = 1)
+n_feature = random.sample(population = list(range(4,n_columns)), k = 1)
+n_max_depth = random.sample(population = list(range(3,20)), k = 1)
+n_bootstrap = random.sample(population = list(range(1000,2900)), k = 1)
+
+grid= {
+    'n_tree' : n_tree[0],
+    'n_feature' : n_feature[0],
+    'n_max_depth' : n_max_depth[0],
+    'n_bootstrap' : n_bootstrap[0]
+}
+print(grid)
+
+training_RF(df, test_size = 0.2, grid_search = grid, type_df = type_df)
 
 
 

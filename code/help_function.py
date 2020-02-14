@@ -3,6 +3,7 @@ import random
 import pandas as pd
 import numpy as np
 from sklearn.preprocessing import MinMaxScaler, StandardScaler
+from sklearn.impute import KNNImputer, MissingIndicator
 import glob
 
 false_positive_file_path = "output/false_positive.out"
@@ -222,14 +223,14 @@ def merge_df(hits_reads_file, hits_promoter_file, ratio_promoter_file, ORF_lengt
     hits_reads_df.columns = ["orf","hits_count","reads_count"]
     #normalizes values of hits count and reads count
     norm_cols_hits_reads = ["hits_count","reads_count"]
-    hits_reads_df[norm_cols_hits_reads]  = StandardScaler().fit_transform(hits_reads_df[norm_cols_hits_reads])
+    hits_reads_df[norm_cols_hits_reads]  = MinMaxScaler().fit_transform(hits_reads_df[norm_cols_hits_reads])
 
     #hits per promoter
     hits_promoter_df = pd.read_csv(hits_promoter_file,sep=" ", header=None)
     hits_promoter_df.columns = ["orf","hits_count_pro","reads_count_pro"]
     #normalize values of hits per promoter
-    # norm_cols_hits_per_pro = ["hits_count_pro"]
-    # hits_promoter_df[norm_cols_hits_per_pro]  = StandardScaler().fit_transform(hits_promoter_df[norm_cols_hits_per_pro])
+    norm_cols_hits_per_pro = ["hits_count_pro"]
+    hits_promoter_df[norm_cols_hits_per_pro]  = MinMaxScaler().fit_transform(hits_promoter_df[norm_cols_hits_per_pro])
 
     #ratio hits in the interval 100 - 500 bp promoter between haploide and diploide
     ratio_hits_prom_df = pd.read_csv(ratio_promoter_file, sep = " ", header= None)
@@ -240,7 +241,7 @@ def merge_df(hits_reads_file, hits_promoter_file, ratio_promoter_file, ORF_lengt
     orf_len_df.columns = ["orf","orf_len"]
     #normalizes values of orf length
     norm_cols_orf_len = ["orf_len"]
-    orf_len_df[norm_cols_orf_len]  = StandardScaler().fit_transform(orf_len_df[norm_cols_orf_len])
+    orf_len_df[norm_cols_orf_len]  = MinMaxScaler().fit_transform(orf_len_df[norm_cols_orf_len])
 
     #insertion index
     insertion_index_df = pd.read_csv(insertion_index_file,sep=" ",header=None)
@@ -264,9 +265,6 @@ def merge_df(hits_reads_file, hits_promoter_file, ratio_promoter_file, ORF_lengt
     label_df = pd.read_csv(label_file)
     label_df.columns = ['orf','label']
 
-    #join the columns from different dataframes which have same column ORF
-    # final_df = hits_reads_df
-
     hits_reads_df["hits_count_pro"] = hits_promoter_df.orf.map(hits_promoter_df.set_index("orf")["hits_count_pro"].to_dict())
 
     hits_reads_df["ratio_hits_prom"] = hits_promoter_df.orf.map(ratio_hits_prom_df.set_index("orf")["ratio_hits_prom"].to_dict())
@@ -279,9 +277,9 @@ def merge_df(hits_reads_file, hits_promoter_file, ratio_promoter_file, ORF_lengt
 
     hits_reads_df["NI_ratio"] = hits_reads_df.orf.map(NI_ratio_df.set_index("orf")["NI_ratio"].to_dict())
 
-    hits_reads_df["HFI_normalized"] = hits_reads_df.orf.map(HFI_df.set_index("orf")["HFI_normalized"].to_dict())
+    hits_reads_df["HFI"] = hits_reads_df.orf.map(HFI_df.set_index("orf")["HFI"].to_dict())
 
-    # hits_reads_df["HFI_ratio"] = hits_reads_df.orf.map(HFI_ratio_df.set_index("orf")["HFI_ratio"].to_dict())
+    hits_reads_df["HFI_ratio"] = hits_reads_df.orf.map(HFI_ratio_df.set_index("orf")["HFI_ratio"].to_dict())
 
     hits_reads_df["label"] = hits_reads_df.orf.map(label_df.set_index("orf")["label"].to_dict())
 
@@ -289,6 +287,13 @@ def merge_df(hits_reads_file, hits_promoter_file, ratio_promoter_file, ORF_lengt
     hits_reads_df['label'].replace(' ', np.nan, inplace=True)
     hits_reads_df = hits_reads_df.dropna(subset=['label'])
     hits_reads_df.reset_index(drop = True)
+
+    #Fill missing data
+    # imputer = KNNImputer(n_neighbors=2, weights="uniform")
+    # hits_reads_df["NI_ratio"] = imputer.fit_transform(hits_reads_df["NI_ratio"])
+    hits_reads_df["NI_ratio"] = hits_reads_df["NI_ratio"].interpolate(method ='linear', limit_direction ='forward') 
+
+    # hits_reads_df = pd.DataFrame(hits_reads_df_arr)
 
     #move orf column to the end of df
     cols = hits_reads_df.columns.tolist()
@@ -397,9 +402,9 @@ def ratio_haploid_diploid(haploid_file, diploid_file, save_file):
                 if orf_haplo == orf_diplo:
                     # prevent from divise by 0
                     if figure_haplo != 0:
-                        ratio = figure_haplo/figure_diplo
+                        ratio = figure_diplo/figure_haplo
                     else:
-                        ratio = 0
+                        ratio = np.nan
                     save.write(orf_haplo + " " + str(ratio) + "\n")
                     break
 

@@ -1,11 +1,12 @@
 #%%
-import numpy as numpy
+import numpy as np
 import pandas as pd
 import matplotlib
 import matplotlib.pyplot as plt
 import seaborn as sns
 from sklearn.metrics import confusion_matrix
 from helper_functions import train_test_split
+from random import seed
 # %%
 sns.lineplot(data=pd.DataFrame(dataFrame["accuracy_HFI_NI"]), palette="tab10", linewidth=2.5, color = "orange",markers="o")
 
@@ -88,5 +89,29 @@ plt.rcParams["figure.figsize"] = (20,2)
 df_full = pd.read_csv("/home/mddo/stage/M2S4/output/FY/haploid/df/train/normal.csv")
 
 
+
+# %%
+seed(1)
+np.random.randint(low=0,high=2494, size=1800)
+
+# %%
+
+
+# %%
+seed(1)
+np.random.randint(low=0,high=2494, size=1800)
+
+# %%
+
+
+# %%
+df = pd.read_csv("/home/mddo/stage/M2S4/output/FY/diploid_/diploid_0/df/HFI_NI_PROM.csv")
+
+# %%
+print(df)
+
+# %%
+NI = pd.read_csv("/home/mddo/stage/M2S4/output/FY/diploid_/diploid_0/diplo_NI_ratio_haplo_diplo.out", sep=" ")
+print(NI)
 
 # %%
