@@ -3,7 +3,6 @@ import random
 import pandas as pd
 import numpy as np
 from sklearn.preprocessing import MinMaxScaler, StandardScaler
-from sklearn.impute import KNNImputer, MissingIndicator
 import glob
 
 false_positive_file_path = "output/false_positive.out"
@@ -288,10 +287,17 @@ def merge_df(hits_reads_file, hits_promoter_file, ratio_promoter_file, ORF_lengt
     hits_reads_df = hits_reads_df.dropna(subset=['label'])
     hits_reads_df.reset_index(drop = True)
 
-    #Fill missing data
-    # imputer = KNNImputer(n_neighbors=2, weights="uniform")
-    # hits_reads_df["NI_ratio"] = imputer.fit_transform(hits_reads_df["NI_ratio"])
-    hits_reads_df["NI_ratio"] = hits_reads_df["NI_ratio"].interpolate(method ='linear', limit_direction ='forward') 
+    #Fill missing data with KNN
+    missing_data_columns = hits_reads_df.columns[df.isna().any()].tolist()
+    for missing_data_col in missing_data_columns:
+        hits_reads_df[missing_data_col] = knn_impute(
+            target=hits_reads_df[missing_data_col], 
+            attributes=hits_reads_df.drop([missing_data_col], 1),
+            aggregation_method="median", 
+            k_neighbors=10, numeric_distance='euclidean',
+            categorical_distance='hamming', 
+            missing_neighbors_threshold=0.8
+        )
 
     # hits_reads_df = pd.DataFrame(hits_reads_df_arr)
 
@@ -304,18 +310,53 @@ def merge_df(hits_reads_file, hits_promoter_file, ratio_promoter_file, ORF_lengt
     hits_reads_df.to_csv(save_file_dataframe,index=False)
 
 #this function find the genes frequenly have false positive results after prediction   
-def find_false_positive():
-    files_path = glob.glob("/home/mddo/stage/M2S4/output/output_predictions/*.csv")
+"""
+    type_session: name of the session: train or test
+    type_df :  type of dataframe : HFI_NI_PROM / HFI_NI_PROM_nan / normal
+"""
+def find_false_positive(type_session, type_df):
+    
+    file_paths = glob.glob("/home/mddo/stage/M2S4/output/predictions/{}/{}/*.csv".format(type_session, type_df))
+
+    if type_df == "HFI_NI_PROM" or type_df == "HFI_NI_PROM_nan":
+        columns_name = ["hits_count","reads_count","hits_count_pro","ratio_hits_prom","orf_len","insertion_index","NI","NI_ratio","HFI","HFI_ratio","orf","label","predictions"]
+    else:
+        columns_name = ["hits_count","reads_count","hits_count_pro","orf_len","insertion_index","NI","HFI","orf","label","predictions"]
+
+    df_array_FP = []
+    df_array_FN = []
+    result_df = pd.DataFrame(columns = columns_name)
     with open(false_positive_file_path,"a") as fp:
-        for file in files_path:
-            with open(file,"r") as content:
-                for data in content:
-                    data_features = data.strip().split(",")
-                    real_label = data_features[7]
-                    predicted_label = data_features[8]
-                    orf = data_features[6]
-                    if real_label == 'non-ess' and real_label != predicted_label:
-                        fp.write(orf+"\n")
+        for file_p in file_paths:
+            df = pd.read_csv(file_p)
+            labels = df["label"]
+            predictions = df["predictions"]
+            df_FP = df.loc[(labels == "non_ess") & (labels != predictions)]
+            df_FN = df.loc[(labels == "ess") & (labels != predictions)]
+            df_array_FP.append(df_FP)
+            df_array_FN.append(df_FN)
+        result_df_FP = pd.concat(df_array_FP)
+        result_df_FN = pd.concat(df_array_FN)
+        result_df_FP.drop(result_df_FP.columns.difference(["orf","label","predictions"]), 1, inplace=True)
+        result_df_FN.drop(result_df_FN.columns.difference(["orf","label","predictions"]), 1, inplace=True)
+        # result_df["freq"] = result_df.groupby("orf")["orf"].transform("count")
+        report_FP = result_df_FP["orf"].value_counts()
+        report_FP_df = pd.DataFrame(report_FP)
+        report_FP_df.to_csv("/home/mddo/stage/M2S4/output/errros/{}/{}_FP.csv".format(type_session,type_df))
+
+        report_FN = result_df_FN["orf"].value_counts()
+        report_FN_df = pd.DataFrame(report_FP)
+        report_FN_df.to_csv("/home/mddo/stage/M2S4/output/errros/{}/{}_FN.csv".format(type_session,type_df))
+        print("done")
+            
+            # with open(file_p,"r") as content:
+            #     for data in content:
+            #         data_features = data.strip().split(",")
+            #         real_label = data_features[7]
+            #         predicted_label = data_features[8]
+            #         orf = data_features[6]
+            #         if real_label == 'non-ess' and real_label != predicted_label:
+            #             fp.write(orf+"\n")
 
 def frequency_false_positive():
     df = pd.read_csv("output/false_positive.out",sep = " ", header = None)
@@ -401,8 +442,8 @@ def ratio_haploid_diploid(haploid_file, diploid_file, save_file):
                 figure_diplo = float(data_diplo_features[1])
                 if orf_haplo == orf_diplo:
                     # prevent from divise by 0
-                    if figure_haplo != 0:
-                        ratio = figure_diplo/figure_haplo
+                    if figure_diplo != 0:
+                        ratio = figure_haplo/figure_diplo
                     else:
                         ratio = np.nan
                     save.write(orf_haplo + " " + str(ratio) + "\n")

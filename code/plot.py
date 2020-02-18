@@ -7,6 +7,7 @@ import seaborn as sns
 from sklearn.metrics import confusion_matrix
 from helper_functions import train_test_split
 from random import seed
+import json
 # %%
 sns.lineplot(data=pd.DataFrame(dataFrame["accuracy_HFI_NI"]), palette="tab10", linewidth=2.5, color = "orange",markers="o")
 
@@ -113,5 +114,101 @@ print(df)
 # %%
 NI = pd.read_csv("/home/mddo/stage/M2S4/output/FY/diploid_/diploid_0/diplo_NI_ratio_haplo_diplo.out", sep=" ")
 print(NI)
+
+# %%
+
+"""
+REFRORM STRUCTURE OF ACCURACY FILE
+NAME OF FOREST _ ACCURACY _ TOTAL NUMBER OF TREE IN THE FOREST
+
+"""
+acc_file_path = "/home/mddo/stage/M2S4/output/accuracy/test/accuracy_HFI_NI_PROM_nan.csv"
+df = pd.read_csv(acc_file_path)
+print(df)
+
+# %%
+forest_name = df["forest"]
+print(forest_name)
+
+# %%
+total_num_tree_arr = []
+forest_name_arr = []
+for fn in forest_name:
+    forest_name = "{}.0".format(fn)
+    forest_name_arr.append(forest_name)
+    forest_path = "/home/mddo/stage/M2S4/output/forest/HFI_NI_PROM_nan/{}.json".format(forest_name)
+    with open(forest_path) as content:
+        json_data = json.load(content)
+        total_numner_tree = len(json_data)
+    total_num_tree_arr.append(total_numner_tree)
+        
+
+# %%
+print(df.shape)
+print(len(total_num_tree_arr))
+
+# %%
+df["total_tree"] = total_num_tree_arr
+df["forest"] = forest_name_arr
+
+# %%
+print(df)
+print(df.columns)
+df.drop(df.columns.difference(["forest","accuracy","total_tree"]), 1, inplace = True)
+
+
+# %%
+df.to_csv(acc_file_path, index = False)
+
+"""
+FINISH REFORM ACCURACY FILE
+"""
+# %%
+
+"""
+CREATE FIGURE OF TRAININGS WITH 2 DATAFRAME: WITH NaN VALUE AND non NaN VALUE
+"""
+
+df_acc_train_HFI_NI_PROM_path = "/home/mddo/stage/M2S4/output/accuracy/train/accuracy_HFI_NI_PROM.csv"
+df_acc_train_HFI_NI_PROM_nan_path = "/home/mddo/stage/M2S4/output/accuracy/train/accuracy_HFI_NI_PROM_nan.csv"
+df_acc_test_HFI_NI_PROM_path = "/home/mddo/stage/M2S4/output/accuracy/test/accuracy_HFI_NI_PROM.csv"
+df_acc_test_HFI_NI_PROM_nan_path = "/home/mddo/stage/M2S4/output/accuracy/test/accuracy_HFI_NI_PROM_nan.csv"
+
+df_acc_train_HFI_NI_PROM = pd.read_csv(df_acc_train_HFI_NI_PROM_path)
+df_acc_train_HFI_NI_PROM.sort_values(by=["accuracy"])
+df_acc_train_HFI_NI_PROM.reset_index(inplace=True)
+df_acc_train_HFI_NI_PROM_nan = pd.read_csv(df_acc_train_HFI_NI_PROM_nan_path)
+df_acc_train_HFI_NI_PROM_nan.sort_values(by=["accuracy"])
+df_acc_train_HFI_NI_PROM_nan.reset_index(inplace=True)
+df_acc_test_HFI_NI_PROM = pd.read_csv(df_acc_test_HFI_NI_PROM_path)
+df_acc_test_HFI_NI_PROM.sort_values(by=["accuracy"])
+df_acc_test_HFI_NI_PROM.reset_index(inplace=True)
+df_acc_test_HFI_NI_PROM_nan = pd.read_csv(df_acc_test_HFI_NI_PROM_nan_path)
+df_acc_test_HFI_NI_PROM_nan.sort_values(by=["accuracy"])
+df_acc_test_HFI_NI_PROM_nan.reset_index(inplace=True)
+
+#%%
+merge_df = pd.concat([df_acc_train_HFI_NI_PROM_nan["accuracy"],df_acc_test_HFI_NI_PROM_nan["accuracy"]], axis = 1, join="inner")
+merge_df.columns = ["acc_train_HFI_NI_PROM_nan","acc_test_HFI_NI_PROM_nan"]
+#%%
+sns.set(style="whitegrid")
+merge_df.plot()
+# sns.lineplot(x = "total_tree", y = "accuracy", data = merge_df)
+fig = matplotlib.pyplot.gcf()
+fig.set_size_inches(18.5, 10.5)
+plt.rcParams["figure.figsize"] = (20,2)
+
+
+# %%
+"""
+END
+"""
+#%%
+
+predictions_HFI_NI_PROM_train = pd.read_csv("/home/mddo/stage/M2S4/output/predictions/train/HFI_NI_PROM/predictions_18_4_10_2106_92.0.csv")
+label_actu = predictions_HFI_NI_PROM_train["label"]
+label_pred = predictions_HFI_NI_PROM_train["predictions"]
+confusion_matrix = confusion_matrix(label_actu,label_pred)
+sns.heatmap(confusion_matrix)
 
 # %%

@@ -44,6 +44,7 @@ def training_RF(df, test_size, grid_search, type_df):
     n_bootstrap = grid_search['n_bootstrap'] 
 
     forest = random_forest_algorithm(train_df, n_tree = n_tree, n_bootstrap = n_bootstrap, n_feature = n_feature, dt_max_depth = n_max_depth)
+    total_number_of_tree = len(forest)
     predictions = random_forest_predictions(test_df, forest)
 
     predictions_array = np.asanyarray(predictions)
@@ -53,20 +54,20 @@ def training_RF(df, test_size, grid_search, type_df):
     accuracy = calculate_accuracy(predictions,test_df.label)
     accuracy_arr.append(accuracy)
 
-    #save report of predictions
-    test_df.to_csv("output/predictions/train/{}/output_predictions_{}_{}_{}_{}_{}.csv".format(type_df, n_tree, n_feature, n_max_depth, n_bootstrap,round(accuracy*100)),index=False)
+    #save file predictions 
+    test_df.to_csv("output/predictions/train/{}/predictions_forest_{}_{}_{}_{}_{}.csv".format(type_df, n_tree, n_feature, n_max_depth, n_bootstrap,round(accuracy*100)),index=False)
 
     #save forest - save environment
-    save_tree_path = "output/forest/{}/tree_{}_{}_{}_{}_{}.json".format(type_df,n_tree, n_feature, n_max_depth, n_bootstrap,round(accuracy*100))
-    save_file = create_file(save_tree_path)
-    with open(save_tree_path,"w") as save_tree:
-        save_tree.write(json.dumps(forest))
+    save_forest_path = "output/forest/{}/forest_{}_{}_{}_{}_{}.json".format(type_df,n_tree, n_feature, n_max_depth, n_bootstrap,round(accuracy*100))
+    save_file = create_file(save_forest_path)
+    with open(save_forest_path,"w") as save_forest:
+        save_forest.write(json.dumps(forest))
     
     #save hyper parametres and accuracy associated
     save_acc_hyper_para_path = "output/accuracy/train/accuracy_{}.csv".format(type_df)
     create_file(save_acc_hyper_para_path)
     with open(save_acc_hyper_para_path,"a") as save_hyper:
-        save_hyper.write("{},{},{},{},{}\n".format(n_tree, n_feature, n_max_depth, n_bootstrap, accuracy))
+        save_hyper.write("forest_{}_{}_{}_{}_{},{},{}\n".format(n_tree, n_feature, n_max_depth, n_bootstrap,round(accuracy*100), accuracy, total_number_of_tree))
 
     return accuracy_arr
 
