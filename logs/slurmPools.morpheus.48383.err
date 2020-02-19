@@ -1,0 +1,2 @@
+/home/mddo/anaconda3/envs/nguacon01/lib/python3.7/site-packages/statsmodels/tools/_testing.py:19: FutureWarning: pandas.util.testing is deprecated. Use the functions in the public API at pandas.testing instead.
+  import pandas.util.testing as tm
