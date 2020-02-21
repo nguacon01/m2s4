@@ -18,6 +18,7 @@ def bootstrapping(train_df, n_bootstrap):
 
 def random_forest_algorithm(train_df, n_tree, n_bootstrap, n_feature, dt_max_depth):
     for i in range(n_tree):
+        print(forest)
         df_bootstrapped = bootstrapping(train_df, n_bootstrap)
         tree = decision_tree_algorithm(df_bootstrapped, max_depth=dt_max_depth, random_subspace=n_feature)
         forest.append(tree)
