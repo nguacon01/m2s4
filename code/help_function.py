@@ -198,7 +198,7 @@ def neightborhood_index(insertion_index_file,non_coding_windows_file,save_file):
                 nonc_value = nonc_features[1]
                 if ii_orf == nonc_orf:
                     if float(nonc_value) == 0:
-                        NI = 0
+                        NI = np.nan
                     else:
                         NI = float(ii_value) / float(nonc_value)
                     save.write(ii_orf+ " " + str(NI) + "\n")
@@ -400,7 +400,7 @@ def cal_ratio_100_and_500_bppromoter(hits_100bppromoter_file,hits_100_500bppromo
                     if int(n_hits_interval) != 0:
                         ratio = int(n_hits_100) / int(n_hits_interval)
                     else:
-                        ratio = 0
+                        ratio = np.nan
                     save.write(hits_100_orf + " " + str(ratio) + "\n")
                     break
 # from diploid file of insertion positions, we get randomly some positions to create data which is equivalent with data of haploide

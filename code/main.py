@@ -11,20 +11,22 @@ import json
 def main():
 
     # #CREATE ORIGINAL DATA
-    # diploid_files_data = glob.glob("/home/mddo/stage/M2S4/data/diploid/*.out")
-    # for i in range(len(diploid_files_data)):
-    #     save_hits_reads_file = "/home/mddo/stage/M2S4/output/FY/haploid/hits_reads_per_orf.out"
-    #     save_hits_per_promoter_file = "/home/mddo/stage/M2S4/output/FY/haploid/hits_per_promoter.out"
-    #     save_hits_per_10kbNI_file = "/home/mddo/stage/M2S4/output/FY/haploid/hits_per_10kbNI.out"
-    #     save_orf_length_file = "/home/mddo/stage/M2S4/output/FY/haploid/orf_length.out"
-    #     save_insertion_index_file = "/home/mddo/stage/M2S4/output/FY/haploid/insertion_index.out"
-    #     save_non_coding_windows_file = "/home/mddo/stage/M2S4/output/FY/haploid/non_coding_windows.out"
-    #     save_neighborhood_index_file = "/home/mddo/stage/M2S4/output/FY/haploid/NI.out"
-    #     save_hit_free_interval_file = "/home/mddo/stage/M2S4/output/FY/haploid/HFI.out"
-    #     save_total_hits_count_10kb_NI = "/home/mddo/stage/M2S4/output/FY/haploid/total_hits_count_10kb_NI.out"
-    #     save_annotation_500bp_promoter_file = "/home/mddo/stage/M2S4/output/FY/haploid/annotation_500bppromoters.out"
-    #     save_hits_between_100_500bpprom = "/home/mddo/stage/M2S4/output/FY/haploid/hits_between_100_500bppromoter.out"
-    #     save_ratio_hits_in_100_500bppromoter_file = "/home/mddo/stage/M2S4/output/FY/haploid/ratio_hits_between_100_500bppromoter.out"
+    diploid_files_data = glob.glob("/home/mddo/stage/M2S4/data/diploid/*.out")
+    for i in range(len(diploid_files_data)):
+        save_hits_reads_file = "/home/mddo/stage/M2S4/output/FY/haploid/hits_reads_per_orf.out"
+        save_hits_per_promoter_file = "/home/mddo/stage/M2S4/output/FY/haploid/hits_per_promoter.out"
+        save_hits_per_10kbNI_file = "/home/mddo/stage/M2S4/output/FY/haploid/hits_per_10kbNI.out"
+        save_orf_length_file = "/home/mddo/stage/M2S4/output/FY/haploid/orf_length.out"
+        save_insertion_index_file = "/home/mddo/stage/M2S4/output/FY/haploid/insertion_index.out"
+        save_non_coding_windows_file = "/home/mddo/stage/M2S4/output/FY/haploid/non_coding_windows.out"
+        save_neighborhood_index_file = "/home/mddo/stage/M2S4/output/FY/haploid/NI.out"
+        save_hit_free_interval_file = "/home/mddo/stage/M2S4/output/FY/haploid/HFI.out"
+        save_total_hits_count_10kb_NI = "/home/mddo/stage/M2S4/output/FY/haploid/total_hits_count_10kb_NI.out"
+        save_annotation_500bp_promoter_file = "/home/mddo/stage/M2S4/output/FY/haploid/annotation_500bppromoters.out"
+        save_hits_between_100_500bpprom = "/home/mddo/stage/M2S4/output/FY/haploid/hits_between_100_500bppromoter.out"
+        save_ratio_hits_in_100_500bppromoter_file = "/home/mddo/stage/M2S4/output/FY/haploid/ratio_hits_between_100_500bppromoter.out"
+        
+        neightborhood_index(save_insertion_index_file, save_non_coding_windows_file, save_neighborhood_index_file)
 
     #     save_hits_in_100_500bppromoter_ratio_haplo_diplo = "/home/mddo/stage/M2S4/output/FY/diploid_/diploid_{}/diplo_hits_between_100_500bppromoter_ratio_haplo_diplo.out".format(i)
     #     save_NI_ratio_haplo_diplo = "/home/mddo/stage/M2S4/output/FY/diploid_/diploid_{}/diplo_NI_ratio_haplo_diplo.out".format(i)
@@ -65,33 +67,33 @@ def main():
 
     ##create file report
     ##type_df = ["HFI_NI_PROM","normal", "HFI_PROM", "NI_PROM", "HFI_NI"]
-    type_df = "HFI_NI_PROM_4"
-    list_forest = glob.glob("/home/mddo/stage/M2S4/output/forest/{}/*.json".format(type_df))
-    save_file_report = "/home/mddo/stage/M2S4/output/accuracy/test/accuracy_{}.csv".format(type_df)
-    # create_file(save_file_report)
-    with open(save_file_report,"a") as save:
-        #fetch all trained forests
-        for forest_path in list_forest:
-            with open(forest_path) as json_data:
-                #get forest attributes
-                parametre_info = forest_path.strip().split("/")[-1].split(".")[0]
+    # type_df = "HFI_NI_PROM_4"
+    # list_forest = glob.glob("/home/mddo/stage/M2S4/output/forest/{}/*.json".format(type_df))
+    # save_file_report = "/home/mddo/stage/M2S4/output/accuracy/test/accuracy_{}.csv".format(type_df)
+    # # create_file(save_file_report)
+    # with open(save_file_report,"a") as save:
+    #     #fetch all trained forests
+    #     for forest_path in list_forest:
+    #         with open(forest_path) as json_data:
+    #             #get forest attributes
+    #             parametre_info = forest_path.strip().split("/")[-1].split(".")[0]
                        
-                #load forest
-                forest = json.load(json_data)
-                total_number_of_tree = len(forest)
+    #             #load forest
+    #             forest = json.load(json_data)
+    #             total_number_of_tree = len(forest)
                      
-                # diploid_files_data = glob.glob("/home/mddo/stage/M2S4/data/diploid/*.out")
-                # for i in range(len(diploid_files_data)):
-                #define test data
-                test_df = pd.read_csv("/home/mddo/stage/M2S4/output/FY/diploid_/diploid_4/df/test/HFI_NI_PROM.csv".format(type_df))
-                predictions = random_forest_predictions(test_df, forest)
-                predictions_array = np.asanyarray(predictions)
-                accuracy = calculate_accuracy(predictions,test_df.label)
-                test_df["predictions"] = predictions_array
-                # save predictions output
-                test_df.to_csv("/home/mddo/stage/M2S4/output/predictions/test/{}/predictions_{}_{}.csv".format(type_df, parametre_info, round(accuracy*100)),index=False)
-                print(str(accuracy) + "," + parametre_info+"\n")
-                save.write("{},{},{}\n".format(parametre_info,accuracy,total_number_of_tree))
+    #             # diploid_files_data = glob.glob("/home/mddo/stage/M2S4/data/diploid/*.out")
+    #             # for i in range(len(diploid_files_data)):
+    #             #define test data
+    #             test_df = pd.read_csv("/home/mddo/stage/M2S4/output/FY/diploid_/diploid_4/df/test/HFI_NI_PROM.csv".format(type_df))
+    #             predictions = random_forest_predictions(test_df, forest)
+    #             predictions_array = np.asanyarray(predictions)
+    #             accuracy = calculate_accuracy(predictions,test_df.label)
+    #             test_df["predictions"] = predictions_array
+    #             # save predictions output
+    #             test_df.to_csv("/home/mddo/stage/M2S4/output/predictions/test/{}/predictions_{}_{}.csv".format(type_df, parametre_info, round(accuracy*100)),index=False)
+    #             print(str(accuracy) + "," + parametre_info+"\n")
+    #             save.write("{},{},{}\n".format(parametre_info,accuracy,total_number_of_tree))
 
 
                 
