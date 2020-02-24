@@ -201,7 +201,7 @@ def neightborhood_index(insertion_index_file,non_coding_windows_file,save_file):
                         NI = np.nan
                     else:
                         NI = float(ii_value) / float(nonc_value)
-                    save.write(ii_orf+ "," + str(NI) + "\n")
+                    save.write(ii_orf+ " " + str(NI) + "\n")
                     break
 
 
@@ -246,7 +246,7 @@ def merge_df(hits_reads_file, hits_promoter_file, ratio_promoter_file, ORF_lengt
     insertion_index_df.columns = ["orf","insertion_index"]
 
     #Neighborhood index
-    NI_df = pd.read_csv(NI_file)
+    NI_df = pd.read_csv(NI_file,sep=" ",header=None)
     NI_df.columns = ["orf","NI"]
 
     #Neighborhood index between haploide and diploide
@@ -287,16 +287,22 @@ def merge_df(hits_reads_file, hits_promoter_file, ratio_promoter_file, ORF_lengt
     hits_reads_df.reset_index(drop = True)
 
     #Fill missing data with KNN
-    missing_data_columns = hits_reads_df.columns[df.isna().any()].tolist()
-    for missing_data_col in missing_data_columns:
-        hits_reads_df[missing_data_col] = knn_impute(
-            target=hits_reads_df[missing_data_col], 
-            attributes=hits_reads_df.drop([missing_data_col], 1),
-            aggregation_method="median", 
-            k_neighbors=10, numeric_distance='euclidean',
-            categorical_distance='hamming', 
-            missing_neighbors_threshold=0.8
-        )
+    # missing_data_columns = hits_reads_df.columns[hits_reads_df.isna().any()].tolist()
+    # for missing_data_col in missing_data_columns:
+    #     hits_reads_df[missing_data_col] = knn_impute(
+    #         target=hits_reads_df[missing_data_col], 
+    #         attributes=hits_reads_df.drop([missing_data_col], 1),
+    #         aggregation_method="median", 
+    #         k_neighbors=100, numeric_distance='euclidean',
+    #         categorical_distance='hamming', 
+    #         missing_neighbors_threshold=0.8
+    #     )
+
+    #Fill missing data with linear method
+    # hits_reads_df = hits_reads_df.interpolate(method ='linear', limit_direction ='forward')
+
+    #Drop NaN
+    hits_reads_df = hits_reads_df.dropna(how = "any")
 
     # hits_reads_df = pd.DataFrame(hits_reads_df_arr)
 
@@ -401,7 +407,7 @@ def cal_ratio_100_and_500_bppromoter(hits_100bppromoter_file,hits_100_500bppromo
                         ratio = int(n_hits_100) / int(n_hits_interval)
                     else:
                         ratio = np.nan
-                    save.write(hits_100_orf + "," + str(ratio) + "\n")
+                    save.write(hits_100_orf + " " + str(ratio) + "\n")
                     break
 # from diploid file of insertion positions, we get randomly some positions to create data which is equivalent with data of haploide
 # the input data are: diploid_insertion_position_read_file - containt all insertion positions of diploide
@@ -431,22 +437,21 @@ def generate_random_diploid_insertion_position(diploid_insertion_position_read_f
 # return a file with name of ORF, ratio of HFI or NI or Insertion index between haploide and diploide
 def ratio_haploid_diploid(haploid_file, diploid_file, save_file):
     with open(haploid_file) as haploid_content, open(diploid_file) as diploid_content, open (save_file,"w") as save:
-        print("dung")
         for data_haplo in haploid_content:
-            data_haplo_features = data_haplo.strip().split(",")
+            data_haplo_features = data_haplo.strip().split(" ")
             orf_haplo = data_haplo_features[0]
             figure_haplo = float(data_haplo_features[1])
             for data_diplo in diploid_content:
-                data_diplo_features = data_diplo.strip().split(",")
+                data_diplo_features = data_diplo.strip().split(" ")
                 orf_diplo = data_diplo_features[0]
                 figure_diplo = float(data_diplo_features[1])
                 if orf_haplo == orf_diplo:
                     # prevent from divise by 0
-                    if figure_diplo != 0:
+                    if figure_diplo != 0 and figure_diplo != np.nan:
                         ratio = figure_haplo/figure_diplo
                     else:
                         ratio = np.nan
-                    save.write(orf_haplo + "," + str(ratio) + "\n")
+                    save.write(orf_haplo + " " + str(ratio) + "\n")
                     break
 
 def generate_all_insertion_site_by_orf(insertion_position_file,orf_annotation_file, save_file):

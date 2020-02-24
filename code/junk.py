@@ -101,9 +101,9 @@ def main():
     save_diploid_ratio_hits_in_100_500bppromoter_file = "/home/mddo/stage/M2S4/output/FY/diploid/diploid_{}/diplo_ratio_hits_between_100_500bppromoter.out".format(i)
 
     
-    save_hits_in_100_500bppromoter_ratio_haplo_diplo = "/home/mddo/stage/M2S4/output/FY/diploid/diploid_{}/diplo_hits_between_100_500bppromoter_ratio_haplo_diplo.out".format(i)
-    save_NI_ratio_haplo_diplo = "/home/mddo/stage/M2S4/output/FY/diploid/diploid_{}/diplo_NI_ratio.out".format(i)
-    save_HFI_ratio_haplo_diplo = "/home/mddo/stage/M2S4/output/FY/diploid/diploid_{}/diplo_HFI_ratio_haplo_diplo.out".format(i)
+    save_hits_in_100_500bppromoter_ratio_haplo_diplo = "/home/mddo/stage/M2S4/output/FY/diploid_/diploid_{}/diplo_hits_between_100_500bppromoter_ratio_haplo_diplo.out".format(i)
+    save_NI_ratio_haplo_diplo = "/home/mddo/stage/M2S4/output/FY/diploid_diploid_{}/diplo_NI_ratio.out".format(i)
+    save_HFI_ratio_haplo_diplo = "/home/mddo/stage/M2S4/output/FY/diploid_/diploid_{}/diplo_HFI_ratio_haplo_diplo.out".format(i)
 
     ##--------------------#generate data files#--------------------#
     #hits count reads count generate
