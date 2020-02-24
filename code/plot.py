@@ -212,3 +212,46 @@ confusion_matrix = confusion_matrix(label_actu,label_pred)
 sns.heatmap(confusion_matrix)
 
 # %%
+df = pd.read_csv("/home/mddo/stage/M2S4/data/FY/final_annot.csv", sep = ";")
+
+# %%
+print(df["systematic_name"])
+
+# %%
+df = df.drop(columns = ["AnnotSGD", "AnnotDowell", "NoteFinal"])
+
+# %%
+print(df)
+
+# %%
+drop_index = df[df["AnnotFinal"] == "decrease"].index
+print(drop_index)
+
+#%%
+df.drop(drop_index, inplace = True)
+
+# %%
+drop_index = df[df["AnnotFinal"] == "decrease_galactose"].index
+print(drop_index)
+df.drop(drop_index, inplace = True)
+df.shape
+
+# %%
+drop_index = df[df["AnnotFinal"] == "Divergent"].index
+print(drop_index)
+df.drop(drop_index, inplace = True)
+df.shape
+
+# %%
+df.to_csv("/home/mddo/stage/M2S4/data/FY/final_annot.csv", index = False)
+
+# %%
+df = df.replace("No","non_ess")
+
+# %%
+df = df.replace("Yes","ess")
+
+# %%
+df.to_csv("/home/mddo/stage/M2S4/data/FY/final_annot.csv", index = False)
+
+# %%
