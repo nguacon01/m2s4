@@ -4,7 +4,7 @@ import random
 import pandas as pd
 from helper_functions import train_test_split, calculate_accuracy
 from decision_tree import decision_tree_algorithm, decision_tree_predictions
-from help_function import create_file,find_false_positive,frequency_false_positive
+from help_function import create_file,find_false_positive,frequency_false_positive, create_folder
 import json
 forest = []
 #randomly create sub dataframes based on train_df
@@ -18,7 +18,6 @@ def bootstrapping(train_df, n_bootstrap):
 
 def random_forest_algorithm(train_df, n_tree, n_bootstrap, n_feature, dt_max_depth):
     for i in range(n_tree):
-        print(forest)
         df_bootstrapped = bootstrapping(train_df, n_bootstrap)
         tree = decision_tree_algorithm(df_bootstrapped, max_depth=dt_max_depth, random_subspace=n_feature)
         forest.append(tree)
@@ -56,11 +55,13 @@ def training_RF(df, test_size, grid_search, type_df):
     accuracy_arr.append(accuracy)
 
     #save file predictions 
+    create_folder("output/predictions/train/{}".format(type_df))
     test_df.to_csv("output/predictions/train/{}/predictions_forest_{}_{}_{}_{}_{}.csv".format(type_df, n_tree, n_feature, n_max_depth, n_bootstrap,round(accuracy*100)),index=False)
 
     #save forest - save environment
+    create_folder("output/forest/{}".format(type_df))
     save_forest_path = "output/forest/{}/forest_{}_{}_{}_{}_{}.json".format(type_df,n_tree, n_feature, n_max_depth, n_bootstrap,round(accuracy*100))
-    save_file = create_file(save_forest_path)
+    create_file(save_forest_path)
     with open(save_forest_path,"w") as save_forest:
         save_forest.write(json.dumps(forest))
     

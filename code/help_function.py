@@ -301,8 +301,11 @@ def merge_df(hits_reads_file, hits_promoter_file, ratio_promoter_file, ORF_lengt
     #Fill missing data with linear method
     # hits_reads_df = hits_reads_df.interpolate(method ='linear', limit_direction ='forward')
 
+    #Fill missing data with 0
+    hits_reads_df = hits_reads_df.fillna(0)
+
     #Drop NaN
-    hits_reads_df = hits_reads_df.dropna(how = "any")
+    # hits_reads_df = hits_reads_df.dropna(how = "any")
 
     # hits_reads_df = pd.DataFrame(hits_reads_df_arr)
 
