@@ -131,9 +131,14 @@ def main():
         
 
     ##TESTING_SESSION
-    type_data = "HFI_NI_PROM_zerofill_0"
-    test_df_path = "/home/mddo/stage/M2S4/output/FY/diploid_/diploid_0/df/test/HFI_NI_PROM_zerofill.csv".format(type_data)
-    testing_RF(test_df_path, type_data)
+    # type_data = "HFI_NI_PROM_zerofill_0"
+    # test_df_path = "/home/mddo/stage/M2S4/output/FY/diploid_/diploid_0/df/test/HFI_NI_PROM_zerofill.csv".format(type_data)
+    # testing_RF(test_df_path, type_data)
+
+
+    type_df = "HFI_NI_PROM_0"
+    session = "train"
+    plot_confusion_matrix(session, type_df)
     
 
 

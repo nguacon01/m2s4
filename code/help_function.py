@@ -5,6 +5,9 @@ import numpy as np
 from sklearn.preprocessing import MinMaxScaler, StandardScaler
 import glob
 from knn_impute import knn_impute
+import matplotlib.pyplot as plt
+import matplotlib
+import seaborn as sns
 
 
 #create file and folder
@@ -514,3 +517,40 @@ def remove_fp_gene():
 
             
 
+def plot_confusion_matrix(session, type_df):
+    accuracy_file = "/home/mddo/stage/M2S4/output/accuracy/{}/accuracy_{}.csv".format(session,type_df)
+    accuracy_df = pd.read_csv(accuracy_file)
+    # accuracy_df.columns = ["forest","accuracy","total_tree"]
+    # forests = accuracy_df["forest"]
+    accuracy_df_array = np.asanyarray(accuracy_df)
+    for acc_df_element in accuracy_df_array:
+        forest_name = acc_df_element[0]
+        acc_value = acc_df_element[1]
+        total_tree = acc_df_element[2]
+        if session == "train":
+            prediction_path = "/home/mddo/stage/M2S4/output/predictions/{}/{}/predictions_{}.csv".format(session,type_df,forest_name)
+        else:
+            prediction_path = "/home/mddo/stage/M2S4/output/predictions/{}/{}/predictions_{}_{}.0.csv".format(session,type_df,forest_name, round(acc_value*100))
+        plt.figure(figsize=(10,10))
+        df = pd.read_csv(prediction_path)
+        confusion_matrix = pd.crosstab(df['label'],df['predictions'], rownames = ['Actual'], colnames=['Predict'])
+        ax = sns.heatmap(confusion_matrix,
+                    annot=True,
+                    annot_kws={"size": 22,},
+                    fmt='g',
+                    vmin=0, vmax=600,
+                    linewidths=.5,
+                    cbar=False)
+        plt.xticks(size=20)
+        plt.yticks(size=20)
+        plt.xlabel("Predict",size=14)
+        plt.ylabel("Actual", size=14)
+
+        bottom, top = ax.get_ylim()
+        ax.set_ylim(bottom + 0.5, top - 0.5)
+
+        # plt.rcParams.update({'font.size': 14})
+        # plt.show()
+        save_folder_path = "/home/mddo/stage/M2S4/images/{}/{}/".format(session,type_df)
+        create_folder(save_folder_path)
+        plt.savefig(save_folder_path + "/confusion_matrix_{}.png".format(forest_name))
