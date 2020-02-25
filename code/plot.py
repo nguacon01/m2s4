@@ -255,3 +255,12 @@ df = df.replace("Yes","ess")
 df.to_csv("/home/mddo/stage/M2S4/data/FY/final_annot.csv", index = False)
 
 # %%
+df = pd.read_csv("/home/mddo/stage/M2S4/output/FY/diploid_/diploid_0/df/HFI_NI_PROM.csv")
+
+# %%
+df.info()
+
+# %%
+
+
+# %%

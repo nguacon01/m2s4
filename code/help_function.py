@@ -265,7 +265,7 @@ def merge_df(hits_reads_file, hits_promoter_file, ratio_promoter_file, ORF_lengt
 
     hits_reads_df["hits_count_pro"] = hits_promoter_df.orf.map(hits_promoter_df.set_index("orf")["hits_count_pro"].to_dict())
 
-    # hits_reads_df["ratio_hits_prom"] = hits_promoter_df.orf.map(ratio_hits_prom_df.set_index("orf")["ratio_hits_prom"].to_dict())
+    hits_reads_df["ratio_hits_prom"] = hits_promoter_df.orf.map(ratio_hits_prom_df.set_index("orf")["ratio_hits_prom"].to_dict())
 
     hits_reads_df["orf_len"] = hits_reads_df.orf.map(orf_len_df.set_index("orf")["orf_len"].to_dict())
 
@@ -273,11 +273,11 @@ def merge_df(hits_reads_file, hits_promoter_file, ratio_promoter_file, ORF_lengt
 
     hits_reads_df["NI"] = hits_reads_df.orf.map(NI_df.set_index("orf")["NI"].to_dict())
 
-    # hits_reads_df["NI_ratio"] = hits_reads_df.orf.map(NI_ratio_df.set_index("orf")["NI_ratio"].to_dict())
+    hits_reads_df["NI_ratio"] = hits_reads_df.orf.map(NI_ratio_df.set_index("orf")["NI_ratio"].to_dict())
 
     hits_reads_df["HFI"] = hits_reads_df.orf.map(HFI_df.set_index("orf")["HFI"].to_dict())
 
-    # hits_reads_df["HFI_ratio"] = hits_reads_df.orf.map(HFI_ratio_df.set_index("orf")["HFI_ratio"].to_dict())
+    hits_reads_df["HFI_ratio"] = hits_reads_df.orf.map(HFI_ratio_df.set_index("orf")["HFI_ratio"].to_dict())
 
     hits_reads_df["label"] = hits_reads_df.orf.map(label_df.set_index("orf")["label"].to_dict())
 
@@ -286,7 +286,7 @@ def merge_df(hits_reads_file, hits_promoter_file, ratio_promoter_file, ORF_lengt
     hits_reads_df = hits_reads_df.dropna(subset=['label'])
     hits_reads_df.reset_index(drop = True)
 
-    #Fill missing data with KNN
+    ## Fill missing data with KNN
     # missing_data_columns = hits_reads_df.columns[hits_reads_df.isna().any()].tolist()
     # for missing_data_col in missing_data_columns:
     #     hits_reads_df[missing_data_col] = knn_impute(
@@ -302,10 +302,10 @@ def merge_df(hits_reads_file, hits_promoter_file, ratio_promoter_file, ORF_lengt
     # hits_reads_df = hits_reads_df.interpolate(method ='linear', limit_direction ='forward')
 
     #Fill missing data with 0
-    hits_reads_df = hits_reads_df.fillna(0)
+    # hits_reads_df = hits_reads_df.fillna(0)
 
     #Drop NaN
-    # hits_reads_df = hits_reads_df.dropna(how = "any")
+    hits_reads_df = hits_reads_df.dropna(how = "any")
 
     # hits_reads_df = pd.DataFrame(hits_reads_df_arr)
 

@@ -6,6 +6,7 @@ from helper_functions import train_test_split, calculate_accuracy
 from decision_tree import decision_tree_algorithm, decision_tree_predictions
 from help_function import create_file,find_false_positive,frequency_false_positive, create_folder
 import json
+import glob
 forest = []
 #randomly create sub dataframes based on train_df
 #input: train_df
@@ -73,3 +74,37 @@ def training_RF(df, test_size, grid_search, type_df):
 
     return accuracy_arr
 
+def testing_RF(test_df_path, type_df):
+    train_accuracy_file = "/home/mddo/stage/M2S4/output/accuracy/train/accuracy_{}.csv".format(type_df)
+    train_accuracy_df = pd.read_csv(train_accuracy_file)
+    train_accuracy_df.columns = ["forest","accuracy","total_tree"]
+    trained_forests = train_accuracy_df["forest"]
+
+    save_file_report = "/home/mddo/stage/M2S4/output/accuracy/test/accuracy_{}.csv".format(type_df)
+
+    for forest_name in trained_forests:
+        
+        # create_file(save_file_report)
+        with open(save_file_report,"a") as save:
+            #fetch all trained forests
+            forest_path = "/home/mddo/stage/M2S4/output/forest/{}/{}.json".format(type_df,forest_name)
+            with open(forest_path) as json_data:
+                #get forest attributes
+                parametre_info = forest_name
+                    
+                #load forest
+                forest = json.load(json_data)
+                total_number_of_tree = len(forest)
+                    
+                # diploid_files_data = glob.glob("/home/mddo/stage/M2S4/data/diploid/*.out")
+                # for i in range(len(diploid_files_data)):
+                #define test data
+                test_df = pd.read_csv(test_df_path)
+                predictions = random_forest_predictions(test_df, forest)
+                predictions_array = np.asanyarray(predictions)
+                accuracy = calculate_accuracy(predictions,test_df.label)
+                test_df["predictions"] = predictions_array
+                # save predictions output
+                test_df.to_csv("/home/mddo/stage/M2S4/output/predictions/test/{}/predictions_{}_{}.csv".format(type_df, parametre_info, round(accuracy*100)),index=False)
+                print(str(accuracy) + "," + parametre_info+"\n")
+                save.write("{},{},{}\n".format(parametre_info,accuracy,total_number_of_tree))

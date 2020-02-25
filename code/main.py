@@ -33,7 +33,7 @@ def main():
     #     save_HFI_ratio_haplo_diplo = "/home/mddo/stage/M2S4/output/FY/diploid_/diploid_{}/diplo_HFI_ratio_haplo_diplo.out".format(i)
 
     #     label_df = "/home/mddo/stage/M2S4/data/FY/final_annot.csv"
-    #     save_file_dataframe = "/home/mddo/stage/M2S4/output/FY/diploid_/diploid_{}/df/HFI_NI_PROM_zerofill.csv".format(i)
+    #     save_file_dataframe = "/home/mddo/stage/M2S4/output/FY/diploid_/diploid_{}/df/HFI_NI_PROM.csv".format(i)
     #     # # #---------------merge data file--------------#
     #     merge_df(
     #         save_hits_reads_file, 
@@ -86,29 +86,30 @@ def main():
                 
 
     # # #GENERATE DATA BASE ON RATIO TRAINING AND TESTING
-    # type_data = "HFI_NI_PROM_zerofill"
+    # types_data = ["HFI_NI_PROM","HFI_NI_PROM_dropna","HFI_NI_PROM_zerofill","HFI_NI_PROM_linear","normal"]
     # diploid_files_data = glob.glob("/home/mddo/stage/M2S4/data/diploid/*.out")
     # for i in range(len(diploid_files_data)):
-    #     df_path = "/home/mddo/stage/M2S4/output/FY/diploid_/diploid_{}/df/{}.csv".format(i, type_data)
-    #     df = pd.read_csv(df_path)
-    #     test_size = 0.43
-    #     if isinstance(test_size, float):
-    #         test_size = round(test_size * len(df))
+    #     for type_data in types_data:
+    #         df_path = "/home/mddo/stage/M2S4/output/FY/diploid_/diploid_{}/df/{}.csv".format(i, type_data)
+    #         df = pd.read_csv(df_path)
+    #         test_size = 0.43
+    #         if isinstance(test_size, float):
+    #             test_size = round(test_size * len(df))
 
-    #     indices = df.index.tolist()
-    #     test_indices = random.sample(population=indices, k=test_size)
+    #         indices = df.index.tolist()
+    #         test_indices = random.sample(population=indices, k=test_size)
 
-    #     test_df = df.loc[test_indices]
-    #     test_df.to_csv("/home/mddo/stage/M2S4/output/FY/diploid_/diploid_{}/df/test/{}.csv".format(i,type_data),index=False)
-    #     train_df = df.drop(test_indices)
-    #     train_df.to_csv("/home/mddo/stage/M2S4/output/FY/diploid_/diploid_{}/df/train/{}.csv".format(i,type_data),index=False)
+    #         test_df = df.loc[test_indices]
+    #         test_df.to_csv("/home/mddo/stage/M2S4/output/FY/diploid_/diploid_{}/df/test/{}.csv".format(i,type_data),index=False)
+    #         train_df = df.drop(test_indices)
+    #         train_df.to_csv("/home/mddo/stage/M2S4/output/FY/diploid_/diploid_{}/df/train/{}.csv".format(i,type_data),index=False)
 
 
 
     ##TRAINING SESSION - non normal
-    for i in range(100):
-        type_df = "HFI_NI_PROM_zerofill_0"
-        save_file_dataframe = "/home/mddo/stage/M2S4/output/FY/diploid_/diploid_0/df/train/HFI_NI_PROM_zerofill.csv"
+    for i in range(30):
+        type_df = "HFI_NI_PROM_0"
+        save_file_dataframe = "/home/mddo/stage/M2S4/output/FY/diploid_/diploid_0/df/train/HFI_NI_PROM.csv"
         df = pd.read_csv(save_file_dataframe)
         n_columns = len(df.columns) - 2
     
@@ -128,6 +129,11 @@ def main():
     
         training_RF(df, test_size = 0.2, grid_search = grid, type_df = type_df)
         
+
+    ##TESTING_SESSION
+    type_data = "HFI_NI_PROM_0"
+    test_df_path = "/home/mddo/stage/M2S4/output/FY/diploid_/diploid_0/df/test/HFI_NI_PROM.csv".format(type_data)
+    testing_RF(test_df_path, type_data)
     
 
 
