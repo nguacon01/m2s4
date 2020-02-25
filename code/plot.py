@@ -8,6 +8,7 @@ from sklearn.metrics import confusion_matrix
 from helper_functions import train_test_split
 from random import seed
 import json
+from sklearn.metrics import precision_recall_fscore_support
 # %%
 sns.lineplot(data=pd.DataFrame(dataFrame["accuracy_HFI_NI"]), palette="tab10", linewidth=2.5, color = "orange",markers="o")
 
@@ -262,5 +263,34 @@ df.info()
 
 # %%
 
+
+# %%
+df = pd.read_csv("/home/mddo/stage/M2S4/output/predictions/train/HFI_NI_PROM_zerofill_0/predictions_forest_19_5_10_1789_92.0.csv")
+plt.figure(figsize=(10,10))
+confusion_matrix = pd.crosstab(df['label'],df['predictions'], rownames = ['Actual'], colnames=['Predict'])
+ax = sns.heatmap(confusion_matrix,
+            annot=True,
+            annot_kws={"size": 22,},
+            fmt='g',
+            vmin=0, vmax=600,
+            linewidths=.5,
+            cbar=False)
+plt.xticks(size=20)
+plt.yticks(size=20)
+plt.xlabel("Predict",size=14)
+plt.ylabel("Actual", size=14)
+
+bottom, top = ax.get_ylim()
+ax.set_ylim(bottom + 0.5, top - 0.5)
+
+# plt.rcParams.update({'font.size': 14})
+# plt.show()# %%
+plt.savefig("/home/mddo/stage/M2S4/images/confusion_matrix_train_zerofill.png")
+
+
+# %%
+y_true = df["label"]
+y_pred = df["predictions"]
+precision_recall_fscore_support(y_true, y_pred, average='macro')
 
 # %%

@@ -516,13 +516,16 @@ def remove_fp_gene():
     df.drop(df[condition].index, inplace = True)
 
             
-
+"""
+This function is about to plot all the confusion matrix which is existen in accuracy files
+session: train/test
+type_df: HFI_NI_PROM / HFI_NI_PROM_nan / HFI_NI_PROM_dropna / HFI_NI_PROM_zerofill / .....
+"""
 def plot_confusion_matrix(session, type_df):
     accuracy_file = "/home/mddo/stage/M2S4/output/accuracy/{}/accuracy_{}.csv".format(session,type_df)
     accuracy_df = pd.read_csv(accuracy_file)
-    # accuracy_df.columns = ["forest","accuracy","total_tree"]
-    # forests = accuracy_df["forest"]
     accuracy_df_array = np.asanyarray(accuracy_df)
+    
     for acc_df_element in accuracy_df_array:
         forest_name = acc_df_element[0]
         acc_value = acc_df_element[1]
