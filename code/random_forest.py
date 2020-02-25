@@ -105,6 +105,7 @@ def testing_RF(test_df_path, type_df):
                 accuracy = calculate_accuracy(predictions,test_df.label)
                 test_df["predictions"] = predictions_array
                 # save predictions output
+                create_folder("/home/mddo/stage/M2S4/output/predictions/test/{}".format(type_df))
                 test_df.to_csv("/home/mddo/stage/M2S4/output/predictions/test/{}/predictions_{}_{}.csv".format(type_df, parametre_info, round(accuracy*100)),index=False)
                 print(str(accuracy) + "," + parametre_info+"\n")
                 save.write("{},{},{}\n".format(parametre_info,accuracy,total_number_of_tree))

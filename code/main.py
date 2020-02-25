@@ -107,32 +107,32 @@ def main():
 
 
     ##TRAINING SESSION - non normal
-    for i in range(30):
-        type_df = "HFI_NI_PROM_0"
-        save_file_dataframe = "/home/mddo/stage/M2S4/output/FY/diploid_/diploid_0/df/train/HFI_NI_PROM.csv"
-        df = pd.read_csv(save_file_dataframe)
-        n_columns = len(df.columns) - 2
+    # for i in range(30):
+    #     type_df = "HFI_NI_PROM_dropna_0"
+    #     save_file_dataframe = "/home/mddo/stage/M2S4/output/FY/diploid_/diploid_0/df/train/HFI_NI_PROM_dropna.csv"
+    #     df = pd.read_csv(save_file_dataframe)
+    #     n_columns = len(df.columns) - 2
     
-        #create search grid
-        n_tree = random.sample(population = list(range(10,30)), k = 1)
-        n_feature = random.sample(population = list(range(4,n_columns+1)), k = 1)
-        n_max_depth = random.sample(population = list(range(3,20)), k = 1)
-        n_bootstrap = random.sample(population = list(range(1000,2000)), k = 1)
+    #     #create search grid
+    #     n_tree = random.sample(population = list(range(10,30)), k = 1)
+    #     n_feature = random.sample(population = list(range(4,n_columns+1)), k = 1)
+    #     n_max_depth = random.sample(population = list(range(3,20)), k = 1)
+    #     n_bootstrap = random.sample(population = list(range(1000,2000)), k = 1)
     
-        grid= {
-            'n_tree' : n_tree[0],
-            'n_feature' : n_feature[0],
-            'n_max_depth' : n_max_depth[0],
-            'n_bootstrap' : n_bootstrap[0]
-        }
-        print(grid)
+    #     grid= {
+    #         'n_tree' : n_tree[0],
+    #         'n_feature' : n_feature[0],
+    #         'n_max_depth' : n_max_depth[0],
+    #         'n_bootstrap' : n_bootstrap[0]
+    #     }
+    #     print(grid)
     
-        training_RF(df, test_size = 0.2, grid_search = grid, type_df = type_df)
+    #     training_RF(df, test_size = 0.2, grid_search = grid, type_df = type_df)
         
 
     ##TESTING_SESSION
-    type_data = "HFI_NI_PROM_0"
-    test_df_path = "/home/mddo/stage/M2S4/output/FY/diploid_/diploid_0/df/test/HFI_NI_PROM.csv".format(type_data)
+    type_data = "HFI_NI_PROM_zerofill_0"
+    test_df_path = "/home/mddo/stage/M2S4/output/FY/diploid_/diploid_0/df/test/HFI_NI_PROM_zerofill.csv".format(type_data)
     testing_RF(test_df_path, type_data)
     
 
