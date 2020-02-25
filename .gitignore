@@ -1,3 +1,6 @@
 *.err
 *.pyc
 logs/*.out
+output/FY/diploid
+output/FY/accuracy
+output/FY/trees
