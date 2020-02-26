@@ -5,6 +5,7 @@ import pandas as pd
 from helper_functions import train_test_split, calculate_accuracy
 from decision_tree import decision_tree_algorithm, decision_tree_predictions
 from help_function import create_file,find_false_positive,frequency_false_positive, create_folder
+from sklearn.metrics import precision_recall_fscore_support
 import json
 import glob
 forest = []
@@ -51,6 +52,8 @@ def training_RF(df, test_size, grid_search, type_df):
     predictions_array = np.asanyarray(predictions)
 
     test_df["predictions"] = predictions_array
+
+    
 
     accuracy = calculate_accuracy(predictions,test_df.label)
     accuracy_arr.append(accuracy)

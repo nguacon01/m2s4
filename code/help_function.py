@@ -490,23 +490,7 @@ def generate_all_insertion_site_by_orf(insertion_position_file,orf_annotation_fi
                 else:
                     save.write("\n")
                     break
-                                       
-def fill_missing_data(df_path):
-    df = pd.read_csv(df_path)
-    df.columns = ["orf", "values"]
-    #Fill missing data with KNN
-    missing_data_columns = df.columns[df.isna().any()].tolist()
-    for missing_data_col in missing_data_columns:
-        df[missing_data_col] = knn_impute(
-            target = df[missing_data_col], 
-            attributes = df.drop([missing_data_col], 1),
-            aggregation_method = "median", 
-            k_neighbors = 100, 
-            numeric_distance = 'euclidean',
-            categorical_distance = 'hamming', 
-            missing_neighbors_threshold = 0.8
-        )
-    df.to_csv(df_path, index = False, header = False)     
+                 
 
 def remove_fp_gene():
     orf_drop = fp_df[fp_df["freq"] >= 10].orf

@@ -294,3 +294,15 @@ y_pred = df["predictions"]
 precision_recall_fscore_support(y_true, y_pred, average='macro')
 
 # %%
+df = pd.read_csv("/home/mddo/stage/M2S4/output/predictions/train/HFI_NI_PROM_zerofill_0/predictions_forest_19_5_10_1789_92.0.csv")
+
+# %%
+y_true = df["label"]
+y_pred = df["predictions"]
+metric = precision_recall_fscore_support(y_true, y_pred, )
+
+
+# %%
+print(metric)
+
+# %%

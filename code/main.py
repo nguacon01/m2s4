@@ -136,8 +136,8 @@ def main():
     # testing_RF(test_df_path, type_data)
 
 
-    type_df = "HFI_NI_PROM_0"
-    session = "train"
+    type_df = "HFI_NI_PROM_linear_0"
+    session = "test"
     plot_confusion_matrix(session, type_df)
     
 
