@@ -11,43 +11,44 @@ import json
 def main():
 
     # #CREATE ORIGINAL DATA
-    # diploid_files_data = glob.glob("/home/mddo/stage/M2S4/data/diploid/*.out")
-    # for i in range(len(diploid_files_data)):
+    strain_name = "FY"
+    diploid_files_data = glob.glob("/home/mddo/stage/M2S4/data/diploid/*.out")
+    for i in range(len(diploid_files_data)):
         
-    #     save_hits_reads_file = "/home/mddo/stage/M2S4/output/FY/haploid/hits_reads_per_orf.out"
-    #     save_hits_per_promoter_file = "/home/mddo/stage/M2S4/output/FY/haploid/hits_per_promoter.out"
-    #     save_hits_per_10kbNI_file = "/home/mddo/stage/M2S4/output/FY/haploid/hits_per_10kbNI.out"
-    #     save_orf_length_file = "/home/mddo/stage/M2S4/output/FY/haploid/orf_length.out"
-    #     save_insertion_index_file = "/home/mddo/stage/M2S4/output/FY/haploid/insertion_index.out"
-    #     save_non_coding_windows_file = "/home/mddo/stage/M2S4/output/FY/haploid/non_coding_windows.out"
-    #     save_neighborhood_index_file = "/home/mddo/stage/M2S4/output/FY/haploid/NI.out"
-    #     save_hit_free_interval_file = "/home/mddo/stage/M2S4/output/FY/haploid/HFI.out"
-    #     save_total_hits_count_10kb_NI = "/home/mddo/stage/M2S4/output/FY/haploid/total_hits_count_10kb_NI.out"
-    #     save_annotation_500bp_promoter_file = "/home/mddo/stage/M2S4/output/FY/haploid/annotation_500bppromoters.out"
-    #     save_hits_between_100_500bpprom = "/home/mddo/stage/M2S4/output/FY/haploid/hits_between_100_500bppromoter.out"
-    #     save_ratio_hits_in_100_500bppromoter_file = "/home/mddo/stage/M2S4/output/FY/haploid/ratio_hits_between_100_500bppromoter.out"
+        save_hits_reads_file = "/home/mddo/stage/M2S4/output/{}/haploid/hits_reads_per_orf.out".format(strain_name)
+        save_hits_per_promoter_file = "/home/mddo/stage/M2S4/output/{}/haploid/hits_per_promoter.out".format(strain_name)
+        save_hits_per_10kbNI_file = "/home/mddo/stage/M2S4/output/{}/haploid/hits_per_10kbNI.out".format(strain_name)
+        save_orf_length_file = "/home/mddo/stage/M2S4/output/{}/haploid/orf_length.out".format(strain_name)
+        save_insertion_index_file = "/home/mddo/stage/M2S4/output/{}/haploid/insertion_index.out".format(strain_name)
+        save_non_coding_windows_file = "/home/mddo/stage/M2S4/output/{}/haploid/non_coding_windows.out".format(strain_name)
+        save_neighborhood_index_file = "/home/mddo/stage/M2S4/output/{}/haploid/NI.out".format(strain_name)
+        save_hit_free_interval_file = "/home/mddo/stage/M2S4/output/{}/haploid/HFI.out".format(strain_name)
+        save_total_hits_count_10kb_NI = "/home/mddo/stage/M2S4/output/{}/haploid/total_hits_count_10kb_NI.out".format(strain_name)
+        save_annotation_500bp_promoter_file = "/home/mddo/stage/M2S4/output/{}/haploid/annotation_500bppromoters.out".format(strain_name)
+        save_hits_between_100_500bpprom = "/home/mddo/stage/M2S4/output/{}/haploid/hits_between_100_500bppromoter.out".format(strain_name)
+        save_ratio_hits_in_100_500bppromoter_file = "/home/mddo/stage/M2S4/output/{}/haploid/ratio_hits_between_100_500bppromoter.out".format(strain_name)
 
         
-    #     save_hits_in_100_500bppromoter_ratio_haplo_diplo = "/home/mddo/stage/M2S4/output/FY/diploid_/diploid_{}/diplo_hits_between_100_500bppromoter_ratio_haplo_diplo.out".format(i)
-    #     save_NI_ratio_haplo_diplo = "/home/mddo/stage/M2S4/output/FY/diploid_/diploid_{}/diplo_NI_ratio_haplo_diplo.out".format(i)
-    #     save_HFI_ratio_haplo_diplo = "/home/mddo/stage/M2S4/output/FY/diploid_/diploid_{}/diplo_HFI_ratio_haplo_diplo.out".format(i)
+        save_hits_in_100_500bppromoter_ratio_haplo_diplo = "/home/mddo/stage/M2S4/output/{}/diploid_/diploid_{}/diplo_hits_between_100_500bppromoter_ratio_haplo_diplo.out".format(strain_name,i)
+        save_NI_ratio_haplo_diplo = "/home/mddo/stage/M2S4/output/{}/diploid_/diploid_{}/diplo_NI_ratio_haplo_diplo.out".format(strain_name,i)
+        save_HFI_ratio_haplo_diplo = "/home/mddo/stage/M2S4/output/{}/diploid_/diploid_{}/diplo_HFI_ratio_haplo_diplo.out".format(strain_name,i)
 
-    #     label_df = "/home/mddo/stage/M2S4/data/FY/final_annot.csv"
-    #     save_file_dataframe = "/home/mddo/stage/M2S4/output/FY/diploid_/diploid_{}/df/HFI_NI_PROM.csv".format(i)
-    #     # # #---------------merge data file--------------#
-    #     merge_df(
-    #         save_hits_reads_file, 
-    #         save_hits_per_promoter_file, 
-    #         save_hits_in_100_500bppromoter_ratio_haplo_diplo,
-    #         save_orf_length_file, 
-    #         save_insertion_index_file, 
-    #         save_neighborhood_index_file,
-    #         save_NI_ratio_haplo_diplo, 
-    #         save_hit_free_interval_file,
-    #         save_HFI_ratio_haplo_diplo,
-    #         label_df,
-    #         save_file_dataframe
-    #     )
+        label_df = "/home/mddo/stage/M2S4/data/{}/final_annot.csv".format(strain_name)
+        save_file_dataframe = "/home/mddo/stage/M2S4/output/{}/diploid_/diploid_{}/df/HFI_NI.csv".format(strain_name, i)
+        # # #---------------merge data file--------------#
+        merge_df(
+            save_hits_reads_file, 
+            save_hits_per_promoter_file, 
+            save_hits_in_100_500bppromoter_ratio_haplo_diplo,
+            save_orf_length_file, 
+            save_insertion_index_file, 
+            save_neighborhood_index_file,
+            save_NI_ratio_haplo_diplo, 
+            save_hit_free_interval_file,
+            save_HFI_ratio_haplo_diplo,
+            label_df,
+            save_file_dataframe
+        )
 
 
 
@@ -142,17 +143,11 @@ def main():
 
     # find_false_positive("test","HFI_NI_PROM_0")
 
-
-    #create folder output
-    list_file_to_reads = glob.glob("/home/mddo/stage/M2S4/20_strains/*.txt")
-    for file_path in list_file_to_reads:
-        file_path_elements = file_path.strip().split("/")
-        file_name = file_path_elements[-1].split("-")[0]
-        folder_path_to_create = "/home/mddo/stage/M2S4/output/{}".format(file_name)
-        print(folder_path_to_create)
-        create_folder(folder_path_to_create)
     
 
+        
+
+    
 
     
 

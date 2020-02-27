@@ -268,7 +268,7 @@ def merge_df(hits_reads_file, hits_promoter_file, ratio_promoter_file, ORF_lengt
 
     hits_reads_df["hits_count_pro"] = hits_promoter_df.orf.map(hits_promoter_df.set_index("orf")["hits_count_pro"].to_dict())
 
-    hits_reads_df["ratio_hits_prom"] = hits_promoter_df.orf.map(ratio_hits_prom_df.set_index("orf")["ratio_hits_prom"].to_dict())
+    # hits_reads_df["ratio_hits_prom"] = hits_promoter_df.orf.map(ratio_hits_prom_df.set_index("orf")["ratio_hits_prom"].to_dict())
 
     hits_reads_df["orf_len"] = hits_reads_df.orf.map(orf_len_df.set_index("orf")["orf_len"].to_dict())
 
@@ -418,7 +418,7 @@ def cal_ratio_100_and_500_bppromoter(hits_100bppromoter_file,hits_100_500bppromo
 # the input data are: diploid_insertion_position_read_file - containt all insertion positions of diploide
 # number of files - how many files we want to generate
 # number of lines - number of lines in each file (in general, number of lines is number of lines in haploide data file)
-def generate_random_diploid_insertion_position(diploid_insertion_position_read_file, number_of_files, number_of_lines_generated):
+def generate_random_diploid_insertion_position(diploid_insertion_position_read_file, number_of_files, number_of_lines_generated, strain_name):
     #read data from diploide file
     diplo_ins_pos = open(diploid_insertion_position_read_file)
     data = diplo_ins_pos.readlines()
@@ -433,7 +433,9 @@ def generate_random_diploid_insertion_position(diploid_insertion_position_read_f
         #sort new data
         picked_line.sort()
         #create new file data and write it
-        with open("/home/mddo/stage/M2S4/output/FY/diploid/file_{}_diploid_insertion_positions.out".format(i),"w") as save:
+        file_path = "/home/mddo/stage/M2S4/data/{}/diploid/file_{}_diploid_insertion_positions.out".format(strain_name,i)
+        create_file(file_path)
+        with open(file_path,"w") as save:
             for line in picked_line:
                 save.write(data[line])
 

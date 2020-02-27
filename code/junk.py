@@ -9,44 +9,63 @@ from sklearn import metrics
 import glob
 import json
 def main():
-    #create data session
 
-    # insertion_position_read_file = "data/FY/FY-re1-rel_readPerPos_v2.txt" # insertion positions of transposon in haploide FY strain
-
-    annotation_100bpPromoters_file = "PourMD/ref_data/sace_R64_annotation_100bppromoters.gff" #positions of promoters
-    annotation_genesonly_simplified_file = "PourMD/ref_data/sace_R64_annotation_genesonly_simplified.gff" #positions of orfs
-    annotation_noncoding_10kb_NI_file = "PourMD/ref_data/all_subtracts_noncoding_10kbNI_genes.bed" #positions of 10kb non coding regions around orfs
-    annotation_insertionsitesinORF_file = "PourMD/ref_data/all_rel_insertionsitesinORF_CLQCA20184.txt" #all insertion positions in orfs
-    annotation_100_500bppromoters_file = "/home/mddo/stage/M2S4/data/FY/annotation/annotation_100-500bppromoters.out" #insertion positions in 100-500bp promoter interval of orfs
+    # #--------------------#BEGIN generate all_insertion_site for each strain#--------------------#
+    ##read all the insertion positions profile of each strain
+    # list_files_to_read = glob.glob("/home/mddo/stage/M2S4/reads_per_pos/*.txt")
+    # ##read file annotation
+    # orf_annot_file = "/home/mddo/stage/M2S4/data/annotations/sace_R64_annotation_genesonly_simplified.gff"
     
-    #--------------------#haploid begin#--------------------#
+    # for file_path in list_files_to_read:
+    #     strain_name = file_path.strip().split("/")[-1].split("-")[0]
+    #     save_file = "/home/mddo/stage/M2S4/output/{}/haploid/all_rel_insertionsitesinORF.out".format(strain_name)
+    #     generate_all_insertion_site_by_orf(file_path, orf_annot_file, save_file)
 
-    #--------------------#define save files#--------------------#
-    # save_hits_reads_file = "/home/mddo/stage/M2S4/output/FY/haploid/hits_reads_per_orf.out"
-    # save_hits_per_promoter_file = "/home/mddo/stage/M2S4/output/FY/haploid/hits_per_promoter.out"
-    # save_hits_per_10kbNI_file = "/home/mddo/stage/M2S4/output/FY/haploid/hits_per_10kbNI.out"
-    # save_orf_length_file = "/home/mddo/stage/M2S4/output/FY/haploid/orf_length.out"
-    # save_insertion_index_file = "/home/mddo/stage/M2S4/output/FY/haploid/insertion_index.out"
-    # save_non_coding_windows_file = "/home/mddo/stage/M2S4/output/FY/haploid/non_coding_windows.out"
-    # save_neighborhood_index_file = "/home/mddo/stage/M2S4/output/FY/haploid/NI.out"
-    # save_free_hit_interval_file = "/home/mddo/stage/M2S4/output/FY/haploid/HFI.out"
-    # save_total_hits_count_10kb_NI = "/home/mddo/stage/M2S4/output/FY/haploid/total_hits_count_10kb_NI.out"
-    # save_annotation_500bp_promoter_file = "/home/mddo/stage/M2S4/output/FY/haploid/annotation_500bppromoters.out"
-    # save_hits_between_100_500bpprom = "/home/mddo/stage/M2S4/output/FY/haploid/hits_between_100_500bppromoter.out"
-    # save_ratio_hits_in_100_500bppromoter_file = "/home/mddo/stage/M2S4/output/FY/haploid/ratio_hits_between_100_500bppromoter.out"
+    # #--------------------#FINISH generate all_insertion_site for each strain#--------------------#
 
-    #--------------------#generate data files#--------------------#
+
+
+
+    # #--------------------#BEGIN generate features#--------------------#
+
+    # strain_name = "CNT"
+
+    # insertion_position_read_file = "/home/mddo/stage/M2S4/reads_per_pos/{}-rel_readPerPos_v2.txt".format(strain_name) # insertion positions of transposon in haploide FY strain
+
+    # annotation_100bpPromoters_file = "/home/mddo/stage/M2S4/data/annotations/sace_R64_annotation_100bppromoters.gff" #positions of promoters
+    # annotation_genesonly_simplified_file = "/home/mddo/stage/M2S4/data/annotations/sace_R64_annotation_genesonly_simplified.gff" #positions of orfs
+    # annotation_noncoding_10kb_NI_file = "/home/mddo/stage/M2S4/data/annotations/all_subtracts_noncoding_10kbNI_genes.bed" #positions of 10kb non coding regions around orfs
+    # annotation_insertionsitesinORF_file = "/home/mddo/stage/M2S4/output/{}/haploid/all_rel_insertionsitesinORF.out".format(strain_name) #all insertion positions in orfs
+    # # annotation_100_500bppromoters_file = "/home/mddo/stage/M2S4/data/FY/annotation/annotation_100-500bppromoters.out" #insertion positions in 100-500bp promoter interval of orfs
+    
+    # # #--------------------#haploid begin#--------------------#
+
+    # # #--------------------#define save files#--------------------#
+    # save_hits_reads_file = "/home/mddo/stage/M2S4/output/{}/haploid/hits_reads_per_orf.out".format(strain_name)
+    # save_hits_per_promoter_file = "/home/mddo/stage/M2S4/output/{}/haploid/hits_per_promoter.out".format(strain_name)
+    # save_hits_per_10kbNI_file = "/home/mddo/stage/M2S4/output/{}/haploid/hits_per_10kbNI.out".format(strain_name)
+    # save_orf_length_file = "/home/mddo/stage/M2S4/output/{}/haploid/orf_length.out".format(strain_name)
+    # save_insertion_index_file = "/home/mddo/stage/M2S4/output/{}/haploid/insertion_index.out".format(strain_name)
+    # save_non_coding_windows_file = "/home/mddo/stage/M2S4/output/{}/haploid/non_coding_windows.out".format(strain_name)
+    # save_neighborhood_index_file = "/home/mddo/stage/M2S4/output/{}/haploid/NI.out".format(strain_name)
+    # save_free_hit_interval_file = "/home/mddo/stage/M2S4/output/{}/haploid/HFI.out".format(strain_name)
+    # save_total_hits_count_10kb_NI = "/home/mddo/stage/M2S4/output/{}/haploid/total_hits_count_10kb_NI.out".format(strain_name)
+    # save_annotation_500bp_promoter_file = "/home/mddo/stage/M2S4/output/{}/haploid/annotation_500bppromoters.out".format(strain_name)
+    # save_hits_between_100_500bpprom = "/home/mddo/stage/M2S4/output/{}/haploid/hits_between_100_500bppromoter.out".format(strain_name)
+    # save_ratio_hits_in_100_500bppromoter_file = "/home/mddo/stage/M2S4/output/{}/haploid/ratio_hits_between_100_500bppromoter.out".format(strain_name)
+
+    # # #--------------------#generate data files#--------------------#
     # #hits count reads count generate
-    # hits_read_count(insertion_position_diploid_file,annotation_genesonly_simplified_file,save_hits_reads_file)
+    # hits_read_count(insertion_position_read_file,annotation_genesonly_simplified_file,save_hits_reads_file)
 
     # #promoter hits count
     # hits_read_count(insertion_position_read_file,annotation_100bpPromoters_file,save_hits_per_promoter_file)
 
-    # hits count between 500 and 100 bp promoter
-    # hits_read_count(insertion_position_read_file,save_annotation_500bp_promoter_file,save_hits_between_100_500bpprom)
+    # # hits count between 500 and 100 bp promoter
+    # # hits_read_count(insertion_position_read_file,save_annotation_500bp_promoter_file,save_hits_between_100_500bpprom)
 
     # #10kb NI hits count
-    # hits_read_count(insertion_position_diploid_file,annotation_noncoding_10kb_NI_file,save_hits_per_10kbNI_file)
+    # hits_read_count(insertion_position_read_file,annotation_noncoding_10kb_NI_file,save_hits_per_10kbNI_file)
 
     # # #total hits count in 10kb NI
     # total_hits_count_10kb(save_hits_per_10kbNI_file,save_total_hits_count_10kb_NI)
@@ -63,10 +82,10 @@ def main():
     # # #calculate neighborhood index
     # neightborhood_index(save_insertion_index_file, save_non_coding_windows_file, save_neighborhood_index_file)
 
-    # # #calculate hit free interval
+    # #calculate hit free interval
     # hit_free_interval(annotation_insertionsitesinORF_file, save_free_hit_interval_file)
 
-    #--------------------#haploid end#--------------------#
+    # #--------------------#haploid end#--------------------#
 
 
 
