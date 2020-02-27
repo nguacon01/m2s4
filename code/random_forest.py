@@ -53,7 +53,7 @@ def training_RF(df, test_size, grid_search, type_df):
 
     test_df["predictions"] = predictions_array
 
-    
+    precision_recall_fscore = precision_recall_fscore_support(test_df["label"], test_df["predictions"])
 
     accuracy = calculate_accuracy(predictions,test_df.label)
     accuracy_arr.append(accuracy)

@@ -323,51 +323,50 @@ def merge_df(hits_reads_file, hits_promoter_file, ratio_promoter_file, ORF_lengt
 #this function find the genes frequenly have false positive results after prediction   
 """
     type_session: name of the session: train or test
-    type_df :  type of dataframe : HFI_NI_PROM / HFI_NI_PROM_nan / normal
 """
 def find_false_positive(type_session, type_df):
     
-    file_paths = glob.glob("/home/mddo/stage/M2S4/output/predictions/{}/{}/*.csv".format(type_session, type_df))
+    # file_paths = glob.glob("/home/mddo/stage/M2S4/output/predictions/{}/{}/*.csv".format(type_session, type_df))
 
-    if type_df == "HFI_NI_PROM" or type_df == "HFI_NI_PROM_nan":
-        columns_name = ["hits_count","reads_count","hits_count_pro","ratio_hits_prom","orf_len","insertion_index","NI","NI_ratio","HFI","HFI_ratio","orf","label","predictions"]
-    else:
-        columns_name = ["hits_count","reads_count","hits_count_pro","orf_len","insertion_index","NI","HFI","orf","label","predictions"]
-
-    df_array_FP = []
-    df_array_FN = []
-    result_df = pd.DataFrame(columns = columns_name)
-    with open(false_positive_file_path,"a") as fp:
-        for file_p in file_paths:
-            df = pd.read_csv(file_p)
+    accuracy_file_path = "/home/mddo/stage/M2S4/output/accuracy/{}/accuracy_{}.csv".format(type_session, type_df)
+    with open (accuracy_file_path) as accuracy_file:
+        df_array_FP = []
+        df_array_FN = []
+        for accuracy in accuracy_file:
+            acc_elements = accuracy.strip().split(",")
+            forest_name = acc_elements[0]
+            acc_value = float(acc_elements[1])
+            total_tree = acc_elements[2]
+            if type_session == "test":
+                report_path = "/home/mddo/stage/M2S4/output/predictions/{}/{}/predictions_{}_{}.0.csv".format(type_session, type_df, forest_name, round(acc_value*100))
+            else:
+                report_path = "/home/mddo/stage/M2S4/output/predictions/{}/{}/predictions_{}.csv".format(type_session, type_df, forest_name)
+            
+            
+            df = pd.read_csv(report_path)
             labels = df["label"]
             predictions = df["predictions"]
+
+            #filter all the wrong predictions
             df_FP = df.loc[(labels == "non_ess") & (labels != predictions)]
             df_FN = df.loc[(labels == "ess") & (labels != predictions)]
+            #put it in array
             df_array_FP.append(df_FP)
             df_array_FN.append(df_FN)
+        
         result_df_FP = pd.concat(df_array_FP)
         result_df_FN = pd.concat(df_array_FN)
+        
         result_df_FP.drop(result_df_FP.columns.difference(["orf","label","predictions"]), 1, inplace=True)
         result_df_FN.drop(result_df_FN.columns.difference(["orf","label","predictions"]), 1, inplace=True)
-        # result_df["freq"] = result_df.groupby("orf")["orf"].transform("count")
+
         report_FP = result_df_FP["orf"].value_counts()
         report_FP_df = pd.DataFrame(report_FP)
-        report_FP_df.to_csv("/home/mddo/stage/M2S4/output/errros/{}/{}_FP.csv".format(type_session,type_df))
+        report_FP_df.to_csv("/home/mddo/stage/M2S4/output/error/{}/{}_FP.csv".format(type_session,type_df))
 
         report_FN = result_df_FN["orf"].value_counts()
-        report_FN_df = pd.DataFrame(report_FP)
-        report_FN_df.to_csv("/home/mddo/stage/M2S4/output/errros/{}/{}_FN.csv".format(type_session,type_df))
-        print("done")
-            
-            # with open(file_p,"r") as content:
-            #     for data in content:
-            #         data_features = data.strip().split(",")
-            #         real_label = data_features[7]
-            #         predicted_label = data_features[8]
-            #         orf = data_features[6]
-            #         if real_label == 'non-ess' and real_label != predicted_label:
-            #             fp.write(orf+"\n")
+        report_FN_df = pd.DataFrame(report_FN)
+        report_FN_df.to_csv("/home/mddo/stage/M2S4/output/error/{}/{}_FN.csv".format(type_session,type_df))
 
 def frequency_false_positive():
     df = pd.read_csv("output/false_positive.out",sep = " ", header = None)
@@ -541,3 +540,5 @@ def plot_confusion_matrix(session, type_df):
         save_folder_path = "/home/mddo/stage/M2S4/images/{}/{}/".format(session,type_df)
         create_folder(save_folder_path)
         plt.savefig(save_folder_path + "/confusion_matrix_{}.png".format(forest_name))
+
+
