@@ -42,7 +42,7 @@ def main():
 
     # # #--------------------#define save files#--------------------#
     # save_hits_reads_file = "/home/mddo/stage/M2S4/output/{}/haploid/hits_reads_per_orf.out".format(strain_name)
-    # save_hits_per_promoter_file = "/home/mddo/stage/M2S4/output/{}/haploid/hits_per_promoter.out".format(strain_name)
+    # save_hits_in_promoter_file = "/home/mddo/stage/M2S4/output/{}/haploid/hits_in_promoter.out".format(strain_name)
     # save_hits_per_10kbNI_file = "/home/mddo/stage/M2S4/output/{}/haploid/hits_per_10kbNI.out".format(strain_name)
     # save_orf_length_file = "/home/mddo/stage/M2S4/output/{}/haploid/orf_length.out".format(strain_name)
     # save_insertion_index_file = "/home/mddo/stage/M2S4/output/{}/haploid/insertion_index.out".format(strain_name)
@@ -107,7 +107,7 @@ def main():
     #--------------------#define diploide save files#--------------------#
     #diploid save files reference to the insertion positions files generated 
     save_diploid_hits_reads_file = "/home/mddo/stage/M2S4/output/FY/diploid/diploid_{}/diplo_hits_reads_per_orf.out".format(i)
-    save_diploid_hits_per_promoter_file = "/home/mddo/stage/M2S4/output/FY/diploid/diploid_{}/diplo_hits_per_promoter.out".format(i)
+    save_diploid_hits_in_promoter_file = "/home/mddo/stage/M2S4/output/FY/diploid/diploid_{}/diplo_hits_in_promoter.out".format(i)
     save_diploid_hits_per_10kbNI_file = "/home/mddo/stage/M2S4/output/FY/diploid/diploid_{}/diplo_hits_per_10kbNI.out".format(i)
     save_diploid_orf_length_file = "/home/mddo/stage/M2S4/output/FY/diploid/diploid_{}/diplo_orf_length.out".format(i)
     save_diploid_insertion_index_file = "/home/mddo/stage/M2S4/output/FY/diploid/diploid_{}/diplo_insertion_index.out".format(i)
@@ -152,7 +152,8 @@ def main():
     # #calculate neighborhood index
     neightborhood_index(save_diploid_insertion_index_file, save_diploid_non_coding_windows_file, save_diploid_neighborhood_index_file)
 
-        
+    # #calculate hit free interval
+    hit_free_interval(annotation_insertionsitesinORF_file, save_free_hit_interval_file)
 
         # #calculate hit free interval
         # hit_free_interval(annotation_insertionsitesinORF_file, save_diploid_free_hit_interval_file)

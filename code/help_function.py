@@ -233,7 +233,7 @@ def merge_df(hits_reads_file, hits_promoter_file, ratio_promoter_file, ORF_lengt
     norm_cols_hits_per_pro = ["hits_count_pro"]
     hits_promoter_df[norm_cols_hits_per_pro]  = MinMaxScaler().fit_transform(hits_promoter_df[norm_cols_hits_per_pro])
 
-    #ratio hits in the interval 100 - 500 bp promoter between haploide and diploide
+    #ratio hits in the 100 bp promoter between haploide and diploide
     ratio_hits_prom_df = pd.read_csv(ratio_promoter_file, sep = " ", header= None)
     ratio_hits_prom_df.columns = ["orf","ratio_hits_prom"]
 
@@ -276,15 +276,15 @@ def merge_df(hits_reads_file, hits_promoter_file, ratio_promoter_file, ORF_lengt
 
     hits_reads_df["NI"] = hits_reads_df.orf.map(NI_df.set_index("orf")["NI"].to_dict())
 
-    hits_reads_df["NI_ratio"] = hits_reads_df.orf.map(NI_ratio_df.set_index("orf")["NI_ratio"].to_dict())
+    # hits_reads_df["NI_ratio"] = hits_reads_df.orf.map(NI_ratio_df.set_index("orf")["NI_ratio"].to_dict())
 
     hits_reads_df["HFI"] = hits_reads_df.orf.map(HFI_df.set_index("orf")["HFI"].to_dict())
 
-    hits_reads_df["HFI_ratio"] = hits_reads_df.orf.map(HFI_ratio_df.set_index("orf")["HFI_ratio"].to_dict())
+    # hits_reads_df["HFI_ratio"] = hits_reads_df.orf.map(HFI_ratio_df.set_index("orf")["HFI_ratio"].to_dict())
 
     hits_reads_df["label"] = hits_reads_df.orf.map(label_df.set_index("orf")["label"].to_dict())
 
-    #drop all the row which have NaN in label
+    ## drop all the row which have NaN in label
     hits_reads_df['label'].replace(' ', np.nan, inplace=True)
     hits_reads_df = hits_reads_df.dropna(subset=['label'])
     hits_reads_df.reset_index(drop = True)
@@ -308,7 +308,7 @@ def merge_df(hits_reads_file, hits_promoter_file, ratio_promoter_file, ORF_lengt
     # hits_reads_df = hits_reads_df.fillna(0)
 
     #Drop NaN
-    hits_reads_df = hits_reads_df.dropna(how = "any")
+    # hits_reads_df = hits_reads_df.dropna(how = "any")
 
     # hits_reads_df = pd.DataFrame(hits_reads_df_arr)
 
