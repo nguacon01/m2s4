@@ -131,9 +131,9 @@ def main():
         
 
     #TESTING_SESSION
-    type_data = "HFI_NI_PROM_final_0"
-    test_df_path = "/home/mddo/stage/M2S4/output/FY/diploid_/diploid_0/df/test/HFI_NI_PROM_final.csv".format(type_data)
-    testing_RF(test_df_path, type_data)
+    # type_data = "HFI_NI_PROM_final_0"
+    # test_df_path = "/home/mddo/stage/M2S4/output/FY/diploid_/diploid_0/df/test/HFI_NI_PROM_final.csv".format(type_data)
+    # testing_RF(test_df_path, type_data)
 
 
     # type_df = "HFI_NI_PROM_final_0"
@@ -141,6 +141,15 @@ def main():
     # plot_confusion_matrix(session, type_df)
 
     # find_false_positive("test","HFI_NI_PROM_0")
+
+
+    #create folder output
+    list_file_to_reads = glob.glob("/home/mddo/stage/M2S4/20_strains/*.txt")
+    for file_path in list_file_to_reads:
+        file_path_elements = file_path.strip().split("/")
+        file_name = file_path_elements[-1].split("-")[0]
+        folder_path_to_create = "/home/mddo/stage/M2S4/output/{}".format(file_name)
+        create_folder(folder_path_to_create)
     
 
 

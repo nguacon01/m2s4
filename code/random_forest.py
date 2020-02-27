@@ -107,8 +107,14 @@ def testing_RF(test_df_path, type_df):
                 predictions_array = np.asanyarray(predictions)
                 accuracy = calculate_accuracy(predictions,test_df.label)
                 test_df["predictions"] = predictions_array
+
+                precision_recall_fscore = precision_recall_fscore_support(test_df["label"], test_df["predictions"],average = "macro")
+                precision = precision_recall_fscore[0]
+                recall = precision_recall_fscore[1]
+                fscore = precision_recall_fscore[2]
+
                 # save predictions output
                 create_folder("/home/mddo/stage/M2S4/output/predictions/test/{}".format(type_df))
                 test_df.to_csv("/home/mddo/stage/M2S4/output/predictions/test/{}/predictions_{}_{}.csv".format(type_df, parametre_info, round(accuracy*100)),index=False)
                 print(str(accuracy) + "," + parametre_info+"\n")
-                save.write("{},{},{}\n".format(parametre_info,accuracy,total_number_of_tree))
+                save.write("{},{},{},{},{},{}\n".format(parametre_info,accuracy,precision, recall, fscore, total_number_of_tree))
