@@ -149,6 +149,7 @@ def main():
         file_path_elements = file_path.strip().split("/")
         file_name = file_path_elements[-1].split("-")[0]
         folder_path_to_create = "/home/mddo/stage/M2S4/output/{}".format(file_name)
+        print(folder_path_to_create)
         create_folder(folder_path_to_create)
     
 
