@@ -216,8 +216,30 @@ def neightborhood_index(insertion_index_file,non_coding_windows_file,save_file):
     # insertion_index_file:  save_insertion_index_file
     # NI_file:  save_neighborhood_index_file
     # HFI_file: save_free_hit_interval_file
-def merge_df(hits_reads_file, hits_promoter_file, ratio_promoter_file, ORF_length_file, insertion_index_file, NI_file, NI_ratio_file, HFI_file, HFI_ratio_file,label_file, save_file_dataframe):
+    # you can add label file or not
+def merge_df(strain_name):
     min_max_scaler = MinMaxScaler()
+    
+    ##declare read files
+    i = 0
+    hits_reads_file = "/home/mddo/stage/M2S4/output/{}/haploid/hits_reads_per_orf.out".format(strain_name)
+    hits_promoter_file = "/home/mddo/stage/M2S4/output/{}/haploid/hits_in_promoter.out".format(strain_name)
+    save_hits_per_10kbNI_file = "/home/mddo/stage/M2S4/output/{}/haploid/hits_per_10kbNI.out".format(strain_name)
+    ORF_length_file = "/home/mddo/stage/M2S4/output/{}/haploid/orf_length.out".format(strain_name)
+    insertion_index_file = "/home/mddo/stage/M2S4/output/{}/haploid/insertion_index.out".format(strain_name)
+    save_non_coding_windows_file = "/home/mddo/stage/M2S4/output/{}/haploid/non_coding_windows.out".format(strain_name)
+    NI_file = "/home/mddo/stage/M2S4/output/{}/haploid/NI.out".format(strain_name)
+    HFI_file = "/home/mddo/stage/M2S4/output/{}/haploid/HFI.out".format(strain_name)
+    save_total_hits_count_10kb_NI = "/home/mddo/stage/M2S4/output/{}/haploid/total_hits_count_10kb_NI.out".format(strain_name)
+    save_ratio_hits_in_promoter_file = "/home/mddo/stage/M2S4/output/{}/haploid/ratio_hits_in_promoter.out".format(strain_name)
+    
+    ratio_promoter_file = "/home/mddo/stage/M2S4/output/{}/diploid_/diploid_{}/diplo_hits_in_promoter_ratio_haplo_diplo.out".format(strain_name,i)
+    NI_ratio_file = "/home/mddo/stage/M2S4/output/{}/diploid_/diploid_{}/diplo_NI_ratio_haplo_diplo.out".format(strain_name,i)
+    HFI_ratio_file = "/home/mddo/stage/M2S4/output/{}/diploid_/diploid_{}/diplo_HFI_ratio_haplo_diplo.out".format(strain_name,i)
+
+    label_file = "/home/mddo/stage/M2S4/data/FY/final_annot.csv".format(strain_name)
+    save_file_dataframe = "/home/mddo/stage/M2S4/output/{}/diploid_/diploid_{}/df/HFI_NI_PROM_KNN.csv".format(strain_name, i)
+    ## end declare read files
 
     #hits count and reads count
     hits_reads_df = pd.read_csv(hits_reads_file, sep=" ", header=None)
@@ -263,12 +285,9 @@ def merge_df(hits_reads_file, hits_promoter_file, ratio_promoter_file, ORF_lengt
     HFI_ratio_df = pd.read_csv(HFI_ratio_file,sep=" ",header=None)
     HFI_ratio_df.columns = ["orf","HFI_ratio"]
 
-    label_df = pd.read_csv(label_file)
-    label_df.columns = ['orf','label']
-
     hits_reads_df["hits_count_pro"] = hits_promoter_df.orf.map(hits_promoter_df.set_index("orf")["hits_count_pro"].to_dict())
 
-    # hits_reads_df["ratio_hits_prom"] = hits_promoter_df.orf.map(ratio_hits_prom_df.set_index("orf")["ratio_hits_prom"].to_dict())
+    hits_reads_df["ratio_hits_prom"] = hits_promoter_df.orf.map(ratio_hits_prom_df.set_index("orf")["ratio_hits_prom"].to_dict())
 
     hits_reads_df["orf_len"] = hits_reads_df.orf.map(orf_len_df.set_index("orf")["orf_len"].to_dict())
 
@@ -276,30 +295,36 @@ def merge_df(hits_reads_file, hits_promoter_file, ratio_promoter_file, ORF_lengt
 
     hits_reads_df["NI"] = hits_reads_df.orf.map(NI_df.set_index("orf")["NI"].to_dict())
 
-    # hits_reads_df["NI_ratio"] = hits_reads_df.orf.map(NI_ratio_df.set_index("orf")["NI_ratio"].to_dict())
+    hits_reads_df["NI_ratio"] = hits_reads_df.orf.map(NI_ratio_df.set_index("orf")["NI_ratio"].to_dict())
 
-    hits_reads_df["HFI"] = hits_reads_df.orf.map(HFI_df.set_index("orf")["HFI"].to_dict())
+    hits_reads_df["HFI"] = hits_reads_df.orf.map(HFI_df.set_index("orf")["HFI_normalized"].to_dict())
 
-    # hits_reads_df["HFI_ratio"] = hits_reads_df.orf.map(HFI_ratio_df.set_index("orf")["HFI_ratio"].to_dict())
+    hits_reads_df["HFI_ratio"] = hits_reads_df.orf.map(HFI_ratio_df.set_index("orf")["HFI_ratio"].to_dict())
 
-    hits_reads_df["label"] = hits_reads_df.orf.map(label_df.set_index("orf")["label"].to_dict())
+    ## if exist label file
+    if label_file:
+        label_df = pd.read_csv(label_file)
+        label_df.columns = ['orf','label']
 
-    ## drop all the row which have NaN in label
-    hits_reads_df['label'].replace(' ', np.nan, inplace=True)
-    hits_reads_df = hits_reads_df.dropna(subset=['label'])
-    hits_reads_df.reset_index(drop = True)
+        hits_reads_df["label"] = hits_reads_df.orf.map(label_df.set_index("orf")["label"].to_dict())
+        ## drop all NaN rows in label
+        hits_reads_df['label'].replace(' ', np.nan, inplace=True)
+        hits_reads_df = hits_reads_df.dropna(subset=['label'])
+        hits_reads_df.reset_index(drop = True)
 
-    ## Fill missing data with KNN
-    # missing_data_columns = hits_reads_df.columns[hits_reads_df.isna().any()].tolist()
-    # for missing_data_col in missing_data_columns:
-    #     hits_reads_df[missing_data_col] = knn_impute(
-    #         target=hits_reads_df[missing_data_col], 
-    #         attributes=hits_reads_df.drop([missing_data_col], 1),
-    #         aggregation_method="median", 
-    #         k_neighbors=100, numeric_distance='euclidean',
-    #         categorical_distance='hamming', 
-    #         missing_neighbors_threshold=0.8
-    #     )
+    # Fill missing data with KNN
+    missing_data_columns = hits_reads_df.columns[hits_reads_df.isna().any()].tolist()
+    print(missing_data_columns)
+    for missing_data_col in missing_data_columns:
+        hits_reads_df[missing_data_col] = knn_impute(
+            target = hits_reads_df[missing_data_col], 
+            attributes = hits_reads_df.drop([missing_data_col], 1),
+            aggregation_method = "median", 
+            k_neighbors = 100,
+            numeric_distance = 'euclidean',
+            categorical_distance = 'hamming', 
+            missing_neighbors_threshold = 0.8
+        )
 
     #Fill missing data with linear method
     # hits_reads_df = hits_reads_df.interpolate(method ='linear', limit_direction ='forward')

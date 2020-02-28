@@ -53,44 +53,49 @@ def training_RF(df, test_size, grid_search, type_df):
 
     test_df["predictions"] = predictions_array
 
-    precision_recall_fscore = precision_recall_fscore_support(test_df["label"], test_df["predictions"])
+    precision_recall_fscore = precision_recall_fscore_support(test_df["label"], test_df["predictions"],average = "macro")
+    precision = precision_recall_fscore[0]
+    recall = precision_recall_fscore[1]
+    fscore = precision_recall_fscore[2]
 
     accuracy = calculate_accuracy(predictions,test_df.label)
     accuracy_arr.append(accuracy)
 
     #save file predictions 
-    create_folder("output/predictions/train/{}".format(type_df))
-    test_df.to_csv("output/predictions/train/{}/predictions_forest_{}_{}_{}_{}_{}.csv".format(type_df, n_tree, n_feature, n_max_depth, n_bootstrap,round(accuracy*100)),index=False)
+    create_folder("output/FY/predictions/train/{}".format(type_df))
+    test_df.to_csv("output/FY/predictions/train/{}/predictions_forest_{}_{}_{}_{}_{}.csv".format(type_df, n_tree, n_feature, n_max_depth, n_bootstrap,round(accuracy*100)),index=False)
 
     #save forest - save environment
-    create_folder("output/forest/{}".format(type_df))
-    save_forest_path = "output/forest/{}/forest_{}_{}_{}_{}_{}.json".format(type_df,n_tree, n_feature, n_max_depth, n_bootstrap,round(accuracy*100))
+    create_folder("output/FY/forest/{}".format(type_df))
+    save_forest_path = "output/FY/forest/{}/forest_{}_{}_{}_{}_{}.json".format(type_df,n_tree, n_feature, n_max_depth, n_bootstrap,round(accuracy*100))
     create_file(save_forest_path)
     with open(save_forest_path,"w") as save_forest:
         save_forest.write(json.dumps(forest))
     
     #save hyper parametres and accuracy associated
-    save_acc_hyper_para_path = "output/accuracy/train/accuracy_{}.csv".format(type_df)
+    save_acc_hyper_para_path = "output/FY/accuracy/train/accuracy_{}.csv".format(type_df)
     create_file(save_acc_hyper_para_path)
     with open(save_acc_hyper_para_path,"a") as save_hyper:
-        save_hyper.write("forest_{}_{}_{}_{}_{},{},{}\n".format(n_tree, n_feature, n_max_depth, n_bootstrap,round(accuracy*100), accuracy, total_number_of_tree))
+        save_hyper.write("forest_{}_{}_{}_{}_{},{},{},{},{},{}\n".format(n_tree, n_feature, n_max_depth, n_bootstrap,round(accuracy*100), accuracy,precision,recall,fscore,total_number_of_tree))
 
     return accuracy_arr
 
-def testing_RF(test_df_path, type_df):
-    train_accuracy_file = "/home/mddo/stage/M2S4/output/accuracy/train/accuracy_{}.csv".format(type_df)
+def testing_RF(test_df_path, type_df, strain_name):
+    if strain_name != "FY":
+        strain_name = "FY"
+    train_accuracy_file = "/home/mddo/stage/M2S4/output/{}/accuracy/train/accuracy_{}.csv".format(strain_name,type_df)
     train_accuracy_df = pd.read_csv(train_accuracy_file)
-    train_accuracy_df.columns = ["forest","accuracy","total_tree"]
+    train_accuracy_df.columns = ["forest","accuracy","precision","recall","fscore","total_tree"]
     trained_forests = train_accuracy_df["forest"]
 
-    save_file_report = "/home/mddo/stage/M2S4/output/accuracy/test/accuracy_{}.csv".format(type_df)
+    save_file_report = "/home/mddo/stage/M2S4/output/{}/accuracy/test/accuracy_{}.csv".format(strain_name, type_df)
 
     for forest_name in trained_forests:
         
         # create_file(save_file_report)
         with open(save_file_report,"a") as save:
             #fetch all trained forests
-            forest_path = "/home/mddo/stage/M2S4/output/forest/{}/{}.json".format(type_df,forest_name)
+            forest_path = "/home/mddo/stage/M2S4/output/{}/forest/{}/{}.json".format(strain_name,type_df,forest_name)
             with open(forest_path) as json_data:
                 #get forest attributes
                 parametre_info = forest_name
@@ -105,16 +110,19 @@ def testing_RF(test_df_path, type_df):
                 test_df = pd.read_csv(test_df_path)
                 predictions = random_forest_predictions(test_df, forest)
                 predictions_array = np.asanyarray(predictions)
-                accuracy = calculate_accuracy(predictions,test_df.label)
                 test_df["predictions"] = predictions_array
+                create_folder("/home/mddo/stage/M2S4/output/{}/predictions/test/{}".format(strain_name,type_df))
+                if strain_name == "FY":
+                    accuracy = calculate_accuracy(predictions,test_df.label)
+                    precision_recall_fscore = precision_recall_fscore_support(test_df["label"], test_df["predictions"],average = "macro")
+                    precision = precision_recall_fscore[0]
+                    recall = precision_recall_fscore[1]
+                    fscore = precision_recall_fscore[2]
 
-                precision_recall_fscore = precision_recall_fscore_support(test_df["label"], test_df["predictions"],average = "macro")
-                precision = precision_recall_fscore[0]
-                recall = precision_recall_fscore[1]
-                fscore = precision_recall_fscore[2]
-
-                # save predictions output
-                create_folder("/home/mddo/stage/M2S4/output/predictions/test/{}".format(type_df))
-                test_df.to_csv("/home/mddo/stage/M2S4/output/predictions/test/{}/predictions_{}_{}.csv".format(type_df, parametre_info, round(accuracy*100)),index=False)
-                print(str(accuracy) + "," + parametre_info+"\n")
-                save.write("{},{},{},{},{},{}\n".format(parametre_info,accuracy,precision, recall, fscore, total_number_of_tree))
+                    # save predictions output
+                    test_df.to_csv("/home/mddo/stage/M2S4/output/{}/predictions/test/{}/predictions_{}_{}.csv".format(strain_name,type_df, parametre_info, round(accuracy*100)),index=False)
+                    print(str(accuracy) + "," + parametre_info+"\n")
+                    save.write("{},{},{},{},{},{}\n".format(parametre_info,accuracy,precision, recall, fscore, total_number_of_tree))
+                else:
+                    # save predictions output
+                    test_df.to_csv("/home/mddo/stage/M2S4/output/{}/predictions/test/{}/predictions_{}.csv".format(strain_name,type_df, parametre_info),index=False)
