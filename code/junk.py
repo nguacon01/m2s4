@@ -213,13 +213,13 @@ def main():
 
 
     # #--------------------#BEGIN CREATE ORIGINAL DATA#--------------------## 
-    # strain_name = "FY"
+    # strain_name = "CNT"
     # diploid_files_data = glob.glob("/home/mddo/stage/M2S4/data/diploid/*.out")
-    ## for i in range(len(diploid_files_data)):
+    # # for i in range(len(diploid_files_data)):
     # i = 0
         
     # save_hits_reads_file = "/home/mddo/stage/M2S4/output/{}/haploid/hits_reads_per_orf.out".format(strain_name)
-    # save_hits_per_promoter_file = "/home/mddo/stage/M2S4/output/{}/haploid/hits_per_promoter.out".format(strain_name)
+    # save_hits_per_promoter_file = "/home/mddo/stage/M2S4/output/{}/haploid/hits_in_promoter.out".format(strain_name)
     # save_hits_per_10kbNI_file = "/home/mddo/stage/M2S4/output/{}/haploid/hits_per_10kbNI.out".format(strain_name)
     # save_orf_length_file = "/home/mddo/stage/M2S4/output/{}/haploid/orf_length.out".format(strain_name)
     # save_insertion_index_file = "/home/mddo/stage/M2S4/output/{}/haploid/insertion_index.out".format(strain_name)
@@ -233,8 +233,8 @@ def main():
     # save_NI_ratio_haplo_diplo = "/home/mddo/stage/M2S4/output/{}/diploid_/diploid_{}/diplo_NI_ratio_haplo_diplo.out".format(strain_name,i)
     # save_HFI_ratio_haplo_diplo = "/home/mddo/stage/M2S4/output/{}/diploid_/diploid_{}/diplo_HFI_ratio_haplo_diplo.out".format(strain_name,i)
 
-    # label_df = "/home/mddo/stage/M2S4/data/{}/final_annot.csv".format(strain_name)
-    # save_file_dataframe = "/home/mddo/stage/M2S4/output/{}/diploid_/diploid_{}/df/normal.csv".format(strain_name, i)
+    # label_df = "/home/mddo/stage/M2S4/data/FY/final_annot.csv".format(strain_name)
+    # save_file_dataframe = "/home/mddo/stage/M2S4/output/{}/diploid_/diploid_{}/df/HFI_NI_PROM_KNN.csv".format(strain_name, i)
     # # # #---------------merge data file--------------#
     # merge_df(
     #     save_hits_reads_file, 
@@ -323,3 +323,59 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
+    # missing_data_columns = hits_reads_df.columns[hits_reads_df.isna().any()].tolist()
+    # print(missing_data_columns)
+    # for missing_data_col in missing_data_columns:
+    #     hits_reads_df[missing_data_col] = knn_impute(
+    #         target = hits_reads_df[missing_data_col], 
+    #         attributes = hits_reads_df.drop([missing_data_col], 1),
+    #         aggregation_method = "median", 
+    #         k_neighbors = 100,
+    #         numeric_distance = 'euclidean',
+    #         categorical_distance = 'hamming', 
+    #         missing_neighbors_threshold = 0.8
+    #     )
+    #     print(hits_reads_df[missing_data_col])
+
+
+
+
+
+
+    # Fill missing data with KNN
+    imputer = KNNImputer(n_neighbors=100, weights="distance")
+    final_df = imputer.fit_transform(hits_reads_df.drop(columns = ["orf"]))
+    final_df = pd.DataFrame(final_df)
+    final_df.columns = ["hits_count","reads_count","hits_count_pro","ratio_hits_prom","orf_len","insertion_index","NI","NI_ratio","HFI","HFI_ratio"]
+    final_df["orf"] = hits_reads_df["orf"]
+   
+    
+    label_df = pd.read_csv(label_file)
+    label_df.columns = ['orf','label']
+
+    final_df["label"] = final_df.orf.map(label_df.set_index("orf")["label"].to_dict())
+    ## drop all NaN rows in label
+    final_df['label'].replace(' ', np.nan, inplace=True)
+    final_df = final_df.dropna(subset=['label'])
+    final_df.reset_index(drop = True)
+
+    #Fill missing data with linear method
+    # hits_reads_df = hits_reads_df.interpolate(method ='linear', limit_direction ='forward')
+
+    #Fill missing data with 0
+    # hits_reads_df = hits_reads_df.fillna(0)
+
+    #Drop NaN
+    # hits_reads_df = hits_reads_df.dropna(how = "any")
+
+    # hits_reads_df = pd.DataFrame(hits_reads_df_arr)
+
+    #move orf column to the end of df
+    # cols = hits_reads_df.columns.tolist()
+    # cols.insert(-1, cols.pop(cols.index("orf")))
+    # hits_reads_df = hits_reads_df.reindex(columns = cols)
+    
+    #generate csv file
+    final_df.to_csv(save_file_dataframe,index=False)

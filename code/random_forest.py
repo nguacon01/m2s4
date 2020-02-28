@@ -1,6 +1,7 @@
 
 import numpy as np
 import random
+import os
 import pandas as pd
 from helper_functions import train_test_split, calculate_accuracy
 from decision_tree import decision_tree_algorithm, decision_tree_predictions
@@ -81,9 +82,7 @@ def training_RF(df, test_size, grid_search, type_df):
     return accuracy_arr
 
 def testing_RF(test_df_path, type_df, strain_name):
-    if strain_name != "FY":
-        strain_name = "FY"
-    train_accuracy_file = "/home/mddo/stage/M2S4/output/{}/accuracy/train/accuracy_{}.csv".format(strain_name,type_df)
+    train_accuracy_file = "/home/mddo/stage/M2S4/output/FY/accuracy/train/accuracy_{}.csv".format(type_df)
     train_accuracy_df = pd.read_csv(train_accuracy_file)
     train_accuracy_df.columns = ["forest","accuracy","precision","recall","fscore","total_tree"]
     trained_forests = train_accuracy_df["forest"]
@@ -91,17 +90,20 @@ def testing_RF(test_df_path, type_df, strain_name):
     save_file_report = "/home/mddo/stage/M2S4/output/{}/accuracy/test/accuracy_{}.csv".format(strain_name, type_df)
 
     for forest_name in trained_forests:
-        
         # create_file(save_file_report)
         with open(save_file_report,"a") as save:
             #fetch all trained forests
-            forest_path = "/home/mddo/stage/M2S4/output/{}/forest/{}/{}.json".format(strain_name,type_df,forest_name)
+            forest_path = "/home/mddo/stage/M2S4/output/FY/forest/{}/{}.json".format(type_df,forest_name)
+            print(forest_path)
+            if not os.path.exists(forest_path):
+                continue
             with open(forest_path) as json_data:
                 #get forest attributes
                 parametre_info = forest_name
                     
                 #load forest
                 forest = json.load(json_data)
+                print(forest)
                 total_number_of_tree = len(forest)
                     
                 # diploid_files_data = glob.glob("/home/mddo/stage/M2S4/data/diploid/*.out")
@@ -124,5 +126,6 @@ def testing_RF(test_df_path, type_df, strain_name):
                     print(str(accuracy) + "," + parametre_info+"\n")
                     save.write("{},{},{},{},{},{}\n".format(parametre_info,accuracy,precision, recall, fscore, total_number_of_tree))
                 else:
+                    test_df = test_df.drop(columns = ["label"])
                     # save predictions output
                     test_df.to_csv("/home/mddo/stage/M2S4/output/{}/predictions/test/{}/predictions_{}.csv".format(strain_name,type_df, parametre_info),index=False)

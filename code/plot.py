@@ -306,3 +306,22 @@ metric = precision_recall_fscore_support(y_true, y_pred, )
 print(metric)
 
 # %%
+df = pd.read_csv("/home/mddo/stage/M2S4/output/FY/predictions/train/HFI_NI_PROM_KNN_0/predictions_forest_29_8_12_1401_92.0.csv")
+plt.figure(figsize=(10,10))
+confusion_matrix = pd.crosstab(df['label'],df['predictions'], rownames = ['Actual'], colnames=['Predict'])
+ax = sns.heatmap(confusion_matrix,
+            annot=True,
+            annot_kws={"size": 22,},
+            fmt='g',
+            vmin=0, vmax=600,
+            linewidths=.5,
+            cbar=False)
+plt.xticks(size=20)
+plt.yticks(size=20)
+plt.xlabel("Predict",size=14)
+plt.ylabel("Actual", size=14)
+
+bottom, top = ax.get_ylim()
+ax.set_ylim(bottom + 0.5, top - 0.5)
+
+# %%

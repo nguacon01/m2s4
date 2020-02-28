@@ -3,6 +3,7 @@ import random
 import pandas as pd
 import numpy as np
 from sklearn.preprocessing import MinMaxScaler, StandardScaler
+# from sklearn.impute import KNNImputer
 import glob
 from knn_impute import knn_impute
 import matplotlib.pyplot as plt
@@ -217,29 +218,8 @@ def neightborhood_index(insertion_index_file,non_coding_windows_file,save_file):
     # NI_file:  save_neighborhood_index_file
     # HFI_file: save_free_hit_interval_file
     # you can add label file or not
-def merge_df(strain_name):
+def merge_df(hits_reads_file, hits_in_promoter_file, hits_in_promoter_ratio_file, orf_len_file, insertion_index_file, NI_file, NI_ratio_file, HFI_file, HFI_ratio_file, label_file, save_file):
     min_max_scaler = MinMaxScaler()
-    
-    ##declare read files
-    i = 0
-    hits_reads_file = "/home/mddo/stage/M2S4/output/{}/haploid/hits_reads_per_orf.out".format(strain_name)
-    hits_promoter_file = "/home/mddo/stage/M2S4/output/{}/haploid/hits_in_promoter.out".format(strain_name)
-    save_hits_per_10kbNI_file = "/home/mddo/stage/M2S4/output/{}/haploid/hits_per_10kbNI.out".format(strain_name)
-    ORF_length_file = "/home/mddo/stage/M2S4/output/{}/haploid/orf_length.out".format(strain_name)
-    insertion_index_file = "/home/mddo/stage/M2S4/output/{}/haploid/insertion_index.out".format(strain_name)
-    save_non_coding_windows_file = "/home/mddo/stage/M2S4/output/{}/haploid/non_coding_windows.out".format(strain_name)
-    NI_file = "/home/mddo/stage/M2S4/output/{}/haploid/NI.out".format(strain_name)
-    HFI_file = "/home/mddo/stage/M2S4/output/{}/haploid/HFI.out".format(strain_name)
-    save_total_hits_count_10kb_NI = "/home/mddo/stage/M2S4/output/{}/haploid/total_hits_count_10kb_NI.out".format(strain_name)
-    save_ratio_hits_in_promoter_file = "/home/mddo/stage/M2S4/output/{}/haploid/ratio_hits_in_promoter.out".format(strain_name)
-    
-    ratio_promoter_file = "/home/mddo/stage/M2S4/output/{}/diploid_/diploid_{}/diplo_hits_in_promoter_ratio_haplo_diplo.out".format(strain_name,i)
-    NI_ratio_file = "/home/mddo/stage/M2S4/output/{}/diploid_/diploid_{}/diplo_NI_ratio_haplo_diplo.out".format(strain_name,i)
-    HFI_ratio_file = "/home/mddo/stage/M2S4/output/{}/diploid_/diploid_{}/diplo_HFI_ratio_haplo_diplo.out".format(strain_name,i)
-
-    label_file = "/home/mddo/stage/M2S4/data/FY/final_annot.csv".format(strain_name)
-    save_file_dataframe = "/home/mddo/stage/M2S4/output/{}/diploid_/diploid_{}/df/HFI_NI_PROM_KNN.csv".format(strain_name, i)
-    ## end declare read files
 
     #hits count and reads count
     hits_reads_df = pd.read_csv(hits_reads_file, sep=" ", header=None)
@@ -249,18 +229,18 @@ def merge_df(strain_name):
     hits_reads_df[norm_cols_hits_reads]  = MinMaxScaler().fit_transform(hits_reads_df[norm_cols_hits_reads])
 
     #hits per promoter
-    hits_promoter_df = pd.read_csv(hits_promoter_file,sep=" ", header=None)
+    hits_promoter_df = pd.read_csv(hits_in_promoter_file,sep=" ", header=None)
     hits_promoter_df.columns = ["orf","hits_count_pro","reads_count_pro"]
     #normalize values of hits per promoter
     norm_cols_hits_per_pro = ["hits_count_pro"]
     hits_promoter_df[norm_cols_hits_per_pro]  = MinMaxScaler().fit_transform(hits_promoter_df[norm_cols_hits_per_pro])
 
     #ratio hits in the 100 bp promoter between haploide and diploide
-    ratio_hits_prom_df = pd.read_csv(ratio_promoter_file, sep = " ", header= None)
+    ratio_hits_prom_df = pd.read_csv(hits_in_promoter_ratio_file, sep = " ", header= None)
     ratio_hits_prom_df.columns = ["orf","ratio_hits_prom"]
 
     #orf length
-    orf_len_df = pd.read_csv(ORF_length_file,sep=" ", header=None)
+    orf_len_df = pd.read_csv(orf_len_file,sep=" ", header=None)
     orf_len_df.columns = ["orf","orf_len"]
     #normalizes values of orf length
     norm_cols_orf_len = ["orf_len"]
@@ -274,7 +254,7 @@ def merge_df(strain_name):
     NI_df = pd.read_csv(NI_file,sep=" ",header=None)
     NI_df.columns = ["orf","NI"]
 
-    #Neighborhood index between haploide and diploide
+    #Neighborhood index ratio between haploide and diploide
     NI_ratio_df = pd.read_csv(NI_ratio_file,sep = " ", header=None)
     NI_ratio_df.columns = ["orf","NI_ratio"]
 
@@ -284,6 +264,8 @@ def merge_df(strain_name):
 
     HFI_ratio_df = pd.read_csv(HFI_ratio_file,sep=" ",header=None)
     HFI_ratio_df.columns = ["orf","HFI_ratio"]
+
+    ##-----------------##
 
     hits_reads_df["hits_count_pro"] = hits_promoter_df.orf.map(hits_promoter_df.set_index("orf")["hits_count_pro"].to_dict())
 
@@ -301,49 +283,53 @@ def merge_df(strain_name):
 
     hits_reads_df["HFI_ratio"] = hits_reads_df.orf.map(HFI_ratio_df.set_index("orf")["HFI_ratio"].to_dict())
 
-    ## if exist label file
-    if label_file:
-        label_df = pd.read_csv(label_file)
-        label_df.columns = ['orf','label']
+    orf_col = hits_reads_df["orf"]
 
-        hits_reads_df["label"] = hits_reads_df.orf.map(label_df.set_index("orf")["label"].to_dict())
-        ## drop all NaN rows in label
-        hits_reads_df['label'].replace(' ', np.nan, inplace=True)
-        hits_reads_df = hits_reads_df.dropna(subset=['label'])
-        hits_reads_df.reset_index(drop = True)
-
-    # Fill missing data with KNN
-    missing_data_columns = hits_reads_df.columns[hits_reads_df.isna().any()].tolist()
+    final_df = hits_reads_df.drop(columns = ["orf"])
+    print(final_df)
+    missing_data_columns = final_df.columns[final_df.isna().any()].tolist()
     print(missing_data_columns)
+
     for missing_data_col in missing_data_columns:
-        hits_reads_df[missing_data_col] = knn_impute(
-            target = hits_reads_df[missing_data_col], 
-            attributes = hits_reads_df.drop([missing_data_col], 1),
+        final_df[missing_data_col] = knn_impute(
+            target = final_df["NI_ratio"], 
+            attributes = final_df.drop([missing_data_col], 1),
             aggregation_method = "median", 
-            k_neighbors = 100,
+            k_neighbors = 200,
             numeric_distance = 'euclidean',
             categorical_distance = 'hamming', 
-            missing_neighbors_threshold = 0.8
+            missing_neighbors_threshold = 1000
         )
+   
+    final_df["orf"] = orf_col
 
-    #Fill missing data with linear method
-    # hits_reads_df = hits_reads_df.interpolate(method ='linear', limit_direction ='forward')
+    label_df = pd.read_csv(label_file)
+    label_df.columns = ['orf','label']
 
-    #Fill missing data with 0
-    # hits_reads_df = hits_reads_df.fillna(0)
+    final_df["label"] = final_df.orf.map(label_df.set_index("orf")["label"].to_dict())
+    ## drop all NaN rows in label
+    final_df['label'].replace(' ', np.nan, inplace=True)
+    final_df = final_df.dropna(subset=['label'])
+    final_df.reset_index(drop = True)
 
-    #Drop NaN
-    # hits_reads_df = hits_reads_df.dropna(how = "any")
+    # #Fill missing data with linear method
+    # # hits_reads_df = hits_reads_df.interpolate(method ='linear', limit_direction ='forward')
 
-    # hits_reads_df = pd.DataFrame(hits_reads_df_arr)
+    # #Fill missing data with 0
+    # # hits_reads_df = hits_reads_df.fillna(0)
 
-    #move orf column to the end of df
-    cols = hits_reads_df.columns.tolist()
-    cols.insert(-1, cols.pop(cols.index("orf")))
-    hits_reads_df = hits_reads_df.reindex(columns = cols)
+    # #Drop NaN
+    # # hits_reads_df = hits_reads_df.dropna(how = "any")
+
+    # # hits_reads_df = pd.DataFrame(hits_reads_df_arr)
+
+    # #move orf column to the end of df
+    # # cols = hits_reads_df.columns.tolist()
+    # # cols.insert(-1, cols.pop(cols.index("orf")))
+    # # hits_reads_df = hits_reads_df.reindex(columns = cols)
     
-    #generate csv file
-    hits_reads_df.to_csv(save_file_dataframe,index=False)
+    # #generate csv file
+    final_df.to_csv(save_file,index=False)
 
 #this function find the genes frequenly have false positive results after prediction   
 """
@@ -532,7 +518,7 @@ session: train/test
 type_df: HFI_NI_PROM / HFI_NI_PROM_nan / HFI_NI_PROM_dropna / HFI_NI_PROM_zerofill / .....
 """
 def plot_confusion_matrix(session, type_df):
-    accuracy_file = "/home/mddo/stage/M2S4/output/accuracy/{}/accuracy_{}.csv".format(session,type_df)
+    accuracy_file = "/home/mddo/stage/M2S4/output/FY/accuracy/{}/accuracy_{}.csv".format(session,type_df)
     accuracy_df = pd.read_csv(accuracy_file)
     accuracy_df_array = np.asanyarray(accuracy_df)
     
@@ -541,9 +527,9 @@ def plot_confusion_matrix(session, type_df):
         acc_value = acc_df_element[1]
         total_tree = acc_df_element[2]
         if session == "train":
-            prediction_path = "/home/mddo/stage/M2S4/output/predictions/{}/{}/predictions_{}.csv".format(session,type_df,forest_name)
+            prediction_path = "/home/mddo/stage/M2S4/output/FY/predictions/{}/{}/predictions_{}.csv".format(session,type_df,forest_name)
         else:
-            prediction_path = "/home/mddo/stage/M2S4/output/predictions/{}/{}/predictions_{}_{}.0.csv".format(session,type_df,forest_name, round(acc_value*100))
+            prediction_path = "/home/mddo/stage/M2S4/output/FY/predictions/{}/{}/predictions_{}_{}.0.csv".format(session,type_df,forest_name, round(acc_value*100))
         plt.figure(figsize=(10,10))
         df = pd.read_csv(prediction_path)
         confusion_matrix = pd.crosstab(df['label'],df['predictions'], rownames = ['Actual'], colnames=['Predict'])
