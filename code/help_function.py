@@ -290,16 +290,30 @@ def merge_df(hits_reads_file, hits_in_promoter_file, hits_in_promoter_ratio_file
     missing_data_columns = final_df.columns[final_df.isna().any()].tolist()
     print(missing_data_columns)
 
-    for missing_data_col in missing_data_columns:
-        final_df[missing_data_col] = knn_impute(
-            target = final_df["NI_ratio"], 
-            attributes = final_df.drop([missing_data_col], 1),
-            aggregation_method = "median", 
-            k_neighbors = 200,
-            numeric_distance = 'euclidean',
-            categorical_distance = 'hamming', 
-            missing_neighbors_threshold = 1000
-        )
+    ### Fill missing data with KNN algo
+    # for missing_data_col in missing_data_columns:
+    #     final_df[missing_data_col] = knn_impute(
+    #         target = final_df[missing_data_col], 
+    #         attributes = final_df.drop([missing_data_col], 1),
+    #         aggregation_method = "median", 
+    #         k_neighbors = 1000,
+    #         numeric_distance = 'euclidean',
+    #         categorical_distance = 'hamming', 
+    #         missing_neighbors_threshold = 500
+    #     )
+
+    # #Fill missing data with linear method
+    # final_df = final_df.interpolate(method ='linear', limit_direction ='both')
+
+    # #Drop NaN
+    # # hits_reads_df = hits_reads_df.dropna(how = "any")
+
+    # # hits_reads_df = pd.DataFrame(hits_reads_df_arr)
+
+    # #move orf column to the end of df
+    # # cols = hits_reads_df.columns.tolist()
+    # # cols.insert(-1, cols.pop(cols.index("orf")))
+    # # hits_reads_df = hits_reads_df.reindex(columns = cols)
    
     final_df["orf"] = orf_col
 
@@ -311,22 +325,6 @@ def merge_df(hits_reads_file, hits_in_promoter_file, hits_in_promoter_ratio_file
     final_df['label'].replace(' ', np.nan, inplace=True)
     final_df = final_df.dropna(subset=['label'])
     final_df.reset_index(drop = True)
-
-    # #Fill missing data with linear method
-    # # hits_reads_df = hits_reads_df.interpolate(method ='linear', limit_direction ='forward')
-
-    # #Fill missing data with 0
-    # # hits_reads_df = hits_reads_df.fillna(0)
-
-    # #Drop NaN
-    # # hits_reads_df = hits_reads_df.dropna(how = "any")
-
-    # # hits_reads_df = pd.DataFrame(hits_reads_df_arr)
-
-    # #move orf column to the end of df
-    # # cols = hits_reads_df.columns.tolist()
-    # # cols.insert(-1, cols.pop(cols.index("orf")))
-    # # hits_reads_df = hits_reads_df.reindex(columns = cols)
     
     # #generate csv file
     final_df.to_csv(save_file,index=False)
@@ -335,11 +333,11 @@ def merge_df(hits_reads_file, hits_in_promoter_file, hits_in_promoter_ratio_file
 """
     type_session: name of the session: train or test
 """
-def find_false_positive(type_session, type_df):
+def find_false_positive(type_session, type_df, strain_name):
     
     # file_paths = glob.glob("/home/mddo/stage/M2S4/output/predictions/{}/{}/*.csv".format(type_session, type_df))
 
-    accuracy_file_path = "/home/mddo/stage/M2S4/output/accuracy/{}/accuracy_{}.csv".format(type_session, type_df)
+    accuracy_file_path = "/home/mddo/stage/M2S4/output/{}/accuracy/{}/accuracy_{}.csv".format(strain_name, type_session, type_df)
     with open (accuracy_file_path) as accuracy_file:
         df_array_FP = []
         df_array_FN = []
@@ -349,9 +347,9 @@ def find_false_positive(type_session, type_df):
             acc_value = float(acc_elements[1])
             total_tree = acc_elements[2]
             if type_session == "test":
-                report_path = "/home/mddo/stage/M2S4/output/predictions/{}/{}/predictions_{}_{}.0.csv".format(type_session, type_df, forest_name, round(acc_value*100))
+                report_path = "/home/mddo/stage/M2S4/output/{}/predictions/{}/{}/predictions_{}_{}.0.csv".format(strain_name,type_session, type_df, forest_name, round(acc_value*100))
             else:
-                report_path = "/home/mddo/stage/M2S4/output/predictions/{}/{}/predictions_{}.csv".format(type_session, type_df, forest_name)
+                report_path = "/home/mddo/stage/M2S4/output/{}/predictions/{}/{}/predictions_{}.csv".format(strain_name,type_session, type_df, forest_name)
             
             
             df = pd.read_csv(report_path)
@@ -373,11 +371,11 @@ def find_false_positive(type_session, type_df):
 
         report_FP = result_df_FP["orf"].value_counts()
         report_FP_df = pd.DataFrame(report_FP)
-        report_FP_df.to_csv("/home/mddo/stage/M2S4/output/error/{}/{}_FP.csv".format(type_session,type_df))
+        report_FP_df.to_csv("/home/mddo/stage/M2S4/output/{}/error/{}/{}_FP.csv".format(strain_name, type_session,type_df))
 
         report_FN = result_df_FN["orf"].value_counts()
         report_FN_df = pd.DataFrame(report_FN)
-        report_FN_df.to_csv("/home/mddo/stage/M2S4/output/error/{}/{}_FN.csv".format(type_session,type_df))
+        report_FN_df.to_csv("/home/mddo/stage/M2S4/output/{}/error/{}/{}_FN.csv".format(strain_name, type_session,type_df))
 
 def frequency_false_positive():
     df = pd.read_csv("output/false_positive.out",sep = " ", header = None)
@@ -517,7 +515,7 @@ This function is about to plot all the confusion matrix which is existen in accu
 session: train/test
 type_df: HFI_NI_PROM / HFI_NI_PROM_nan / HFI_NI_PROM_dropna / HFI_NI_PROM_zerofill / .....
 """
-def plot_confusion_matrix(session, type_df):
+def plot_confusion_matrix(session, type_df, strain_name):
     accuracy_file = "/home/mddo/stage/M2S4/output/FY/accuracy/{}/accuracy_{}.csv".format(session,type_df)
     accuracy_df = pd.read_csv(accuracy_file)
     accuracy_df_array = np.asanyarray(accuracy_df)
@@ -527,9 +525,9 @@ def plot_confusion_matrix(session, type_df):
         acc_value = acc_df_element[1]
         total_tree = acc_df_element[2]
         if session == "train":
-            prediction_path = "/home/mddo/stage/M2S4/output/FY/predictions/{}/{}/predictions_{}.csv".format(session,type_df,forest_name)
+            prediction_path = "/home/mddo/stage/M2S4/output/{}/predictions/{}/{}/predictions_{}.csv".format(strain_name,session,type_df,forest_name)
         else:
-            prediction_path = "/home/mddo/stage/M2S4/output/FY/predictions/{}/{}/predictions_{}_{}.0.csv".format(session,type_df,forest_name, round(acc_value*100))
+            prediction_path = "/home/mddo/stage/M2S4/output/{}/predictions/{}/{}/predictions_{}.csv".format(strain_name,session,type_df,forest_name)
         plt.figure(figsize=(10,10))
         df = pd.read_csv(prediction_path)
         confusion_matrix = pd.crosstab(df['label'],df['predictions'], rownames = ['Actual'], colnames=['Predict'])
@@ -550,7 +548,7 @@ def plot_confusion_matrix(session, type_df):
 
         # plt.rcParams.update({'font.size': 14})
         # plt.show()
-        save_folder_path = "/home/mddo/stage/M2S4/images/{}/{}/".format(session,type_df)
+        save_folder_path = "/home/mddo/stage/M2S4/images/{}/{}/{}/".format(strain_name,session,type_df)
         create_folder(save_folder_path)
         plt.savefig(save_folder_path + "/confusion_matrix_{}.png".format(forest_name))
 

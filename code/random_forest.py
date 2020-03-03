@@ -14,7 +14,7 @@ forest = []
 #input: train_df
 #n_bootstrap: number of rows within sub dataframe
 def bootstrapping(train_df, n_bootstrap):
-    bootstrap_indices = np.random.randint(low=0,high=len(train_df), size=n_bootstrap)
+    bootstrap_indices = np.random.choice(len(train_df),n_bootstrap, replace=True)
     df_bootstrapped = train_df.iloc[bootstrap_indices]
 
     return df_bootstrapped
@@ -54,7 +54,7 @@ def training_RF(df, test_size, grid_search, type_df):
 
     test_df["predictions"] = predictions_array
 
-    precision_recall_fscore = precision_recall_fscore_support(test_df["label"], test_df["predictions"],average = "macro")
+    precision_recall_fscore = precision_recall_fscore_support(test_df["label"], test_df["predictions"],average = "binary", pos_label="ess")
     precision = precision_recall_fscore[0]
     recall = precision_recall_fscore[1]
     fscore = precision_recall_fscore[2]
@@ -103,7 +103,6 @@ def testing_RF(test_df_path, type_df, strain_name):
                     
                 #load forest
                 forest = json.load(json_data)
-                print(forest)
                 total_number_of_tree = len(forest)
                     
                 # diploid_files_data = glob.glob("/home/mddo/stage/M2S4/data/diploid/*.out")
@@ -114,18 +113,14 @@ def testing_RF(test_df_path, type_df, strain_name):
                 predictions_array = np.asanyarray(predictions)
                 test_df["predictions"] = predictions_array
                 create_folder("/home/mddo/stage/M2S4/output/{}/predictions/test/{}".format(strain_name,type_df))
-                if strain_name == "FY":
-                    accuracy = calculate_accuracy(predictions,test_df.label)
-                    precision_recall_fscore = precision_recall_fscore_support(test_df["label"], test_df["predictions"],average = "macro")
-                    precision = precision_recall_fscore[0]
-                    recall = precision_recall_fscore[1]
-                    fscore = precision_recall_fscore[2]
+                accuracy = calculate_accuracy(predictions,test_df.label)
+                precision_recall_fscore = precision_recall_fscore_support(test_df["label"], test_df["predictions"],average = "binary", pos_label="ess")
+                precision = precision_recall_fscore[0]
+                recall = precision_recall_fscore[1]
+                fscore = precision_recall_fscore[2]
 
-                    # save predictions output
-                    test_df.to_csv("/home/mddo/stage/M2S4/output/{}/predictions/test/{}/predictions_{}_{}.csv".format(strain_name,type_df, parametre_info, round(accuracy*100)),index=False)
-                    print(str(accuracy) + "," + parametre_info+"\n")
-                    save.write("{},{},{},{},{},{}\n".format(parametre_info,accuracy,precision, recall, fscore, total_number_of_tree))
-                else:
-                    test_df = test_df.drop(columns = ["label"])
-                    # save predictions output
-                    test_df.to_csv("/home/mddo/stage/M2S4/output/{}/predictions/test/{}/predictions_{}.csv".format(strain_name,type_df, parametre_info),index=False)
+                # save predictions output
+                test_df.to_csv("/home/mddo/stage/M2S4/output/{}/predictions/test/{}/predictions_{}_{}.csv".format(strain_name,type_df, parametre_info, round(accuracy*100)),index=False)
+                print(str(accuracy) + "," + parametre_info+"\n")
+                save.write("{},{},{},{},{},{}\n".format(parametre_info,accuracy,precision, recall, fscore, total_number_of_tree))
+                
