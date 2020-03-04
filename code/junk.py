@@ -326,19 +326,14 @@ if __name__ == "__main__":
     main()
 
 
-    # missing_data_columns = hits_reads_df.columns[hits_reads_df.isna().any()].tolist()
-    # print(missing_data_columns)
-    # for missing_data_col in missing_data_columns:
-    #     hits_reads_df[missing_data_col] = knn_impute(
-    #         target = hits_reads_df[missing_data_col], 
-    #         attributes = hits_reads_df.drop([missing_data_col], 1),
-    #         aggregation_method = "median", 
-    #         k_neighbors = 100,
-    #         numeric_distance = 'euclidean',
-    #         categorical_distance = 'hamming', 
-    #         missing_neighbors_threshold = 0.8
-    #     )
-    #     print(hits_reads_df[missing_data_col])
+    ##remove false prediction genes
+    # strain_name = "FY"
+    # type_df = "HFI_NI_PROM_linear"
+    # i = 0
+    # param = [strain_name, type_df, i]
+    # df_path = "/home/mddo/stage/M2S4/output/{}/diploid_/diploid_1/df/{}.csv".format(strain_name, type_df)
+    
+    # remove_fp_gene(df_path,param)
 
 
 
@@ -380,3 +375,33 @@ if __name__ == "__main__":
     
     #generate csv file
     final_df.to_csv(save_file_dataframe,index=False)
+
+
+
+
+
+
+
+
+
+##remove false prediction genes
+    # strain_names = ["CCD","CNT","Sigma","CPG"]
+    # for strain_name in strain_names:
+    #     type_df = "HFI_NI_KNN"
+    #     i = 0
+    #     param = [strain_name, type_df, i]
+    #     df_path = "/home/mddo/stage/M2S4/output/{}/diploid_/diploid_1/df/{}_full.csv".format(strain_name, type_df)
+        
+    #     remove_fp_gene(df_path,param)
+
+
+    ##compare false prediction
+    # strain_names = ["CCD","CNT","Sigma","CPG"]
+    # type_dfs = ["HFI_NI_PROM_KNN","HFI_NI_PROM_linear","HFI_NI_KNN","HFI_NI_linear"]
+    # false_types = ["FP","FN"]
+    # for strain_name in strain_names:
+    #     for type_df in type_dfs:
+    #         for false_type in false_types:
+    #             FY_HFI_NI_PROM_KNN_FP_file = "/home/mddo/stage/M2S4/output/FY/error/train/{}_0_full_{}.csv".format(type_df, false_type)
+    #             other_HFI_NI_PROM_KNN_FP_file = "/home/mddo/stage/M2S4/output/{}/error/test/{}_0_full_{}.csv".format(strain_name, type_df, false_type)
+    #             compare_false_prediction_files(FY_HFI_NI_PROM_KNN_FP_file, other_HFI_NI_PROM_KNN_FP_file)

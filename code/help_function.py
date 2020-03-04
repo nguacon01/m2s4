@@ -269,7 +269,7 @@ def merge_df(hits_reads_file, hits_in_promoter_file, hits_in_promoter_ratio_file
 
     hits_reads_df["hits_count_pro"] = hits_promoter_df.orf.map(hits_promoter_df.set_index("orf")["hits_count_pro"].to_dict())
 
-    hits_reads_df["ratio_hits_prom"] = hits_promoter_df.orf.map(ratio_hits_prom_df.set_index("orf")["ratio_hits_prom"].to_dict())
+    # hits_reads_df["ratio_hits_prom"] = hits_promoter_df.orf.map(ratio_hits_prom_df.set_index("orf")["ratio_hits_prom"].to_dict())
 
     hits_reads_df["orf_len"] = hits_reads_df.orf.map(orf_len_df.set_index("orf")["orf_len"].to_dict())
 
@@ -277,11 +277,11 @@ def merge_df(hits_reads_file, hits_in_promoter_file, hits_in_promoter_ratio_file
 
     hits_reads_df["NI"] = hits_reads_df.orf.map(NI_df.set_index("orf")["NI"].to_dict())
 
-    hits_reads_df["NI_ratio"] = hits_reads_df.orf.map(NI_ratio_df.set_index("orf")["NI_ratio"].to_dict())
+    # hits_reads_df["NI_ratio"] = hits_reads_df.orf.map(NI_ratio_df.set_index("orf")["NI_ratio"].to_dict())
 
     hits_reads_df["HFI"] = hits_reads_df.orf.map(HFI_df.set_index("orf")["HFI_normalized"].to_dict())
 
-    hits_reads_df["HFI_ratio"] = hits_reads_df.orf.map(HFI_ratio_df.set_index("orf")["HFI_ratio"].to_dict())
+    # hits_reads_df["HFI_ratio"] = hits_reads_df.orf.map(HFI_ratio_df.set_index("orf")["HFI_ratio"].to_dict())
 
     orf_col = hits_reads_df["orf"]
 
@@ -303,7 +303,7 @@ def merge_df(hits_reads_file, hits_in_promoter_file, hits_in_promoter_ratio_file
     #     )
 
     # #Fill missing data with linear method
-    # final_df = final_df.interpolate(method ='linear', limit_direction ='both')
+    final_df = final_df.interpolate(method ='linear', limit_direction ='both')
 
     # #Drop NaN
     # # hits_reads_df = hits_reads_df.dropna(how = "any")
@@ -502,12 +502,38 @@ def generate_all_insertion_site_by_orf(insertion_position_file,orf_annotation_fi
                     break
                  
 
-def remove_fp_gene():
-    orf_drop = fp_df[fp_df["freq"] >= 10].orf
-    orf_drop = pd.DataFrame(orf_drop)
+def remove_fp_gene(df_path, param):
+    df = pd.read_csv(df_path)
+    strain_name = param[0]
+    type_df = param[1]
+    i = param[2]
+    if strain_name == "FY":
+        session_name = "train"
+    else:
+        session_name = "test"
+    false_positive_file = "/home/mddo/stage/M2S4/output/{}/error/{}/{}_{}_full_FP.csv".format(strain_name,session_name,type_df, i)
+    fp_df = pd.read_csv(false_positive_file)
+    fp_df.columns = ["orf","freq"]
+    print(false_positive_file)
 
-    condition = df[orf].isin(orf_drop["orf"]) == True
-    df.drop(df[condition].index, inplace = True)
+    false_negative_file = "/home/mddo/stage/M2S4/output/{}/error/{}/{}_{}_full_FN.csv".format(strain_name,session_name, type_df, i)
+    fn_df = pd.read_csv(false_negative_file)
+    fn_df.columns = ["orf","freq"]
+    print(false_negative_file)
+
+    orf_fp_drop = fp_df[fp_df["freq"] >= 10].orf
+    orf_fp_drop_df = pd.DataFrame(orf_fp_drop)
+    print(orf_fp_drop_df)
+    condition_fp = df["orf"].isin(orf_fp_drop_df["orf"]) == True
+    df.drop(df[condition_fp].index, inplace = True)
+
+    orf_fn_drop = fn_df[fn_df["freq"] >= 10].orf
+    orf_fn_drop_df = pd.DataFrame(orf_fn_drop)
+    print(orf_fn_drop_df)
+    condition_fn = df["orf"].isin(orf_fn_drop_df["orf"]) == True
+    df.drop(df[condition_fn].index, inplace = True)
+    
+    df.to_csv(df_path+"_removed.csv", index = False)
 
             
 """
@@ -551,5 +577,53 @@ def plot_confusion_matrix(session, type_df, strain_name):
         save_folder_path = "/home/mddo/stage/M2S4/images/{}/{}/{}/".format(strain_name,session,type_df)
         create_folder(save_folder_path)
         plt.savefig(save_folder_path + "/confusion_matrix_{}.png".format(forest_name))
+
+def compare_false_prediction_files(FY_false_prediction_files, other_file):
+    FY_false_prediction_df = pd.read_csv(FY_false_prediction_files)
+    FY_false_prediction_df.columns = ["orf","freq"]
+
+    other_strain_false_prediction_df = pd.read_csv(other_file)
+    other_strain_false_prediction_df.columns = ["orf","freq"]
+
+    ##compare
+    intersection = pd.merge(FY_false_prediction_df, other_strain_false_prediction_df, how = "inner", on = ["orf"])
+
+    # condition = intersection[intersection["freq"] >= 10].orf
+    # orf_false_prediction_10_percent_df = pd.DataFrame(orf_false_prediction_10_percent)
+
+    # compare = orf_false_prediction_10_percent_df["orf"].isin(other_strain_false_prediction_df["orf"]) == True
+    # orf_false_prediction_10_percent_df.iloc[orf_false_prediction_10_percent_df[compare].index]
+
+    intersection.to_csv("{}_compare_with_FY.csv".format(other_file), index = False)
+
+def plot_accuracy_precision(strain_name, session_name, type_data):
+    accuracy_file = "/home/mddo/stage/M2S4/output/{}/accuracy/{}/accuracy_{}.csv".format(strain_name, session_name, type_data)
+    create_folder("/home/mddo/stage/M2S4/images/{}/acc_and_precision/".format(strain_name))
+    save_figure = "/home/mddo/stage/M2S4/images/{}/acc_and_precision/{}.png".format(strain_name,type_data)
+    accuracy_df = pd.read_csv(accuracy_file)
+    accuracy_df.columns = ["forest","accuracy","precision","recall","fscrore","total_tree"]
+
+    accuracy = accuracy_df["accuracy"]
+    precision = accuracy_df["precision"]
+    total_tree = accuracy_df["total_tree"]
+
+    ax = plt.gca()
+    sns.set_style("whitegrid")
+
+    accuracy_df.plot(kind='line',x='total_tree',y='accuracy',ax=ax)
+    accuracy_df.plot(kind='line',x='total_tree',y='precision', color='red', ax=ax)
+
+    fig = matplotlib.pyplot.gcf()
+    fig.set_size_inches(18.5, 10.5)
+    plt.rcParams["figure.figsize"] = (20,2)
+    plt.title("{} prediction accuracy and precision".format(strain_name), size = 20)
+    plt.xticks(size = 14)
+    plt.yticks(size = 14)
+    plt.xlabel("Numer of trees in forest", size = 18)
+    plt.ylabel("Accuracy & Precision", size = 18)
+
+    plt.savefig(save_figure)
+    return accuracy_df
+
 
 

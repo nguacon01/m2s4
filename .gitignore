@@ -3,3 +3,4 @@
 logs/*.out
 output/FY/diploid
 output/FY/trees
+images/*
