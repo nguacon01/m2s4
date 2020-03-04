@@ -83,11 +83,13 @@ def training_RF(df, test_size, grid_search, type_df):
 
 def testing_RF(test_df_path, type_df, strain_name):
     train_accuracy_file = "/home/mddo/stage/M2S4/output/FY/accuracy/train/accuracy_{}.csv".format(type_df)
+    print(train_accuracy_file)
     train_accuracy_df = pd.read_csv(train_accuracy_file)
     train_accuracy_df.columns = ["forest","accuracy","precision","recall","fscore","total_tree"]
     trained_forests = train_accuracy_df["forest"]
 
     save_file_report = "/home/mddo/stage/M2S4/output/{}/accuracy/test/accuracy_{}.csv".format(strain_name, type_df)
+    print(save_file_report)
 
     for forest_name in trained_forests:
         # create_file(save_file_report)
@@ -113,6 +115,7 @@ def testing_RF(test_df_path, type_df, strain_name):
                 predictions_array = np.asanyarray(predictions)
                 test_df["predictions"] = predictions_array
                 create_folder("/home/mddo/stage/M2S4/output/{}/predictions/test/{}".format(strain_name,type_df))
+                print("/home/mddo/stage/M2S4/output/{}/predictions/test/{}".format(strain_name,type_df))
                 accuracy = calculate_accuracy(predictions,test_df.label)
                 precision_recall_fscore = precision_recall_fscore_support(test_df["label"], test_df["predictions"],average = "binary", pos_label="ess")
                 precision = precision_recall_fscore[0]
@@ -121,6 +124,7 @@ def testing_RF(test_df_path, type_df, strain_name):
 
                 # save predictions output
                 test_df.to_csv("/home/mddo/stage/M2S4/output/{}/predictions/test/{}/predictions_{}_{}.csv".format(strain_name,type_df, parametre_info, round(accuracy*100)),index=False)
+                print("/home/mddo/stage/M2S4/output/{}/predictions/test/{}/predictions_{}_{}.csv".format(strain_name,type_df, parametre_info, round(accuracy*100)))
                 print(str(accuracy) + "," + parametre_info+"\n")
                 save.write("{},{},{},{},{},{}\n".format(parametre_info,accuracy,precision, recall, fscore, total_number_of_tree))
                 
