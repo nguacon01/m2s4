@@ -385,12 +385,12 @@ if __name__ == "__main__":
 
 
 ##remove false prediction genes
-    # strain_names = ["CCD","CNT","Sigma","CPG"]
+    # strain_names = ["CCD","CNT","Sigma","CPG","FY"]
     # for strain_name in strain_names:
-    #     type_df = "HFI_NI_KNN"
+    #     type_df = "HFI_NI_PROM_KNN"
     #     i = 0
     #     param = [strain_name, type_df, i]
-    #     df_path = "/home/mddo/stage/M2S4/output/{}/diploid_/diploid_1/df/{}_full.csv".format(strain_name, type_df)
+    #     df_path = "/home/mddo/stage/M2S4/output/{}/diploid_/diploid_{}/df/{}.csv".format(strain_name,i,type_df)
         
     #     remove_fp_gene(df_path,param)
 

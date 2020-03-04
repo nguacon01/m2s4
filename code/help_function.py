@@ -507,16 +507,16 @@ def remove_fp_gene(df_path, param):
     strain_name = param[0]
     type_df = param[1]
     i = param[2]
-    if strain_name == "FY":
-        session_name = "train"
-    else:
-        session_name = "test"
-    false_positive_file = "/home/mddo/stage/M2S4/output/{}/error/{}/{}_{}_full_FP.csv".format(strain_name,session_name,type_df, i)
+    # if strain_name == "FY":
+    #     session_name = "train"
+    # else:
+    #     session_name = "test"
+    false_positive_file = "/home/mddo/stage/M2S4/output/FY/error/train/{}_{}_full_FP.csv".format(type_df, i)
     fp_df = pd.read_csv(false_positive_file)
     fp_df.columns = ["orf","freq"]
     print(false_positive_file)
 
-    false_negative_file = "/home/mddo/stage/M2S4/output/{}/error/{}/{}_{}_full_FN.csv".format(strain_name,session_name, type_df, i)
+    false_negative_file = "/home/mddo/stage/M2S4/output/FY/error/train/{}_{}_full_FN.csv".format(type_df, i)
     fn_df = pd.read_csv(false_negative_file)
     fn_df.columns = ["orf","freq"]
     print(false_negative_file)

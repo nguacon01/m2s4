@@ -51,14 +51,14 @@ def main():
     # testing_RF(test_df_path, type_data, strain_name)
 
     ##--------------------# END TESTING_SESSION#--------------------##
-    strain_names = ["FY"]
-    for strain_name in strain_names:
-        type_df = "HFI_NI_KNN_0_full"
-        type_session = "train"
+    # strain_names = ["FY"]
+    # for strain_name in strain_names:
+    #     type_df = "HFI_NI_KNN_0_full"
+    #     type_session = "train"
         
-    #     # plot_confusion_matrix(session, type_df, strain_name)
+    #     plot_confusion_matrix(session, type_df, strain_name)
 
-        find_false_positive(type_session,type_df,strain_name)
+    #     find_false_positive(type_session,type_df,strain_name)
 
 
     ### create plot of accuracy and precision during training session or testing session
@@ -66,6 +66,9 @@ def main():
     # strain_name = "FY"
     # data_type = "HFI_NI_KNN_0_full"
     # plot_accuracy_precision(strain_name,session_name,data_type)
+
+
+    
 
 if __name__ == "__main__":
     main()
