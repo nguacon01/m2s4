@@ -15,15 +15,15 @@ def main():
 
     ##--------------------# BEGIN TRAINING SESSION#--------------------#
     ## only use for FY
-    for i in range(150):
-        type_df = "HFI_NI_KNN_removed"
+    for i in range(100):
+        type_df = "normal_linear"
         file_dataframe = "/home/mddo/stage/M2S4/output/FY/diploid_/diploid_0/df/{}.csv".format(type_df)
         df = pd.read_csv(file_dataframe)
         n_columns = len(df.columns) - 2
     
         #create search grid
         n_tree = random.sample(population = list(range(10,30)), k = 1)
-        n_feature = random.sample(population = list(range(4,n_columns+1)), k = 1)
+        n_feature = random.sample(population = list(range(3,n_columns+1)), k = 1)
         n_max_depth = random.sample(population = list(range(10,20)), k = 1)
         n_bootstrap = random.sample(population = list(range(1000,1500)), k = 1)
     
@@ -44,11 +44,11 @@ def main():
     ##--------------------# BEGIN TESTING_SESSION#--------------------##
     # i = 0
     # # surfix = "_removed"
-    # z = "HFI_NI_linear"
-    # strain_name = "FY"
+    # z = "normal_KNN"
+    # strain_name = "Sigma"
 
-    # type_data = "{}_{}".format(z,i)
-    # test_df_path = "/home/mddo/stage/M2S4/output/{}/diploid_/diploid_{}/df/{}_removed.csv".format(strain_name,i,z)
+    # type_data = "{}".format(z)
+    # test_df_path = "/home/mddo/stage/M2S4/output/{}/diploid_/diploid_{}/df/{}.csv".format(strain_name,i,z)
     # testing_RF(test_df_path, type_data, strain_name)
 
     ##--------------------# END TESTING_SESSION#--------------------##
@@ -68,6 +68,86 @@ def main():
     # data_type = "HFI_NI_KNN_0_full"
     # plot_accuracy_precision(strain_name,session_name,data_type)
 
+
+    # #--------------------#BEGIN CREATE ORIGINAL DATA#--------------------## 
+    # strains_name = ["Sigma","FY","CPG","CNT","CCD"]
+    # for strain_name in strains_name:
+    #     i = 0
+    #     save_hits_reads_file = "/home/mddo/stage/M2S4/output/{}/haploid/hits_reads_per_orf.out".format(strain_name)
+    #     save_hits_in_promoter_file = "/home/mddo/stage/M2S4/output/{}/haploid/hits_in_promoter.out".format(strain_name)
+    #     save_hits_per_10kbNI_file = "/home/mddo/stage/M2S4/output/{}/haploid/hits_per_10kbNI.out".format(strain_name)
+    #     save_orf_length_file = "/home/mddo/stage/M2S4/output/{}/haploid/orf_length.out".format(strain_name)
+    #     save_insertion_index_file = "/home/mddo/stage/M2S4/output/{}/haploid/insertion_index.out".format(strain_name)
+    #     save_non_coding_windows_file = "/home/mddo/stage/M2S4/output/{}/haploid/non_coding_windows.out".format(strain_name)
+    #     save_neighborhood_index_file = "/home/mddo/stage/M2S4/output/{}/haploid/NI.out".format(strain_name)
+    #     save_hit_free_interval_file = "/home/mddo/stage/M2S4/output/{}/haploid/HFI.out".format(strain_name)
+    #     save_total_hits_count_10kb_NI = "/home/mddo/stage/M2S4/output/{}/haploid/total_hits_count_10kb_NI.out".format(strain_name)
+    #     save_ratio_hits_in_promoter_file = "/home/mddo/stage/M2S4/output/{}/haploid/ratio_hits_in_promoter.out".format(strain_name)
+
+    #     save_hits_in_promoter_ratio_haplo_diplo = "/home/mddo/stage/M2S4/output/{}/diploid_/diploid_{}/diplo_hits_in_promoter_ratio_haplo_diplo.out".format(strain_name,i)
+    #     save_NI_ratio_haplo_diplo = "/home/mddo/stage/M2S4/output/{}/diploid_/diploid_{}/diplo_NI_ratio_haplo_diplo.out".format(strain_name,i)
+    #     save_HFI_ratio_haplo_diplo = "/home/mddo/stage/M2S4/output/{}/diploid_/diploid_{}/diplo_HFI_ratio_haplo_diplo.out".format(strain_name,i)
+
+    #     label_df = "/home/mddo/stage/M2S4/data/FY/final_annot.csv"
+
+    #     create_folder("/home/mddo/stage/M2S4/output/{}/diploid_/diploid_{}".format(strain_name, i))
+    #     create_folder("/home/mddo/stage/M2S4/output/{}/diploid_/diploid_{}/df".format(strain_name, i))
+    #     save_file_dataframe = "/home/mddo/stage/M2S4/output/{}/diploid_/diploid_{}/df/normal_linear.csv".format(strain_name, i)
+    #     # # #---------------merge data file--------------#
+    #     merge_df(
+    #         save_hits_reads_file, 
+    #         save_hits_in_promoter_file, 
+    #         save_hits_in_promoter_ratio_haplo_diplo,
+    #         save_orf_length_file, 
+    #         save_insertion_index_file, 
+    #         save_neighborhood_index_file,
+    #         save_NI_ratio_haplo_diplo, 
+    #         save_hit_free_interval_file,
+    #         save_HFI_ratio_haplo_diplo,
+    #         label_df,
+    #         save_file_dataframe
+    #     )
+    # # #--------------------#END CREATE ORIGINAL DATA#--------------------## 
+
+    # #--------------------#BEGIN CREATE ORIGINAL DATA#--------------------## 
+    # strains_name = ["FY"]
+    # for strain_name in strains_name:
+    #     i = 0
+    #     save_hits_reads_file = "/home/mddo/stage/M2S4/output/{}/haploid/hits_reads_per_orf.out".format(strain_name)
+    #     save_hits_in_promoter_file = "/home/mddo/stage/M2S4/output/{}/haploid/hits_in_promoter.out".format(strain_name)
+    #     save_hits_per_10kbNI_file = "/home/mddo/stage/M2S4/output/{}/haploid/hits_per_10kbNI.out".format(strain_name)
+    #     save_orf_length_file = "/home/mddo/stage/M2S4/output/{}/haploid/orf_length.out".format(strain_name)
+    #     save_insertion_index_file = "/home/mddo/stage/M2S4/output/{}/haploid/insertion_index.out".format(strain_name)
+    #     save_non_coding_windows_file = "/home/mddo/stage/M2S4/output/{}/haploid/non_coding_windows.out".format(strain_name)
+    #     save_neighborhood_index_file = "/home/mddo/stage/M2S4/output/{}/haploid/NI.out".format(strain_name)
+    #     save_hit_free_interval_file = "/home/mddo/stage/M2S4/output/{}/haploid/HFI.out".format(strain_name)
+    #     save_total_hits_count_10kb_NI = "/home/mddo/stage/M2S4/output/{}/haploid/total_hits_count_10kb_NI.out".format(strain_name)
+    #     save_ratio_hits_in_promoter_file = "/home/mddo/stage/M2S4/output/{}/haploid/ratio_hits_in_promoter.out".format(strain_name)
+
+    #     save_hits_in_promoter_ratio_haplo_diplo = "/home/mddo/stage/M2S4/output/{}/diploid_/diploid_{}/diplo_hits_in_promoter_ratio_haplo_diplo.out".format(strain_name,i)
+    #     save_NI_ratio_haplo_diplo = "/home/mddo/stage/M2S4/output/{}/diploid_/diploid_{}/diplo_NI_ratio_haplo_diplo.out".format(strain_name,i)
+    #     save_HFI_ratio_haplo_diplo = "/home/mddo/stage/M2S4/output/{}/diploid_/diploid_{}/diplo_HFI_ratio_haplo_diplo.out".format(strain_name,i)
+
+    #     label_df = "/home/mddo/stage/M2S4/data/FY/final_annot.csv"
+
+    #     create_folder("/home/mddo/stage/M2S4/output/{}/diploid_/diploid_{}".format(strain_name, i))
+    #     create_folder("/home/mddo/stage/M2S4/output/{}/diploid_/diploid_{}/df".format(strain_name, i))
+    #     save_file_dataframe = "/home/mddo/stage/M2S4/output/{}/diploid_/diploid_{}/df/HFI_NI_5f.csv".format(strain_name, i)
+    #     # # #---------------merge data file--------------#
+    #     merge_df(
+    #         save_hits_reads_file, 
+    #         save_hits_in_promoter_file, 
+    #         save_hits_in_promoter_ratio_haplo_diplo,
+    #         save_orf_length_file, 
+    #         save_insertion_index_file, 
+    #         save_neighborhood_index_file,
+    #         save_NI_ratio_haplo_diplo, 
+    #         save_hit_free_interval_file,
+    #         save_HFI_ratio_haplo_diplo,
+    #         label_df,
+    #         save_file_dataframe
+    #     )
+    # # #--------------------#END CREATE ORIGINAL DATA#--------------------## 
 
     
 

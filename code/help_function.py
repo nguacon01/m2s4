@@ -269,7 +269,7 @@ def merge_df(hits_reads_file, hits_in_promoter_file, hits_in_promoter_ratio_file
 
     hits_reads_df["hits_count_pro"] = hits_promoter_df.orf.map(hits_promoter_df.set_index("orf")["hits_count_pro"].to_dict())
 
-    # hits_reads_df["ratio_hits_prom"] = hits_promoter_df.orf.map(ratio_hits_prom_df.set_index("orf")["ratio_hits_prom"].to_dict())
+    hits_reads_df["ratio_hits_prom"] = hits_promoter_df.orf.map(ratio_hits_prom_df.set_index("orf")["ratio_hits_prom"].to_dict())
 
     hits_reads_df["orf_len"] = hits_reads_df.orf.map(orf_len_df.set_index("orf")["orf_len"].to_dict())
 
@@ -277,11 +277,11 @@ def merge_df(hits_reads_file, hits_in_promoter_file, hits_in_promoter_ratio_file
 
     hits_reads_df["NI"] = hits_reads_df.orf.map(NI_df.set_index("orf")["NI"].to_dict())
 
-    # hits_reads_df["NI_ratio"] = hits_reads_df.orf.map(NI_ratio_df.set_index("orf")["NI_ratio"].to_dict())
+    hits_reads_df["NI_ratio"] = hits_reads_df.orf.map(NI_ratio_df.set_index("orf")["NI_ratio"].to_dict())
 
     hits_reads_df["HFI"] = hits_reads_df.orf.map(HFI_df.set_index("orf")["HFI_normalized"].to_dict())
 
-    # hits_reads_df["HFI_ratio"] = hits_reads_df.orf.map(HFI_ratio_df.set_index("orf")["HFI_ratio"].to_dict())
+    hits_reads_df["HFI_ratio"] = hits_reads_df.orf.map(HFI_ratio_df.set_index("orf")["HFI_ratio"].to_dict())
 
     orf_col = hits_reads_df["orf"]
 
@@ -303,7 +303,7 @@ def merge_df(hits_reads_file, hits_in_promoter_file, hits_in_promoter_ratio_file
     #     )
 
     # #Fill missing data with linear method
-    final_df = final_df.interpolate(method ='linear', limit_direction ='both')
+    # final_df = final_df.interpolate(method ='linear', limit_direction ='both')
 
     # #Drop NaN
     # # hits_reads_df = hits_reads_df.dropna(how = "any")
@@ -625,5 +625,8 @@ def plot_accuracy_precision(strain_name, session_name, type_data):
     plt.savefig(save_figure)
     return accuracy_df
 
-
-
+def find_missing_data(df_path, save_file):
+    df = pd.read_csv(df_path)
+    # nan_df = pd.DataFrame()
+    nan_df = df[df.isna().any(axis=1)]
+    nan_df.to_csv(save_file, index = False)

@@ -14,7 +14,8 @@ forest = []
 #input: train_df
 #n_bootstrap: number of rows within sub dataframe
 def bootstrapping(train_df, n_bootstrap):
-    bootstrap_indices = np.random.choice(len(train_df),n_bootstrap, replace=True)
+    # bootstrap_indices = np.random.choice(len(train_df),n_bootstrap, replace=True)
+    bootstrap_indices = np.random.randint(low=0,high=len(train_df), size=n_bootstrap)
     df_bootstrapped = train_df.iloc[bootstrap_indices]
 
     return df_bootstrapped
@@ -82,23 +83,31 @@ def training_RF(df, test_size, grid_search, type_df):
     return accuracy_arr
 
 def testing_RF(test_df_path, type_df, strain_name):
+    
+    #read file training accuracy of FY, fetch all the forests which were trained
     train_accuracy_file = "/home/mddo/stage/M2S4/output/FY/accuracy/train/accuracy_{}.csv".format(type_df)
-    print(train_accuracy_file)
+    print("train_accuracy_file: " + train_accuracy_file)
     train_accuracy_df = pd.read_csv(train_accuracy_file)
     train_accuracy_df.columns = ["forest","accuracy","precision","recall","fscore","total_tree"]
     trained_forests = train_accuracy_df["forest"]
 
+    #create path of report save file of testing session, for each differents strains
     save_file_report = "/home/mddo/stage/M2S4/output/{}/accuracy/test/accuracy_{}.csv".format(strain_name, type_df)
-    print(save_file_report)
+    print("save_file_report: " + save_file_report)
 
+    #for each forest name from FY training accuracy file above, we test with test_df of each strains
     for forest_name in trained_forests:
         # create_file(save_file_report)
         with open(save_file_report,"a") as save:
-            #fetch all trained forests
+            #create forest path from forest name
             forest_path = "/home/mddo/stage/M2S4/output/FY/forest/{}/{}.json".format(type_df,forest_name)
             print(forest_path)
+
+            #if forest path does not exist, ignore it
             if not os.path.exists(forest_path):
                 continue
+
+            #read forest file
             with open(forest_path) as json_data:
                 #get forest attributes
                 parametre_info = forest_name
@@ -111,20 +120,30 @@ def testing_RF(test_df_path, type_df, strain_name):
                 # for i in range(len(diploid_files_data)):
                 #define test data
                 test_df = pd.read_csv(test_df_path)
+
+                #predict data from other strains
                 predictions = random_forest_predictions(test_df, forest)
                 predictions_array = np.asanyarray(predictions)
+
+                #create predicted label column in test_df file
                 test_df["predictions"] = predictions_array
+
+                #create folder which contains all the predicted dataframe of other strains for each forests
                 create_folder("/home/mddo/stage/M2S4/output/{}/predictions/test/{}".format(strain_name,type_df))
                 print("/home/mddo/stage/M2S4/output/{}/predictions/test/{}".format(strain_name,type_df))
+
+                #calculate accuracy after predict
                 accuracy = calculate_accuracy(predictions,test_df.label)
+                #calculate precision score, recall score, f1 score
                 precision_recall_fscore = precision_recall_fscore_support(test_df["label"], test_df["predictions"],average = "binary", pos_label="ess")
                 precision = precision_recall_fscore[0]
                 recall = precision_recall_fscore[1]
                 fscore = precision_recall_fscore[2]
 
-                # save predictions output
+                # save predictions output as csv file
                 test_df.to_csv("/home/mddo/stage/M2S4/output/{}/predictions/test/{}/predictions_{}_{}.csv".format(strain_name,type_df, parametre_info, round(accuracy*100)),index=False)
                 print("/home/mddo/stage/M2S4/output/{}/predictions/test/{}/predictions_{}_{}.csv".format(strain_name,type_df, parametre_info, round(accuracy*100)))
                 print(str(accuracy) + "," + parametre_info+"\n")
+                #save all scores into accuracy file, store it in test folder
                 save.write("{},{},{},{},{},{}\n".format(parametre_info,accuracy,precision, recall, fscore, total_number_of_tree))
                 

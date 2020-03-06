@@ -214,7 +214,7 @@ def main():
 
 
     # #--------------------#BEGIN CREATE ORIGINAL DATA#--------------------## 
-    # strains_name = ["Sigma","FY","CNT","CPG"]
+    # strains_name = ["Sigma","FY","CPG","CNT","CCD"]
     # for strain_name in strains_name:
     #     i = 0
     #     save_hits_reads_file = "/home/mddo/stage/M2S4/output/{}/haploid/hits_reads_per_orf.out".format(strain_name)
@@ -232,11 +232,11 @@ def main():
     #     save_NI_ratio_haplo_diplo = "/home/mddo/stage/M2S4/output/{}/diploid_/diploid_{}/diplo_NI_ratio_haplo_diplo.out".format(strain_name,i)
     #     save_HFI_ratio_haplo_diplo = "/home/mddo/stage/M2S4/output/{}/diploid_/diploid_{}/diplo_HFI_ratio_haplo_diplo.out".format(strain_name,i)
 
-    #     label_df = "/home/mddo/stage/M2S4/data/FY/final_annot.csv".format(strain_name)
+    #     label_df = "/home/mddo/stage/M2S4/data/FY/final_annot.csv"
 
     #     create_folder("/home/mddo/stage/M2S4/output/{}/diploid_/diploid_{}".format(strain_name, i))
     #     create_folder("/home/mddo/stage/M2S4/output/{}/diploid_/diploid_{}/df".format(strain_name, i))
-    #     save_file_dataframe = "/home/mddo/stage/M2S4/output/{}/diploid_/diploid_{}/df/HFI_NI_KNN.csv".format(strain_name, i)
+    #     save_file_dataframe = "/home/mddo/stage/M2S4/output/{}/diploid_/diploid_{}/df/normal_linear.csv".format(strain_name, i)
     #     # # #---------------merge data file--------------#
     #     merge_df(
     #         save_hits_reads_file, 

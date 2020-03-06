@@ -2,5 +2,6 @@
 *.pyc
 logs/*.out
 output/FY/diploid
-output/FY/trees
+# output/*/forest
+# output/*/predictions
 images/*
