@@ -269,7 +269,7 @@ def merge_df(hits_reads_file, hits_in_promoter_file, hits_in_promoter_ratio_file
 
     hits_reads_df["hits_count_pro"] = hits_promoter_df.orf.map(hits_promoter_df.set_index("orf")["hits_count_pro"].to_dict())
 
-    hits_reads_df["ratio_hits_prom"] = hits_promoter_df.orf.map(ratio_hits_prom_df.set_index("orf")["ratio_hits_prom"].to_dict())
+    # hits_reads_df["ratio_hits_prom"] = hits_promoter_df.orf.map(ratio_hits_prom_df.set_index("orf")["ratio_hits_prom"].to_dict())
 
     hits_reads_df["orf_len"] = hits_reads_df.orf.map(orf_len_df.set_index("orf")["orf_len"].to_dict())
 
@@ -277,11 +277,11 @@ def merge_df(hits_reads_file, hits_in_promoter_file, hits_in_promoter_ratio_file
 
     hits_reads_df["NI"] = hits_reads_df.orf.map(NI_df.set_index("orf")["NI"].to_dict())
 
-    hits_reads_df["NI_ratio"] = hits_reads_df.orf.map(NI_ratio_df.set_index("orf")["NI_ratio"].to_dict())
+    # hits_reads_df["NI_ratio"] = hits_reads_df.orf.map(NI_ratio_df.set_index("orf")["NI_ratio"].to_dict())
 
     hits_reads_df["HFI"] = hits_reads_df.orf.map(HFI_df.set_index("orf")["HFI_normalized"].to_dict())
 
-    hits_reads_df["HFI_ratio"] = hits_reads_df.orf.map(HFI_ratio_df.set_index("orf")["HFI_ratio"].to_dict())
+    # hits_reads_df["HFI_ratio"] = hits_reads_df.orf.map(HFI_ratio_df.set_index("orf")["HFI_ratio"].to_dict())
 
     orf_col = hits_reads_df["orf"]
 
@@ -291,16 +291,16 @@ def merge_df(hits_reads_file, hits_in_promoter_file, hits_in_promoter_ratio_file
     print(missing_data_columns)
 
     ### Fill missing data with KNN algo
-    # for missing_data_col in missing_data_columns:
-    #     final_df[missing_data_col] = knn_impute(
-    #         target = final_df[missing_data_col], 
-    #         attributes = final_df.drop([missing_data_col], 1),
-    #         aggregation_method = "median", 
-    #         k_neighbors = 1000,
-    #         numeric_distance = 'euclidean',
-    #         categorical_distance = 'hamming', 
-    #         missing_neighbors_threshold = 500
-    #     )
+    for missing_data_col in missing_data_columns:
+        final_df[missing_data_col] = knn_impute(
+            target = final_df[missing_data_col], 
+            attributes = final_df.drop([missing_data_col], 1),
+            aggregation_method = "median", 
+            k_neighbors = 1000,
+            numeric_distance = 'euclidean',
+            categorical_distance = 'hamming', 
+            missing_neighbors_threshold = 500
+        )
 
     # #Fill missing data with linear method
     # final_df = final_df.interpolate(method ='linear', limit_direction ='both')
@@ -610,8 +610,10 @@ def plot_accuracy_precision(strain_name, session_name, type_data):
     ax = plt.gca()
     sns.set_style("whitegrid")
 
-    accuracy_df.plot(kind='line',x='total_tree',y='accuracy',ax=ax)
-    accuracy_df.plot(kind='line',x='total_tree',y='precision', color='red', ax=ax)
+    accuracy_df.plot(kind='line',y='accuracy',ax=ax)
+    accuracy_df.plot(kind='line',y='precision', color='red', ax=ax)
+    # accuracy_df = accuracy_df.drop(columns = ["total_tree"])
+    # accuracy_df.plot(kind="line")
 
     fig = matplotlib.pyplot.gcf()
     fig.set_size_inches(18.5, 10.5)
