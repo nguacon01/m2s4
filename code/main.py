@@ -15,42 +15,40 @@ def main():
 
     ##--------------------# BEGIN TRAINING SESSION#--------------------#
     ## only use for FY
-    for i in range(100):
-        type_df = "normal"
-        folder_number = 0
-        file_dataframe = "/home/mddo/stage/M2S4/output/FY/diploid_/diploid_0/df/{}.csv".format(type_df)
-        df = pd.read_csv(file_dataframe)
-        n_columns = len(df.columns) - 2
+    # for i in range(100):
+    #     type_df = "normal"
+    #     folder_number = 0
+    #     file_dataframe = "/home/mddo/stage/M2S4/output/FY/diploid_/diploid_0/df/{}.csv".format(type_df)
+    #     df = pd.read_csv(file_dataframe)
+    #     n_columns = len(df.columns) - 2
     
-        #create search grid
-        n_tree = random.sample(population = list(range(10,30)), k = 1)
-        n_feature = random.sample(population = list(range(3,n_columns+1)), k = 1)
-        n_max_depth = random.sample(population = list(range(10,20)), k = 1)
-        n_bootstrap = random.sample(population = list(range(1500,2000)), k = 1)
+    #     #create search grid
+    #     n_tree = random.sample(population = list(range(10,30)), k = 1)
+    #     n_feature = random.sample(population = list(range(3,n_columns+1)), k = 1)
+    #     n_max_depth = random.sample(population = list(range(10,20)), k = 1)
+    #     n_bootstrap = random.sample(population = list(range(1500,2000)), k = 1)
     
-        grid= {
-            'n_tree' : n_tree[0],
-            'n_feature' : n_feature[0],
-            'n_max_depth' : n_max_depth[0],
-            'n_bootstrap' : n_bootstrap[0]
-        }
-        print(grid)
+    #     grid= {
+    #         'n_tree' : n_tree[0],
+    #         'n_feature' : n_feature[0],
+    #         'n_max_depth' : n_max_depth[0],
+    #         'n_bootstrap' : n_bootstrap[0]
+    #     }
+    #     print(grid)
     
-        training_RF(df, test_size = 0.2, grid_search = grid, type_df = type_df, folder_number = folder_number)
+    #     training_RF(df, test_size = 0.2, grid_search = grid, type_df = type_df, folder_number = folder_number)
 
     #--------------------# END TRAINING SESSION#--------------------#
 
 
 
     ##--------------------# BEGIN TESTING_SESSION#--------------------##
-    i = 0
-    # surfix = "_removed"
-    # z = "HFI_NI_PROM_linear_removed"
-    # strain_name = "CHM"
+    # type_df = "normal_KNN"
+    # strain_name = "FY"
+    # folder_number = 0
 
-    # type_data = "{}".format(z)
-    # test_df_path = "/home/mddo/stage/M2S4/output/{}/diploid_/diploid_{}/df/{}.csv".format(strain_name,i,z)
-    # testing_RF(test_df_path, type_data, strain_name)
+    # test_df_path = "/home/mddo/stage/M2S4/output/{}/diploid_/diploid_{}/df/{}_removed.csv".format(strain_name,folder_number,type_df)
+    # testing_RF(test_df_path, type_df, strain_name, folder_number)
 
     ##--------------------# END TESTING_SESSION#--------------------##
     # strain_names = ["FY"]
@@ -151,12 +149,13 @@ def main():
     # # #--------------------#END CREATE ORIGINAL DATA#--------------------## 
 
     # find_false_positive("train","normal_linear","FY")
-    # strain_name = "CHM"
-    # type_df = "normal_KNN"
-    # i = 0
-    # param = [strain_name,type_df, i]
-    # df_path = "/home/mddo/stage/M2S4/output/CHM/diploid_/diploid_0/df/{}.csv".format(type_df)
-    # remove_fp_gene(df_path, param)
+    strain_name = "CPG"
+    type_df = "normal_KNN"
+    folder_number = 0
+    param = [strain_name,type_df, folder_number]
+    df_path = "/home/mddo/stage/M2S4/output/{}/diploid_/diploid_{}/df/{}.csv".format(strain_name,folder_number,type_df)
+    remove_fp_gene(df_path, param)
+    
 
     
 

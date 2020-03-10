@@ -511,23 +511,23 @@ def remove_fp_gene(df_path, param):
     #     session_name = "train"
     # else:
     #     session_name = "test"
-    false_positive_file = "/home/mddo/stage/M2S4/output/FY/error/train/{}_{}_full_FP.csv".format(type_df, i)
+    false_positive_file = "/home/mddo/stage/M2S4/output/FY/error/train/{}_FP_{}.csv".format(type_df, i)
     fp_df = pd.read_csv(false_positive_file)
     fp_df.columns = ["orf","freq"]
     print(false_positive_file)
 
-    false_negative_file = "/home/mddo/stage/M2S4/output/FY/error/train/{}_{}_full_FN.csv".format(type_df, i)
+    false_negative_file = "/home/mddo/stage/M2S4/output/FY/error/train/{}_FN_{}.csv".format(type_df, i)
     fn_df = pd.read_csv(false_negative_file)
     fn_df.columns = ["orf","freq"]
     print(false_negative_file)
 
-    orf_fp_drop = fp_df[fp_df["freq"] >= 10].orf
+    orf_fp_drop = fp_df[fp_df["freq"] >= 5].orf
     orf_fp_drop_df = pd.DataFrame(orf_fp_drop)
     print(orf_fp_drop_df)
     condition_fp = df["orf"].isin(orf_fp_drop_df["orf"]) == True
     df.drop(df[condition_fp].index, inplace = True)
 
-    orf_fn_drop = fn_df[fn_df["freq"] >= 10].orf
+    orf_fn_drop = fn_df[fn_df["freq"] >= 5].orf
     orf_fn_drop_df = pd.DataFrame(orf_fn_drop)
     print(orf_fn_drop_df)
     condition_fn = df["orf"].isin(orf_fn_drop_df["orf"]) == True

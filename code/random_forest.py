@@ -64,11 +64,11 @@ def training_RF(df, test_size, grid_search, type_df, folder_number):
     accuracy_arr.append(accuracy)
 
     #save file predictions 
-    create_folder("output/FY/predictions/train/{}".format(type_df))
-    test_df.to_csv("output/FY/predictions/train/{}/predictions_forest_{}_{}_{}_{}_{}.csv".format(type_df, n_tree, n_feature, n_max_depth, n_bootstrap,round(accuracy*100)),index=False)
+    create_folder("output/FY/predictions/train/{}_{}".format(type_df, folder_number))
+    test_df.to_csv("output/FY/predictions/train/{}_{}/predictions_forest_{}_{}_{}_{}_{}.csv".format(type_df,folder_number, n_tree, n_feature, n_max_depth, n_bootstrap,round(accuracy*100)),index=False)
 
     #save forest - save environment
-    create_folder("output/FY/forest/{}".format(type_df))
+    create_folder("output/FY/forest/{}_{}".format(type_df, folder_number))
     save_forest_path = "output/FY/forest/{}_{}/forest_{}_{}_{}_{}_{}.json".format(type_df,folder_number,n_tree, n_feature, n_max_depth, n_bootstrap,round(accuracy*100))
     create_file(save_forest_path)
     with open(save_forest_path,"w") as save_forest:
