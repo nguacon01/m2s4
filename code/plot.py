@@ -9,6 +9,7 @@ from helper_functions import train_test_split
 from random import seed
 import json
 from sklearn.metrics import precision_recall_fscore_support
+import matplotlib_venn as venn
 # %%
 sns.lineplot(data=pd.DataFrame(dataFrame["accuracy_HFI_NI"]), palette="tab10", linewidth=2.5, color = "orange",markers="o")
 
@@ -323,5 +324,48 @@ plt.ylabel("Actual", size=14)
 
 bottom, top = ax.get_ylim()
 ax.set_ylim(bottom + 0.5, top - 0.5)
+
+# %%
+df = pd.read_csv("/home/mddo/stage/M2S4/code/TP_common_0.csv")
+fy_label = df["label_FY"]
+fy_label.replace({"ess" : 1})
+ccd_label = df["predictions_CCD"]
+ccd_label.replace({"ess" : 1})
+cpg_label = df["predictions_CPG"]
+cpg_label.replace({"ess" : 1})
+cnt_label = df["predictions_CNT"]
+sigma_label = df["predictions_Sigma"]
+chm_label = df["predictions_CHM"]
+
+# %%
+from matplotlib_venn import venn2
+from matplotlib_venn import venn3
+set1 = set()
+set2 = set()
+set3 = set()
+set4 = set()
+set_array = []
+set_names = ['Set1', 'Set2', 'Set3', 'Set4']
+
+set1.add('a')
+set1.add('b')
+
+set2.add('b')
+set2.add('c')
+
+set3.add('c')
+set3.add('d')
+
+set4.add('d')
+set4.add('e')
+
+set_array.append(set1)
+set_array.append(set2)
+set_array.append(set3)
+set_array.append(set4)
+
+# venn2([set1, set2], ('Set1', 'Set2')) # venn2 works for two sets
+venn3(set_array[0:3], set_names[0:3])   # venn3 works for three sets
+plt.show()
 
 # %%

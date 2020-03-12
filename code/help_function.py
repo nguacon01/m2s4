@@ -291,16 +291,16 @@ def merge_df(hits_reads_file, hits_in_promoter_file, hits_in_promoter_ratio_file
     print(missing_data_columns)
 
     ### Fill missing data with KNN algo
-    for missing_data_col in missing_data_columns:
-        final_df[missing_data_col] = knn_impute(
-            target = final_df[missing_data_col], 
-            attributes = final_df.drop([missing_data_col], 1),
-            aggregation_method = "median", 
-            k_neighbors = 1000,
-            numeric_distance = 'euclidean',
-            categorical_distance = 'hamming', 
-            missing_neighbors_threshold = 500
-        )
+    # for missing_data_col in missing_data_columns:
+    #     final_df[missing_data_col] = knn_impute(
+    #         target = final_df[missing_data_col], 
+    #         attributes = final_df.drop([missing_data_col], 1),
+    #         aggregation_method = "median", 
+    #         k_neighbors = 1000,
+    #         numeric_distance = 'euclidean',
+    #         categorical_distance = 'hamming', 
+    #         missing_neighbors_threshold = 500
+    #     )
 
     # #Fill missing data with linear method
     # final_df = final_df.interpolate(method ='linear', limit_direction ='both')
@@ -463,10 +463,10 @@ def ratio_haploid_diploid(haploid_file, diploid_file, save_file):
                 figure_diplo = float(data_diplo_features[1])
                 if orf_haplo == orf_diplo:
                     # prevent from divise by 0
-                    if figure_diplo != 0 and figure_diplo != np.nan:
-                        ratio = figure_haplo/figure_diplo
+                    if figure_haplo != 0 and figure_haplo != np.nan:
+                        ratio = figure_diplo/figure_haplo
                     else:
-                        ratio = np.nan
+                        ratio = figure_haplo/float(0.0001)
                     save.write(orf_haplo + " " + str(ratio) + "\n")
                     break
 
@@ -596,10 +596,10 @@ def compare_false_prediction_files(FY_false_prediction_files, other_file):
 
     intersection.to_csv("{}_compare_with_FY.csv".format(other_file), index = False)
 
-def plot_accuracy_precision(strain_name, session_name, type_data):
-    accuracy_file = "/home/mddo/stage/M2S4/output/{}/accuracy/{}/accuracy_{}.csv".format(strain_name, session_name, type_data)
+def plot_accuracy_precision(strain_name, session_name, type_data, folder_number):
+    accuracy_file = "/home/mddo/stage/M2S4/output/{}/accuracy/{}/accuracy_{}_{}.csv".format(strain_name, session_name, type_data,folder_number)
     create_folder("/home/mddo/stage/M2S4/images/{}/acc_and_precision/".format(strain_name))
-    save_figure = "/home/mddo/stage/M2S4/images/{}/acc_and_precision/{}.png".format(strain_name,type_data)
+    save_figure = "/home/mddo/stage/M2S4/images/{}/acc_and_precision/{}_{}.png".format(strain_name,type_data, folder_number)
     accuracy_df = pd.read_csv(accuracy_file)
     accuracy_df.columns = ["forest","accuracy","precision","recall","fscrore","total_tree"]
 
@@ -625,10 +625,31 @@ def plot_accuracy_precision(strain_name, session_name, type_data):
     plt.ylabel("Accuracy & Precision", size = 18)
 
     plt.savefig(save_figure)
-    return accuracy_df
 
 def find_missing_data(df_path, save_file):
     df = pd.read_csv(df_path)
     # nan_df = pd.DataFrame()
     nan_df = df[df.isna().any(axis=1)]
     nan_df.to_csv(save_file, index = False)
+
+def map_all_essential_genes(fy_prediction_file, other_strains_array):
+    fy_prediction_df = pd.read_csv(fy_prediction_file)
+    map_df = pd.DataFrame()
+    ## select all true positive, put it in new dataframe
+    map_df = fy_prediction_df.loc[(fy_prediction_df["label"] == "ess") & (fy_prediction_df["label"] == fy_prediction_df["predictions"])]
+    map_df = map_df.drop(columns = ["hits_count","reads_count","hits_count_pro","orf_len","insertion_index","NI","HFI","predictions"])
+    map_df.columns = ["orf","label_FY"]
+
+    for strain_name, strain_prediction_file in other_strains_array.items():
+        strain_prediction_df = pd.read_csv(strain_prediction_file)
+
+        ## Select True Positive in other strains prediction
+        map_TP_strain = pd.DataFrame()
+        map_TP_strain = strain_prediction_df.loc[(strain_prediction_df["label"] == "ess") & (strain_prediction_df["label"] == strain_prediction_df["predictions"])]
+        map_TP_strain = map_TP_strain.drop(columns = ["hits_count","reads_count","hits_count_pro","orf_len","insertion_index","NI","HFI","label"])
+        map_TP_strain.columns = ["orf","predictions"]
+
+
+        map_df["predictions_{}".format(strain_name)] = map_df.orf.map(map_TP_strain.set_index("orf")["predictions"].to_dict())
+    # map_df = map_df.dropna(how="any")
+    map_df.to_csv("/home/mddo/stage/M2S4/code/TP_common_0.csv", index = False)

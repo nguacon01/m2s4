@@ -8,6 +8,7 @@ import matplotlib.pyplot as plt
 from sklearn import metrics
 import glob
 import json
+import matplotlib_venn as venn
 def main():
 
     
@@ -25,8 +26,8 @@ def main():
     #     #create search grid
     #     n_tree = random.sample(population = list(range(10,30)), k = 1)
     #     n_feature = random.sample(population = list(range(3,n_columns+1)), k = 1)
-    #     n_max_depth = random.sample(population = list(range(10,20)), k = 1)
-    #     n_bootstrap = random.sample(population = list(range(1500,2000)), k = 1)
+    #     n_max_depth = random.sample(population = list(range(5,15)), k = 1)
+    #     n_bootstrap = random.sample(population = list(range(1200,1500)), k = 1)
     
     #     grid= {
     #         'n_tree' : n_tree[0],
@@ -47,10 +48,13 @@ def main():
     # strain_name = "FY"
     # folder_number = 0
 
-    # test_df_path = "/home/mddo/stage/M2S4/output/{}/diploid_/diploid_{}/df/{}_removed.csv".format(strain_name,folder_number,type_df)
+    # test_df_path = "/home/mddo/stage/M2S4/output/{}/diploid_/diploid_{}/df/diploid_normal_KNN.csv".format(strain_name,folder_number,)
     # testing_RF(test_df_path, type_df, strain_name, folder_number)
 
     ##--------------------# END TESTING_SESSION#--------------------##
+
+
+    ## Find false predictions
     # strain_names = ["FY"]
     # for strain_name in strain_names:
     #     type_df = "HFI_NI_KNN_0_full"
@@ -61,103 +65,64 @@ def main():
     #     find_false_positive(type_session,type_df,strain_name)
 
 
-    ### create plot of accuracy and precision during training session or testing session
-    # session_name = "train"
-    # strain_name = "FY"
-    # data_type = "HFI_NI_KNN_0_full"
-    # plot_accuracy_precision(strain_name,session_name,data_type)
+    ## Create plot of accuracy and precision during training session or testing session
+    # session_name = "test"
+    # strain_name = "CHM"
+    # data_type = "normal_KNN_removed"
+    # folder_number = 0
+    # plot_accuracy_precision(strain_name,session_name,data_type, folder_number)
 
+    ## Remove false predited genes
+    # strain_name = "BMK"
+    # type_df = "normal_KNN"
+    # folder_number = 0
+    # param = [strain_name,type_df, folder_number]
+    # df_path = "/home/mddo/stage/M2S4/output/{}/diploid_/diploid_{}/df/{}.csv".format(strain_name,folder_number,type_df)
+    # remove_fp_gene(df_path, param)
 
-    # #--------------------#BEGIN CREATE ORIGINAL DATA#--------------------## 
-    # strains_name = ["Sigma","FY","CPG","CNT","CCD"]
-    # for strain_name in strains_name:
-    #     i = 0
-    #     save_hits_reads_file = "/home/mddo/stage/M2S4/output/{}/haploid/hits_reads_per_orf.out".format(strain_name)
-    #     save_hits_in_promoter_file = "/home/mddo/stage/M2S4/output/{}/haploid/hits_in_promoter.out".format(strain_name)
-    #     save_hits_per_10kbNI_file = "/home/mddo/stage/M2S4/output/{}/haploid/hits_per_10kbNI.out".format(strain_name)
-    #     save_orf_length_file = "/home/mddo/stage/M2S4/output/{}/haploid/orf_length.out".format(strain_name)
-    #     save_insertion_index_file = "/home/mddo/stage/M2S4/output/{}/haploid/insertion_index.out".format(strain_name)
-    #     save_non_coding_windows_file = "/home/mddo/stage/M2S4/output/{}/haploid/non_coding_windows.out".format(strain_name)
-    #     save_neighborhood_index_file = "/home/mddo/stage/M2S4/output/{}/haploid/NI.out".format(strain_name)
-    #     save_hit_free_interval_file = "/home/mddo/stage/M2S4/output/{}/haploid/HFI.out".format(strain_name)
-    #     save_total_hits_count_10kb_NI = "/home/mddo/stage/M2S4/output/{}/haploid/total_hits_count_10kb_NI.out".format(strain_name)
-    #     save_ratio_hits_in_promoter_file = "/home/mddo/stage/M2S4/output/{}/haploid/ratio_hits_in_promoter.out".format(strain_name)
-
-    #     save_hits_in_promoter_ratio_haplo_diplo = "/home/mddo/stage/M2S4/output/{}/diploid_/diploid_{}/diplo_hits_in_promoter_ratio_haplo_diplo.out".format(strain_name,i)
-    #     save_NI_ratio_haplo_diplo = "/home/mddo/stage/M2S4/output/{}/diploid_/diploid_{}/diplo_NI_ratio_haplo_diplo.out".format(strain_name,i)
-    #     save_HFI_ratio_haplo_diplo = "/home/mddo/stage/M2S4/output/{}/diploid_/diploid_{}/diplo_HFI_ratio_haplo_diplo.out".format(strain_name,i)
-
-    #     label_df = "/home/mddo/stage/M2S4/data/FY/final_annot.csv"
-
-    #     create_folder("/home/mddo/stage/M2S4/output/{}/diploid_/diploid_{}".format(strain_name, i))
-    #     create_folder("/home/mddo/stage/M2S4/output/{}/diploid_/diploid_{}/df".format(strain_name, i))
-    #     save_file_dataframe = "/home/mddo/stage/M2S4/output/{}/diploid_/diploid_{}/df/normal_linear.csv".format(strain_name, i)
-    #     # # #---------------merge data file--------------#
-    #     merge_df(
-    #         save_hits_reads_file, 
-    #         save_hits_in_promoter_file, 
-    #         save_hits_in_promoter_ratio_haplo_diplo,
-    #         save_orf_length_file, 
-    #         save_insertion_index_file, 
-    #         save_neighborhood_index_file,
-    #         save_NI_ratio_haplo_diplo, 
-    #         save_hit_free_interval_file,
-    #         save_HFI_ratio_haplo_diplo,
-    #         label_df,
-    #         save_file_dataframe
-    #     )
-    # # #--------------------#END CREATE ORIGINAL DATA#--------------------## 
-
-    # #--------------------#BEGIN CREATE ORIGINAL DATA#--------------------## 
-    # strains_name = ["CHM"]
-    # for strain_name in strains_name:
-    #     i = 0
-    #     save_hits_reads_file = "/home/mddo/stage/M2S4/output/{}/haploid/hits_reads_per_orf.out".format(strain_name)
-    #     save_hits_in_promoter_file = "/home/mddo/stage/M2S4/output/{}/haploid/hits_in_promoter.out".format(strain_name)
-    #     save_hits_per_10kbNI_file = "/home/mddo/stage/M2S4/output/{}/haploid/hits_per_10kbNI.out".format(strain_name)
-    #     save_orf_length_file = "/home/mddo/stage/M2S4/output/{}/haploid/orf_length.out".format(strain_name)
-    #     save_insertion_index_file = "/home/mddo/stage/M2S4/output/{}/haploid/insertion_index.out".format(strain_name)
-    #     save_non_coding_windows_file = "/home/mddo/stage/M2S4/output/{}/haploid/non_coding_windows.out".format(strain_name)
-    #     save_neighborhood_index_file = "/home/mddo/stage/M2S4/output/{}/haploid/NI.out".format(strain_name)
-    #     save_hit_free_interval_file = "/home/mddo/stage/M2S4/output/{}/haploid/HFI.out".format(strain_name)
-    #     save_total_hits_count_10kb_NI = "/home/mddo/stage/M2S4/output/{}/haploid/total_hits_count_10kb_NI.out".format(strain_name)
-    #     save_ratio_hits_in_promoter_file = "/home/mddo/stage/M2S4/output/{}/haploid/ratio_hits_in_promoter.out".format(strain_name)
-
-    #     save_hits_in_promoter_ratio_haplo_diplo = "/home/mddo/stage/M2S4/output/{}/diploid_/diploid_{}/diplo_hits_in_promoter_ratio_haplo_diplo.out".format(strain_name,i)
-    #     save_NI_ratio_haplo_diplo = "/home/mddo/stage/M2S4/output/{}/diploid_/diploid_{}/diplo_NI_ratio_haplo_diplo.out".format(strain_name,i)
-    #     save_HFI_ratio_haplo_diplo = "/home/mddo/stage/M2S4/output/{}/diploid_/diploid_{}/diplo_HFI_ratio_haplo_diplo.out".format(strain_name,i)
-
-    #     label_df = "/home/mddo/stage/M2S4/data/FY/final_annot.csv"
-
-    #     create_folder("/home/mddo/stage/M2S4/output/{}/diploid_/diploid_{}".format(strain_name, i))
-    #     create_folder("/home/mddo/stage/M2S4/output/{}/diploid_/diploid_{}/df".format(strain_name, i))
-    #     save_file_dataframe = "/home/mddo/stage/M2S4/output/{}/diploid_/diploid_{}/df/normal_linear.csv".format(strain_name, i)
-    #     # # #---------------merge data file--------------#
-    #     merge_df(
-    #         save_hits_reads_file, 
-    #         save_hits_in_promoter_file, 
-    #         save_hits_in_promoter_ratio_haplo_diplo,
-    #         save_orf_length_file, 
-    #         save_insertion_index_file, 
-    #         save_neighborhood_index_file,
-    #         save_NI_ratio_haplo_diplo, 
-    #         save_hit_free_interval_file,
-    #         save_HFI_ratio_haplo_diplo,
-    #         label_df,
-    #         save_file_dataframe
-    #     )
-    # # #--------------------#END CREATE ORIGINAL DATA#--------------------## 
-
-    # find_false_positive("train","normal_linear","FY")
-    strain_name = "CPG"
-    type_df = "normal_KNN"
-    folder_number = 0
-    param = [strain_name,type_df, folder_number]
-    df_path = "/home/mddo/stage/M2S4/output/{}/diploid_/diploid_{}/df/{}.csv".format(strain_name,folder_number,type_df)
-    remove_fp_gene(df_path, param)
-    
+    # fy_prediction_file = "/home/mddo/stage/M2S4/output/FY/predictions/test/normal_KNN_0/predictions_forest_16_5_13_1019_92.0_100.0.csv"
+    # ccd_prediction_file = "/home/mddo/stage/M2S4/output/CCD/predictions/test/normal_KNN_0/predictions_forest_12_5_15_1275_92.0_93.0.csv"
+    # cpg_prediction_file = "/home/mddo/stage/M2S4/output/CPG/predictions/test/normal_KNN_0/predictions_forest_24_4_15_1456_91.0_93.0.csv"
+    # cnt_prediction_file = "/home/mddo/stage/M2S4/output/CNT/predictions/test/normal_KNN_0/predictions_forest_13_5_18_1492_92.0_91.0.csv"
+    # sigma_prediction_file = "/home/mddo/stage/M2S4/output/Sigma/predictions/test/normal_KNN_0/predictions_forest_11_7_17_1302_93.0_93.0.csv"
+    # chm_prediction_file = "/home/mddo/stage/M2S4/output/CHM/predictions/test/normal_KNN_0/predictions_forest_24_6_11_1381_91.0_90.0.csv"
+    # other_strains_array = {
+    #     "CCD":ccd_prediction_file, 
+    #     "CPG" : cpg_prediction_file, 
+    #     "CNT" : cnt_prediction_file, 
+    #     "Sigma" : sigma_prediction_file, 
+    #     "CHM" : chm_prediction_file
+    # }
+    # map_all_essential_genes(fy_prediction_file,other_strains_array)
 
     
+
+    # #--------------------#BEGIN generate features DIPLOID#--------------------#
+    # strain_name = "CCD"
+    # i = 0
+    # create_folder("/home/mddo/stage/M2S4/output/{}/diploid_/diploid_{}".format(strain_name,i))
+
+    # insertion_position_diploid_read_file = "/home/mddo/stage/M2S4/data/{}/diploid/file_{}_diploid_insertion_positions.out".format(strain_name,i) # insertion positions of transposon in diploid
+
+    # annotation_100bpPromoters_file = "/home/mddo/stage/M2S4/data/annotations/sace_R64_annotation_100bppromoters.gff" #positions of promoters
+    # annotation_genesonly_simplified_file = "/home/mddo/stage/M2S4/data/annotations/sace_R64_annotation_genesonly_simplified.gff" #positions of orfs
+    # annotation_noncoding_10kb_NI_file = "/home/mddo/stage/M2S4/data/annotations/all_subtracts_noncoding_10kbNI_genes.bed" #positions of 10kb non coding regions around orfs
+    # annotation_insertionsitesinORF_file = "/home/mddo/stage/M2S4/output/{}/diploid_/diploid_{}/all_rel_insertionsitesinORF.out".format(strain_name,i) #all insertion positions in orfs
+    
+    
+    # #--------------------#BEGIN generate ration features between HAPLOID and DIPLOID#--------------------#
+    ##---------------Generate ratio file: NI, HFI, hits_in_promoter between haploid and diploid--------------#
+    ##--a small note: because the HFI in haploide is alway smaller than diploide, so instead of calculating HFI_haplo/HFI_diplo, we calculate ratio HFI_diplo/HFI_haplo
+    ##--we will obtain a ratio which is less than 1. So it take less calculation for the downstream analyses
+    ratio_type = "HFI"
+    strain_name = "FY"
+    i = 0
+    save_file_ratio = "/home/mddo/stage/M2S4/output/{}/diploid_/diploid_{}/diplo_{}_non_zero_ratio_haplo_diplo.out".format(strain_name,i,ratio_type)
+    haploid_file = "/home/mddo/stage/M2S4/output/{}/haploid/{}.out".format(strain_name,ratio_type)
+    diploid_file = "/home/mddo/stage/M2S4/output/{}/diploid_/diploid_{}/diplo_{}.out".format(strain_name,i,ratio_type)
+    ratio_haploid_diploid(haploid_file, diploid_file, save_file_ratio)
+
+    # #--------------------#END generate ration features between HAPLOID 
 
 if __name__ == "__main__":
     main()
