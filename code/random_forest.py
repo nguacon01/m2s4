@@ -14,13 +14,14 @@ forest = []
 #input: train_df
 #n_bootstrap: number of rows within sub dataframe
 def bootstrapping(train_df, n_bootstrap):
-    bootstrap_indices = np.random.choice(len(train_df),n_bootstrap, replace=True)
-    # bootstrap_indices = np.random.randint(low=0,high=len(train_df), size=n_bootstrap)
+    # bootstrap_indices = np.random.choice(len(train_df),n_bootstrap, replace=True)
+    bootstrap_indices = np.random.randint(low=0,high=len(train_df), size=n_bootstrap)
     df_bootstrapped = train_df.iloc[bootstrap_indices]
 
     return df_bootstrapped
 
 def random_forest_algorithm(train_df, n_tree, n_bootstrap, n_feature, dt_max_depth):
+    
     for i in range(n_tree):
         df_bootstrapped = bootstrapping(train_df, n_bootstrap)
         tree = decision_tree_algorithm(df_bootstrapped, max_depth=dt_max_depth, random_subspace=n_feature)
@@ -92,6 +93,7 @@ def testing_RF(test_df_path, type_df, strain_name, folder_number):
     trained_forests = train_accuracy_df["forest"]
 
     #create path of report save file of testing session, for each differents strains
+    create_folder("/home/mddo/stage/M2S4/output/{}/accuracy/test".format(strain_name))
     save_file_report = "/home/mddo/stage/M2S4/output/{}/accuracy/test/accuracy_{}_{}.csv".format(strain_name, type_df, folder_number)
     print("save_file_report: " + save_file_report)
 
@@ -129,6 +131,7 @@ def testing_RF(test_df_path, type_df, strain_name, folder_number):
                 test_df["predictions"] = predictions_array
 
                 #create folder which contains all the predicted dataframe of other strains for each forests
+                create_folder("/home/mddo/stage/M2S4/output/{}/predictions/test".format(strain_name))
                 create_folder("/home/mddo/stage/M2S4/output/{}/predictions/test/{}_{}".format(strain_name,type_df, folder_number))
                 print("/home/mddo/stage/M2S4/output/{}/predictions/test/{}_{}".format(strain_name,type_df, folder_number))
 
@@ -141,6 +144,7 @@ def testing_RF(test_df_path, type_df, strain_name, folder_number):
                 fscore = precision_recall_fscore[2]
 
                 # save predictions output as csv file
+                
                 test_df.to_csv("/home/mddo/stage/M2S4/output/{}/predictions/test/{}_{}/predictions_{}_{}.csv".format(strain_name,type_df,folder_number, parametre_info, round(accuracy*100)),index=False)
                 print("/home/mddo/stage/M2S4/output/{}/predictions/test/{}_{}/predictions_{}_{}.csv".format(strain_name,type_df,folder_number, parametre_info, round(accuracy*100)))
                 print(str(accuracy) + "," + parametre_info+"\n")

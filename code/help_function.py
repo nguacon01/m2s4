@@ -119,19 +119,23 @@ def insertion_index(ORF_hits_file, ORF_length_file, save_file):
     create_file(save_file)
     insertion_id_arr = []
     insertion_id = 0
+    read_by_len = 0
     with open(ORF_hits_file,'r') as hits, open(ORF_length_file,'r') as lengths, open(save_file,"w") as save:
         for h in hits:
             h_features = h.strip().split(" ")
             h_orf = h_features[0]
             hits = h_features[1]
+            reads = h_features[2]
             for l in lengths:
                 l_features = l.strip().split(" ")
                 l_orf = l_features[0]
                 length = l_features[1]
                 if h_orf == l_orf:
                     insertion_id = int(hits)/int(length)
+                    read_by_len = int(reads)/int(length)
                     insertion_id_arr.append([h_features[0], insertion_id])
-                    save.write(str(h_orf) + " " + str(insertion_id) + "\n")
+                    save.write("{} {} {}\n".format(h_orf, insertion_id, read_by_len))
+                    # save.write(str(h_orf) + " " + str(insertion_id) + "\n")
                     break
 
 
@@ -151,7 +155,7 @@ def total_hits_count_10kb(read_file,save_file):
 #input hits_file:total hits per ORF
 #len_file /home/mddo/stage/M2S4/PourMD/Ref/all_subtracts_10kbNI_genes.bed
 #save file: file to save
-#non_coding_windows = total_hit_per_orf / total_len_non_coding_windows_within_10kb_up_downstream_per_orf
+#non_coding_windows = total_hit_in_10kb_around_orf / total_len_non_coding_windows_within_10kb_up_downstream_per_orf
 def non_coding_windows(hits_file,len_file,save_file):
     f = open(len_file)
     x = f.readlines()
@@ -218,7 +222,9 @@ def neightborhood_index(insertion_index_file,non_coding_windows_file,save_file):
     # NI_file:  save_neighborhood_index_file
     # HFI_file: save_free_hit_interval_file
     # you can add label file or not
-def merge_df(hits_reads_file, hits_in_promoter_file, hits_in_promoter_ratio_file, orf_len_file, insertion_index_file, NI_file, NI_ratio_file, HFI_file, HFI_ratio_file, label_file, save_file):
+    # impute_missing_data support linear regression method (linear) and K nearest neighbor method(KNN) or does not use any method (None)
+def merge_df(hits_reads_file, hits_in_promoter_file, hits_in_promoter_ratio_file, orf_len_file, insertion_index_file, NI_file, NI_ratio_file, HFI_file, HFI_ratio_file, label_file, impute_missing_data, save_file):
+
     min_max_scaler = MinMaxScaler()
 
     #hits count and reads count
@@ -248,7 +254,7 @@ def merge_df(hits_reads_file, hits_in_promoter_file, hits_in_promoter_ratio_file
 
     #insertion index
     insertion_index_df = pd.read_csv(insertion_index_file,sep=" ",header=None)
-    insertion_index_df.columns = ["orf","insertion_index"]
+    insertion_index_df.columns = ["orf","insertion_index","reads_by_len"]
 
     #Neighborhood index
     NI_df = pd.read_csv(NI_file,sep=" ",header=None)
@@ -275,6 +281,8 @@ def merge_df(hits_reads_file, hits_in_promoter_file, hits_in_promoter_ratio_file
 
     hits_reads_df["insertion_index"] = hits_reads_df.orf.map(insertion_index_df.set_index("orf")["insertion_index"].to_dict())
 
+    hits_reads_df["reads_by_len"] = hits_reads_df.orf.map(insertion_index_df.set_index("orf")["reads_by_len"].to_dict())
+
     hits_reads_df["NI"] = hits_reads_df.orf.map(NI_df.set_index("orf")["NI"].to_dict())
 
     # hits_reads_df["NI_ratio"] = hits_reads_df.orf.map(NI_ratio_df.set_index("orf")["NI_ratio"].to_dict())
@@ -285,25 +293,25 @@ def merge_df(hits_reads_file, hits_in_promoter_file, hits_in_promoter_ratio_file
 
     orf_col = hits_reads_df["orf"]
 
-    final_df = hits_reads_df.drop(columns = ["orf"])
+    final_df = hits_reads_df.drop(columns = ["orf", "hits_count","reads_count"])
     print(final_df)
     missing_data_columns = final_df.columns[final_df.isna().any()].tolist()
     print(missing_data_columns)
-
-    ### Fill missing data with KNN algo
-    # for missing_data_col in missing_data_columns:
-    #     final_df[missing_data_col] = knn_impute(
-    #         target = final_df[missing_data_col], 
-    #         attributes = final_df.drop([missing_data_col], 1),
-    #         aggregation_method = "median", 
-    #         k_neighbors = 1000,
-    #         numeric_distance = 'euclidean',
-    #         categorical_distance = 'hamming', 
-    #         missing_neighbors_threshold = 500
-    #     )
-
-    # #Fill missing data with linear method
-    # final_df = final_df.interpolate(method ='linear', limit_direction ='both')
+    if impute_missing_data == "KNN":
+        ## Fill missing data with KNN algo
+        for missing_data_col in missing_data_columns:
+            final_df[missing_data_col] = knn_impute(
+                target = final_df[missing_data_col], 
+                attributes = final_df.drop([missing_data_col], 1),
+                aggregation_method = "median", 
+                k_neighbors = 100,
+                numeric_distance = 'euclidean',
+                categorical_distance = 'hamming', 
+                missing_neighbors_threshold = 2500
+            )
+    elif impute_missing_data == "linear":
+        #Fill missing data with linear method
+        final_df = final_df.interpolate(method ='linear', limit_direction ='both')
 
     # #Drop NaN
     # # hits_reads_df = hits_reads_df.dropna(how = "any")
@@ -598,6 +606,7 @@ def compare_false_prediction_files(FY_false_prediction_files, other_file):
 
 def plot_accuracy_precision(strain_name, session_name, type_data, folder_number):
     accuracy_file = "/home/mddo/stage/M2S4/output/{}/accuracy/{}/accuracy_{}_{}.csv".format(strain_name, session_name, type_data,folder_number)
+    create_folder("/home/mddo/stage/M2S4/images/{}".format(strain_name))
     create_folder("/home/mddo/stage/M2S4/images/{}/acc_and_precision/".format(strain_name))
     save_figure = "/home/mddo/stage/M2S4/images/{}/acc_and_precision/{}_{}.png".format(strain_name,type_data, folder_number)
     accuracy_df = pd.read_csv(accuracy_file)
@@ -651,5 +660,179 @@ def map_all_essential_genes(fy_prediction_file, other_strains_array):
 
 
         map_df["predictions_{}".format(strain_name)] = map_df.orf.map(map_TP_strain.set_index("orf")["predictions"].to_dict())
-    # map_df = map_df.dropna(how="any")
+    map_df = map_df.dropna(how="any")
     map_df.to_csv("/home/mddo/stage/M2S4/code/TP_common_0.csv", index = False)
+
+def create_data_haploid(strain_name):
+    # #--------------------#BEGIN generate features HAPLOID#--------------------#
+
+    insertion_position_read_file = "/home/mddo/stage/M2S4/reads_per_pos/{}-rel_readPerPos_v2.txt".format(strain_name) # insertion positions of transposon in haploide FY strain
+
+    annotation_100bpPromoters_file = "/home/mddo/stage/M2S4/data/annotations/sace_R64_annotation_100bppromoters.gff" #positions of promoters
+    annotation_genesonly_simplified_file = "/home/mddo/stage/M2S4/data/annotations/sace_R64_annotation_genesonly_simplified.gff" #positions of orfs
+    annotation_noncoding_10kb_NI_file = "/home/mddo/stage/M2S4/data/annotations/all_subtracts_noncoding_10kbNI_genes.bed" #positions of 10kb non coding regions around orfs
+    annotation_insertionsitesinORF_file = "/home/mddo/stage/M2S4/output/{}/haploid/all_rel_insertionsitesinORF.out".format(strain_name) #all insertion positions in orfs
+
+    # # #--------------------#define save files#--------------------#
+    save_hits_reads_file = "/home/mddo/stage/M2S4/output/{}/haploid/hits_reads_per_orf.out".format(strain_name)
+    save_hits_in_promoter_file = "/home/mddo/stage/M2S4/output/{}/haploid/hits_in_promoter.out".format(strain_name)
+    save_hits_per_10kbNI_file = "/home/mddo/stage/M2S4/output/{}/haploid/hits_per_10kbNI.out".format(strain_name)
+    save_orf_length_file = "/home/mddo/stage/M2S4/output/{}/haploid/orf_length.out".format(strain_name)
+    save_insertion_index_file = "/home/mddo/stage/M2S4/output/{}/haploid/insertion_index.out".format(strain_name)
+    save_non_coding_windows_file = "/home/mddo/stage/M2S4/output/{}/haploid/non_coding_windows.out".format(strain_name)
+    save_neighborhood_index_file = "/home/mddo/stage/M2S4/output/{}/haploid/NI.out".format(strain_name)
+    save_free_hit_interval_file = "/home/mddo/stage/M2S4/output/{}/haploid/HFI.out".format(strain_name)
+    save_total_hits_count_10kb_NI = "/home/mddo/stage/M2S4/output/{}/haploid/total_hits_count_10kb_NI.out".format(strain_name)
+
+    # # #--------------------#generate data files#--------------------#
+    #hits count reads count generate
+    hits_read_count(insertion_position_read_file,annotation_genesonly_simplified_file,save_hits_reads_file)
+
+    #promoter hits count
+    hits_read_count(insertion_position_read_file,annotation_100bpPromoters_file,save_hits_in_promoter_file)
+
+    #10kb NI hits count
+    hits_read_count(insertion_position_read_file,annotation_noncoding_10kb_NI_file,save_hits_per_10kbNI_file)
+
+    # #total hits count in 10kb NI
+    total_hits_count_10kb(save_hits_per_10kbNI_file,save_total_hits_count_10kb_NI)
+
+    # #calculate orf length
+    length_ORF(annotation_genesonly_simplified_file,save_orf_length_file)
+
+    # #calculate insertion index
+    insertion_index(save_hits_reads_file,save_orf_length_file,save_insertion_index_file)
+
+    # #calculate non coding windows
+    non_coding_windows(save_total_hits_count_10kb_NI, annotation_noncoding_10kb_NI_file, save_non_coding_windows_file)
+
+    # #calculate neighborhood index
+    neightborhood_index(save_insertion_index_file, save_non_coding_windows_file, save_neighborhood_index_file)
+
+    #calculate hit free interval
+    hit_free_interval(annotation_insertionsitesinORF_file, save_free_hit_interval_file)
+
+    # # #--------------------#END generate features HAPLOID#--------------------#
+
+def create_data_diploid(strain_name):
+
+    # #--------------------#BEGIN generate features DIPLOID#--------------------#
+    i = 0
+    create_folder("/home/mddo/stage/M2S4/output/{}/diploid_/diploid_{}".format(strain_name,i))
+
+    insertion_position_diploid_read_file = "/home/mddo/stage/M2S4/data/{}/diploid/file_{}_diploid_insertion_positions.out".format(strain_name,i) # insertion positions of transposon in diploid
+
+    annotation_100bpPromoters_file = "/home/mddo/stage/M2S4/data/annotations/sace_R64_annotation_100bppromoters.gff" #positions of promoters
+    annotation_genesonly_simplified_file = "/home/mddo/stage/M2S4/data/annotations/sace_R64_annotation_genesonly_simplified.gff" #positions of orfs
+    annotation_noncoding_10kb_NI_file = "/home/mddo/stage/M2S4/data/annotations/all_subtracts_noncoding_10kbNI_genes.bed" #positions of 10kb non coding regions around orfs
+    annotation_insertionsitesinORF_file = "/home/mddo/stage/M2S4/output/{}/diploid_/diploid_{}/all_rel_insertionsitesinORF.out".format(strain_name,i) #all insertion positions in orfs
+    
+    
+    #--------------------#define diploide save files#--------------------#
+    #diploid save files reference to the insertion positions files generated 
+    save_diploid_hits_reads_file = "/home/mddo/stage/M2S4/output/{}/diploid_/diploid_{}/diplo_hits_reads_per_orf.out".format(strain_name,i)
+    save_diploid_hits_in_promoter_file = "/home/mddo/stage/M2S4/output/{}/diploid_/diploid_{}/diplo_hits_in_promoter.out".format(strain_name,i)
+    save_diploid_hits_per_10kbNI_file = "/home/mddo/stage/M2S4/output/{}/diploid_/diploid_{}/diplo_hits_per_10kbNI.out".format(strain_name,i)
+    save_diploid_orf_length_file = "/home/mddo/stage/M2S4/output/{}/diploid_/diploid_{}/diplo_orf_length.out".format(strain_name,i)
+    save_diploid_insertion_index_file = "/home/mddo/stage/M2S4/output/{}/diploid_/diploid_{}/diplo_insertion_index.out".format(strain_name,i)
+    save_diploid_non_coding_windows_file = "/home/mddo/stage/M2S4/output/{}/diploid_/diploid_{}/diplo_non_coding_windows.out".format(strain_name,i)
+    save_diploid_neighborhood_index_file = "/home/mddo/stage/M2S4/output/{}/diploid_/diploid_{}/diplo_NI.out".format(strain_name,i)
+    save_diploid_hit_free_interval_file = "/home/mddo/stage/M2S4/output/{}/diploid_/diploid_{}/diplo_HFI.out".format(strain_name,i)
+    save_diploid_total_hits_count_10kb_NI = "/home/mddo/stage/M2S4/output/{}/diploid_/diploid_{}/diplo_total_hits_count_10kb_NI.out".format(strain_name,i)
+
+    # #--------------------#generate data files#--------------------#
+    #hits count reads count generate
+    hits_read_count(
+        insertion_position_diploid_read_file,
+        annotation_genesonly_simplified_file,
+        save_diploid_hits_reads_file)
+
+    #promoter hits count
+    hits_read_count(
+        insertion_position_diploid_read_file,
+        annotation_100bpPromoters_file,
+        save_diploid_hits_in_promoter_file)
+
+    #10kb NI hits count
+    hits_read_count(
+        insertion_position_diploid_read_file,
+        annotation_noncoding_10kb_NI_file,
+        save_diploid_hits_per_10kbNI_file)
+
+    #total hits count in 10kb NI
+    total_hits_count_10kb(
+        save_diploid_hits_per_10kbNI_file,
+        save_diploid_total_hits_count_10kb_NI)
+
+    #calculate orf length
+    length_ORF(
+        annotation_genesonly_simplified_file,
+        save_diploid_orf_length_file)
+
+    #calculate insertion index
+    insertion_index(
+        save_diploid_hits_reads_file,
+        save_diploid_orf_length_file,
+        save_diploid_insertion_index_file)
+
+    #calculate non coding windows
+    non_coding_windows(
+        save_diploid_total_hits_count_10kb_NI, 
+        annotation_noncoding_10kb_NI_file, 
+        save_diploid_non_coding_windows_file)
+
+    #calculate neighborhood index
+    neightborhood_index(
+        save_diploid_insertion_index_file, 
+        save_diploid_non_coding_windows_file, 
+        save_diploid_neighborhood_index_file)
+    
+    #calculate hit free interval
+    hit_free_interval(
+        annotation_insertionsitesinORF_file, 
+        save_diploid_hit_free_interval_file)
+
+    # #--------------------#END generate features DIPLOID#--------------------#
+
+def generate_dataframe(strain_names_array, impute_missing_data):
+    # #--------------------#BEGIN CREATE ORIGINAL DATA#--------------------## 
+    # strains_name = ["Sigma","FY","CPG","CNT","CCD"]
+    for strain_name in strain_names_array:
+        i = 0
+        save_hits_reads_file = "/home/mddo/stage/M2S4/output/{}/haploid/hits_reads_per_orf.out".format(strain_name)
+        save_hits_in_promoter_file = "/home/mddo/stage/M2S4/output/{}/haploid/hits_in_promoter.out".format(strain_name)
+        save_hits_per_10kbNI_file = "/home/mddo/stage/M2S4/output/{}/haploid/hits_per_10kbNI.out".format(strain_name)
+        save_orf_length_file = "/home/mddo/stage/M2S4/output/{}/haploid/orf_length.out".format(strain_name)
+        save_insertion_index_file = "/home/mddo/stage/M2S4/output/{}/haploid/insertion_index.out".format(strain_name)
+        save_non_coding_windows_file = "/home/mddo/stage/M2S4/output/{}/haploid/non_coding_windows.out".format(strain_name)
+        save_neighborhood_index_file = "/home/mddo/stage/M2S4/output/{}/haploid/NI.out".format(strain_name)
+        save_hit_free_interval_file = "/home/mddo/stage/M2S4/output/{}/haploid/HFI.out".format(strain_name)
+        save_total_hits_count_10kb_NI = "/home/mddo/stage/M2S4/output/{}/haploid/total_hits_count_10kb_NI.out".format(strain_name)
+        save_ratio_hits_in_promoter_file = "/home/mddo/stage/M2S4/output/{}/haploid/ratio_hits_in_promoter.out".format(strain_name)
+
+        save_hits_in_promoter_ratio_haplo_diplo = "/home/mddo/stage/M2S4/output/{}/diploid_/diploid_{}/diplo_hits_in_promoter_ratio_haplo_diplo.out".format(strain_name,i)
+        save_NI_ratio_haplo_diplo = "/home/mddo/stage/M2S4/output/{}/diploid_/diploid_{}/diplo_NI_ratio_haplo_diplo.out".format(strain_name,i)
+        save_HFI_ratio_haplo_diplo = "/home/mddo/stage/M2S4/output/{}/diploid_/diploid_{}/diplo_HFI_ratio_haplo_diplo.out".format(strain_name,i)
+
+        label_df = "/home/mddo/stage/M2S4/data/FY/final_annot.csv"
+
+        create_folder("/home/mddo/stage/M2S4/output/{}/diploid_/diploid_{}".format(strain_name, i))
+        create_folder("/home/mddo/stage/M2S4/output/{}/diploid_/diploid_{}/df".format(strain_name, i))
+        # impute_missing_data = "KNN" ## KNN/linear/None
+        save_file_dataframe = "/home/mddo/stage/M2S4/output/{}/diploid_/diploid_{}/df/normal_{}.csv".format(strain_name, i, impute_missing_data)
+        # # #---------------merge data file--------------#
+        merge_df(
+            save_hits_reads_file, 
+            save_hits_in_promoter_file, 
+            save_hits_in_promoter_ratio_haplo_diplo,
+            save_orf_length_file, 
+            save_insertion_index_file, 
+            save_neighborhood_index_file,
+            save_NI_ratio_haplo_diplo, 
+            save_hit_free_interval_file,
+            save_HFI_ratio_haplo_diplo,
+            label_df,
+            impute_missing_data,
+            save_file_dataframe
+        )
+    # # #--------------------#END CREATE ORIGINAL DATA#--------------------## 
