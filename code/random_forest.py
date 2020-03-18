@@ -14,8 +14,8 @@ forest = []
 #input: train_df
 #n_bootstrap: number of rows within sub dataframe
 def bootstrapping(train_df, n_bootstrap):
-    # bootstrap_indices = np.random.choice(len(train_df),n_bootstrap, replace=True)
-    bootstrap_indices = np.random.randint(low=0,high=len(train_df), size=n_bootstrap)
+    bootstrap_indices = np.random.choice(len(train_df),n_bootstrap, replace=True)
+    # bootstrap_indices = np.random.randint(low=0,high=len(train_df), size=n_bootstrap)
     df_bootstrapped = train_df.iloc[bootstrap_indices]
 
     return df_bootstrapped

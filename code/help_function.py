@@ -341,11 +341,11 @@ def merge_df(hits_reads_file, hits_in_promoter_file, hits_in_promoter_ratio_file
 """
     type_session: name of the session: train or test
 """
-def find_false_positive(type_session, type_df, strain_name):
+def find_false_positive(type_session, type_df, strain_name, folder_number):
     
     # file_paths = glob.glob("/home/mddo/stage/M2S4/output/predictions/{}/{}/*.csv".format(type_session, type_df))
 
-    accuracy_file_path = "/home/mddo/stage/M2S4/output/{}/accuracy/{}/accuracy_{}.csv".format(strain_name, type_session, type_df)
+    accuracy_file_path = "/home/mddo/stage/M2S4/output/{}/accuracy/{}/accuracy_{}_{}.csv".format(strain_name, type_session, type_df, folder_number)
     with open (accuracy_file_path) as accuracy_file:
         df_array_FP = []
         df_array_FN = []
@@ -355,9 +355,9 @@ def find_false_positive(type_session, type_df, strain_name):
             acc_value = float(acc_elements[1])
             total_tree = acc_elements[2]
             if type_session == "test":
-                report_path = "/home/mddo/stage/M2S4/output/{}/predictions/{}/{}/predictions_{}_{}.0.csv".format(strain_name,type_session, type_df, forest_name, round(acc_value*100))
+                report_path = "/home/mddo/stage/M2S4/output/{}/predictions/{}/{}_{}/predictions_{}_{}.0.csv".format(strain_name,type_session, type_df,folder_number, forest_name, round(acc_value*100))
             else:
-                report_path = "/home/mddo/stage/M2S4/output/{}/predictions/{}/{}/predictions_{}.csv".format(strain_name,type_session, type_df, forest_name)
+                report_path = "/home/mddo/stage/M2S4/output/{}/predictions/{}/{}_{}/predictions_{}.csv".format(strain_name,type_session, type_df,folder_number, forest_name)
             
             
             df = pd.read_csv(report_path)
@@ -379,11 +379,11 @@ def find_false_positive(type_session, type_df, strain_name):
 
         report_FP = result_df_FP["orf"].value_counts()
         report_FP_df = pd.DataFrame(report_FP)
-        report_FP_df.to_csv("/home/mddo/stage/M2S4/output/{}/error/{}/{}_FP.csv".format(strain_name, type_session,type_df))
+        report_FP_df.to_csv("/home/mddo/stage/M2S4/output/{}/error/{}/{}_{}_FP.csv".format(strain_name, type_session,type_df, folder_number))
 
         report_FN = result_df_FN["orf"].value_counts()
         report_FN_df = pd.DataFrame(report_FN)
-        report_FN_df.to_csv("/home/mddo/stage/M2S4/output/{}/error/{}/{}_FN.csv".format(strain_name, type_session,type_df))
+        report_FN_df.to_csv("/home/mddo/stage/M2S4/output/{}/error/{}/{}_{}_FN.csv".format(strain_name, type_session,type_df, folder_number))
 
 def frequency_false_positive():
     df = pd.read_csv("output/false_positive.out",sep = " ", header = None)
