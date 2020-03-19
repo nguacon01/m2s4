@@ -50,7 +50,7 @@ def main():
 
     #     create_folder("/home/mddo/stage/M2S4/output/{}/diploid_/diploid_{}".format(strain_name, i))
     #     create_folder("/home/mddo/stage/M2S4/output/{}/diploid_/diploid_{}/df".format(strain_name, i))
-    #     save_file_dataframe = "/home/mddo/stage/M2S4/output/{}/diploid_/diploid_{}/df/normal_KNN_new.csv".format(strain_name, i)
+    #     save_file_dataframe = "/home/mddo/stage/M2S4/output/{}/diploid_/diploid_{}/df/normal_KNN_new_1.csv".format(strain_name, i)
     #     # # #---------------merge data file--------------#
     #     merge_df(
     #         save_hits_reads_file, 
@@ -71,8 +71,8 @@ def main():
     ##--------------------# BEGIN TRAINING SESSION#--------------------#
     ## only use for FY
     # for i in range(100):
-    #     type_df = "normal_KNN_removed"
-    #     file_dataframe = "/home/mddo/stage/M2S4/output/FY/diploid_/diploid_0/df/normal_KNN_removed.csv"
+    #     type_df = "normal_KNN_removed_removed_crossvalidation"
+    #     file_dataframe = "/home/mddo/stage/M2S4/output/FY/diploid_/diploid_0/df/train/normal_KNN_removed_removed.csv"
 
     #     folder_number = 0
         
@@ -97,31 +97,31 @@ def main():
 
     #     training_RF(df, test_size = 0.2, grid_search = grid, type_df = type_df, folder_number = folder_number)
 
-    #--------------------# END TRAINING SESSION#--------------------#
+    ###--------------------# END TRAINING SESSION#--------------------#
 
 
 
     ##--------------------# BEGIN TESTING_SESSION#--------------------##
-    # type_df = "normal_KNN"
-    # strain_name = "ACP"
-    # folder_number = 0
+    type_df = "normal_KNN_removed_removed_crossvalidation"
+    strain_name = "FY"
+    folder_number = 0
 
-    # test_df_path = "/home/mddo/stage/M2S4/output/{}/diploid_/diploid_{}/df/normal_KNN.csv".format(strain_name,folder_number,)
-    # testing_RF(test_df_path, type_df, strain_name, folder_number)
+    test_df_path = "/home/mddo/stage/M2S4/output/{}/diploid_/diploid_{}/df/test/normal_KNN_removed_removed.csv".format(strain_name,folder_number)
+    testing_RF(test_df_path, type_df, strain_name, folder_number)
 
     ##--------------------# END TESTING_SESSION#--------------------##
 
 
     ## Find false predictions
-    strain_names = ["FY"]
-    for strain_name in strain_names:
-        type_df = "normal_KNN_removed"
-        type_session = "train"
-        folder_number = 0
+    # strain_names = ["FY"]
+    # for strain_name in strain_names:
+    #     type_df = "normal_KNN_new"
+    #     type_session = "train"
+    #     folder_number = 0
         
-        # plot_confusion_matrix(session, type_df, strain_name)
+    #     # plot_confusion_matrix(session, type_df, strain_name)
 
-        find_false_positive(type_session,type_df,strain_name, folder_number)
+    #     find_false_positive(type_session,type_df,strain_name, folder_number)
 
 
     ##---------- Create plot of accuracy and precision during training session or testing session
@@ -175,8 +175,9 @@ def main():
 
     ## Remove false predited genes
     # strains_name = ["ABP","ACF","ACN","ACP","ADD","AND","APH","AVI","BBQ","BHH","BMK","CGQ","CIB","CLG","CNM"]
+    # strains_name = ["FY"]
     # for strain_name in strains_name:
-    #     type_df = "normal_KNN"
+    #     type_df = "normal_KNN_removed"
     #     folder_number = 0
     #     param = [strain_name,type_df, folder_number]
     #     df_path = "/home/mddo/stage/M2S4/output/{}/diploid_/diploid_{}/df/{}.csv".format(strain_name,folder_number,type_df)
@@ -262,6 +263,28 @@ def main():
     # # hit_free_interval(annotation_insertionsitesinORF_file, save_free_hit_interval_file)
 
     # # # #--------------------#END generate features HAPLOID#--------------------#
+
+
+    # #--------------------#BEGIN GENERATE DATA BASE ON RATIO TRAINING AND TESTING#--------------------## 
+    # ##only use for FY
+
+    # types_data = ["normal_KNN_removed_removed"]
+    # i = 0
+    # for type_data in types_data:
+    #     df_path = "/home/mddo/stage/M2S4/output/FY/diploid_/diploid_{}/df/{}.csv".format(i, type_data)
+    #     df = pd.read_csv(df_path)
+    #     test_size = 0.2
+    #     if isinstance(test_size, float):
+    #         test_size = round(test_size * len(df))
+
+    #     indices = df.index.tolist()
+    #     test_indices = random.sample(population=indices, k=test_size)
+
+    #     test_df = df.loc[test_indices]
+    #     test_df.to_csv("/home/mddo/stage/M2S4/output/FY/diploid_/diploid_{}/df/test/{}.csv".format(i,type_data),index=False)
+    #     train_df = df.drop(test_indices)
+    #     train_df.to_csv("/home/mddo/stage/M2S4/output/FY/diploid_/diploid_{}/df/train/{}.csv".format(i,type_data),index=False)
+    # #--------------------# END GENERATE DATA BASE ON RATIO TRAINING AND TESTING#--------------------#
     
 
 if __name__ == "__main__":

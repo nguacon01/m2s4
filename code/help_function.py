@@ -293,7 +293,7 @@ def merge_df(hits_reads_file, hits_in_promoter_file, hits_in_promoter_ratio_file
 
     orf_col = hits_reads_df["orf"]
 
-    final_df = hits_reads_df.drop(columns = ["orf", "hits_count","reads_count"])
+    final_df = hits_reads_df.drop(columns = ["orf"])
     print(final_df)
     missing_data_columns = final_df.columns[final_df.isna().any()].tolist()
     print(missing_data_columns)
