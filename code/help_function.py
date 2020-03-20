@@ -275,7 +275,7 @@ def merge_df(hits_reads_file, hits_in_promoter_file, hits_in_promoter_ratio_file
 
     hits_reads_df["hits_count_pro"] = hits_promoter_df.orf.map(hits_promoter_df.set_index("orf")["hits_count_pro"].to_dict())
 
-    # hits_reads_df["ratio_hits_prom"] = hits_promoter_df.orf.map(ratio_hits_prom_df.set_index("orf")["ratio_hits_prom"].to_dict())
+    hits_reads_df["ratio_hits_prom"] = hits_promoter_df.orf.map(ratio_hits_prom_df.set_index("orf")["ratio_hits_prom"].to_dict())
 
     hits_reads_df["orf_len"] = hits_reads_df.orf.map(orf_len_df.set_index("orf")["orf_len"].to_dict())
 
@@ -285,15 +285,15 @@ def merge_df(hits_reads_file, hits_in_promoter_file, hits_in_promoter_ratio_file
 
     hits_reads_df["NI"] = hits_reads_df.orf.map(NI_df.set_index("orf")["NI"].to_dict())
 
-    # hits_reads_df["NI_ratio"] = hits_reads_df.orf.map(NI_ratio_df.set_index("orf")["NI_ratio"].to_dict())
+    hits_reads_df["NI_ratio"] = hits_reads_df.orf.map(NI_ratio_df.set_index("orf")["NI_ratio"].to_dict())
 
     hits_reads_df["HFI"] = hits_reads_df.orf.map(HFI_df.set_index("orf")["HFI_normalized"].to_dict())
 
-    # hits_reads_df["HFI_ratio"] = hits_reads_df.orf.map(HFI_ratio_df.set_index("orf")["HFI_ratio"].to_dict())
+    hits_reads_df["HFI_ratio"] = hits_reads_df.orf.map(HFI_ratio_df.set_index("orf")["HFI_ratio"].to_dict())
 
     orf_col = hits_reads_df["orf"]
 
-    final_df = hits_reads_df.drop(columns = ["orf"])
+    final_df = hits_reads_df.drop(columns = ["orf","reads_by_len"])
     print(final_df)
     missing_data_columns = final_df.columns[final_df.isna().any()].tolist()
     print(missing_data_columns)
@@ -471,10 +471,20 @@ def ratio_haploid_diploid(haploid_file, diploid_file, save_file):
                 figure_diplo = float(data_diplo_features[1])
                 if orf_haplo == orf_diplo:
                     # prevent from divise by 0
-                    if figure_haplo != 0 and figure_haplo != np.nan:
-                        ratio = figure_diplo/figure_haplo
+                    # if figure_haplo != 0 and figure_haplo != np.nan:
+                    #     ratio = figure_diplo/figure_haplo
+                    # else:
+                    #     ratio = np.nan
+                    # save.write(orf_haplo + " " + str(ratio) + "\n")
+
+                    if figure_diplo == 0 or figure_diplo == np.nan:
+                        if figure_haplo != 0 or figure_haplo != np.nan:
+                            ratio = figure_haplo/0.5
+                        else:
+                            ratio = 1
+                        print(orf_diplo + "-"+ str(ratio))
                     else:
-                        ratio = figure_haplo/float(0.0001)
+                        ratio = figure_haplo/figure_diplo
                     save.write(orf_haplo + " " + str(ratio) + "\n")
                     break
 
@@ -519,12 +529,12 @@ def remove_fp_gene(df_path, param):
     #     session_name = "train"
     # else:
     #     session_name = "test"
-    false_positive_file = "/home/mddo/stage/M2S4/output/FY/error/train/{}_FP_{}.csv".format(type_df, i)
+    false_positive_file = "/home/mddo/stage/M2S4/output/FY/error/train/{}_{}_FP.csv".format(type_df, i)
     fp_df = pd.read_csv(false_positive_file)
     fp_df.columns = ["orf","freq"]
     print(false_positive_file)
 
-    false_negative_file = "/home/mddo/stage/M2S4/output/FY/error/train/{}_FN_{}.csv".format(type_df, i)
+    false_negative_file = "/home/mddo/stage/M2S4/output/FY/error/train/{}_{}_FN.csv".format(type_df, i)
     fn_df = pd.read_csv(false_negative_file)
     fn_df.columns = ["orf","freq"]
     print(false_negative_file)

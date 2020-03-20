@@ -15,11 +15,11 @@ def main():
     ##---------------Generate ratio file: NI, HFI, hits_in_promoter between haploid and diploid--------------#
     ##--a small note: because the HFI in haploide is alway smaller than diploide, so instead of calculating HFI_haplo/HFI_diplo, we calculate ratio HFI_diplo/HFI_haplo
     ##--we will obtain a ratio which is less than 1. So it take less calculation for the downstream analyses
-    # strains_name = ["ABP","ACF","ACN","ACP","ADD","AND","APH","AVI","BBQ","BHH","BMK","CGQ","CIB","CLG","CNM"]
+    # strains_name = ["FY","ABP","ACF","ACN","ACP","ADD","AND","APH","AVI","BBQ","BHH","BMK","CCD","CGQ","CHM","CIB","CLG","CNM","CNT","CPG","Sigma"]
     # for strain_name in strains_name:
-    #     ratio_type = "hits_in_promoter"
+    #     ratio_type = "NI"
     #     i = 0
-    #     save_file_ratio = "/home/mddo/stage/M2S4/output/{}/diploid_/diploid_{}/diplo_{}_ratio_haplo_diplo.out".format(strain_name,i,ratio_type)
+    #     save_file_ratio = "/home/mddo/stage/M2S4/output/{}/diploid_/diploid_{}/diplo_{}_ratio_haplo_diplo_new.out".format(strain_name,i,ratio_type)
     #     haploid_file = "/home/mddo/stage/M2S4/output/{}/haploid/{}.out".format(strain_name,ratio_type)
     #     diploid_file = "/home/mddo/stage/M2S4/output/{}/diploid_/diploid_{}/diplo_{}.out".format(strain_name,i,ratio_type)
     #     ratio_haploid_diploid(haploid_file, diploid_file, save_file_ratio)
@@ -27,7 +27,7 @@ def main():
     # #--------------------#END generate ration features between HAPLOID and DIPLOID#--------------------#
     
     #--------------------#BEGIN CREATE ORIGINAL DATA#--------------------## 
-    # strains_name = ["ABP","ACF","ACN","ACP","ADD","AND","APH","AVI","BBQ","BHH","BMK","CCD","CGQ","CHM","CIB","CLG","CNM","CNT","CPG","FY","Sigma"]
+    # strains_name = ["ABP","ACF","ACN","ACP","ADD","AND","APH","AVI","BBQ","BHH","BMK","CCD","CGQ","CHM","CIB","CLG","CNM","CNT","CPG","Sigma"]
     # for strain_name in strains_name:
     #     i = 0
     #     save_hits_reads_file = "/home/mddo/stage/M2S4/output/{}/haploid/hits_reads_per_orf.out".format(strain_name)
@@ -50,7 +50,7 @@ def main():
 
     #     create_folder("/home/mddo/stage/M2S4/output/{}/diploid_/diploid_{}".format(strain_name, i))
     #     create_folder("/home/mddo/stage/M2S4/output/{}/diploid_/diploid_{}/df".format(strain_name, i))
-    #     save_file_dataframe = "/home/mddo/stage/M2S4/output/{}/diploid_/diploid_{}/df/normal_KNN_new_1.csv".format(strain_name, i)
+    #     save_file_dataframe = "/home/mddo/stage/M2S4/output/{}/diploid_/diploid_{}/df/HFI_NI_PROM_KNN.csv".format(strain_name, i)
     #     # # #---------------merge data file--------------#
     #     merge_df(
     #         save_hits_reads_file, 
@@ -71,8 +71,8 @@ def main():
     ##--------------------# BEGIN TRAINING SESSION#--------------------#
     ## only use for FY
     # for i in range(100):
-    #     type_df = "normal_KNN_removed_removed_crossvalidation"
-    #     file_dataframe = "/home/mddo/stage/M2S4/output/FY/diploid_/diploid_0/df/train/normal_KNN_removed_removed.csv"
+    #     type_df = "normal_KNN_removed"
+    #     file_dataframe = "/home/mddo/stage/M2S4/output/FY/diploid_/diploid_0/df/normal_KNN_removed.csv"
 
     #     folder_number = 0
         
@@ -102,11 +102,11 @@ def main():
 
 
     ##--------------------# BEGIN TESTING_SESSION#--------------------##
-    type_df = "normal_KNN_removed_removed_crossvalidation"
-    strain_name = "FY"
+    type_df = "HFI_NI_PROM_KNN_removed"
+    strain_name = "Sigma"
     folder_number = 0
 
-    test_df_path = "/home/mddo/stage/M2S4/output/{}/diploid_/diploid_{}/df/test/normal_KNN_removed_removed.csv".format(strain_name,folder_number)
+    test_df_path = "/home/mddo/stage/M2S4/output/{}/diploid_/diploid_{}/df/HFI_NI_PROM_KNN_removed.csv".format(strain_name,folder_number)
     testing_RF(test_df_path, type_df, strain_name, folder_number)
 
     ##--------------------# END TESTING_SESSION#--------------------##
@@ -125,7 +125,7 @@ def main():
 
 
     ##---------- Create plot of accuracy and precision during training session or testing session
-    # strain_names = ["CCD","CNT","CPG","Sigma","BHH","BMK","ABP","ACF","ACN","ACP"]
+    # strain_names = ["FY","ABP","ACF","ACN","ACP","ADD","AND","APH","AVI","BBQ","BHH","BMK","CCD","CGQ","CHM","CIB","CLG","CNM","CNT","CPG","Sigma"]
     # acc_df_total = pd.DataFrame()
     # pre_df_total = pd.DataFrame()
     # for strain_name in strain_names:
@@ -152,7 +152,7 @@ def main():
     # ax = plt.gca()
     # sns.set_style("whitegrid")
 
-    # pre_df_total.plot(kind='line',ax=ax)
+    # acc_df_total.plot(kind='line',ax=ax)
     # # accuracy_df.plot(kind='line',y='precision', color='red', ax=ax)
     # # accuracy_df = accuracy_df.drop(columns = ["total_tree"])
     # # accuracy_df.plot(kind="line")
@@ -164,9 +164,9 @@ def main():
     # plt.xticks(size = 14)
     # plt.yticks(size = 14)
     # plt.xlabel("Iteration", size = 18)
-    # plt.ylabel("Precision", size = 18)
+    # plt.ylabel("Accuracy", size = 18)
 
-    # plt.savefig("/home/mddo/stage/M2S4/images/pre.png")
+    # plt.savefig("/home/mddo/stage/M2S4/images/acc.png")
     ##--------------------------------##
 
 
@@ -174,10 +174,9 @@ def main():
 
 
     ## Remove false predited genes
-    # strains_name = ["ABP","ACF","ACN","ACP","ADD","AND","APH","AVI","BBQ","BHH","BMK","CGQ","CIB","CLG","CNM"]
-    # strains_name = ["FY"]
+    # strains_name = ["ABP","ACF","ACN","ACP","ADD","AND","APH","AVI","BBQ","BHH","BMK","CCD","CGQ","CHM","CIB","CLG","CNM","CNT","CPG","Sigma"]
     # for strain_name in strains_name:
-    #     type_df = "normal_KNN_removed"
+    #     type_df = "HFI_NI_PROM_KNN"
     #     folder_number = 0
     #     param = [strain_name,type_df, folder_number]
     #     df_path = "/home/mddo/stage/M2S4/output/{}/diploid_/diploid_{}/df/{}.csv".format(strain_name,folder_number,type_df)
@@ -268,22 +267,22 @@ def main():
     # #--------------------#BEGIN GENERATE DATA BASE ON RATIO TRAINING AND TESTING#--------------------## 
     # ##only use for FY
 
-    # types_data = ["normal_KNN_removed_removed"]
-    # i = 0
-    # for type_data in types_data:
-    #     df_path = "/home/mddo/stage/M2S4/output/FY/diploid_/diploid_{}/df/{}.csv".format(i, type_data)
-    #     df = pd.read_csv(df_path)
-    #     test_size = 0.2
-    #     if isinstance(test_size, float):
-    #         test_size = round(test_size * len(df))
+    types_data = ["HFI_NI_PROM_new"]
+    i = 0
+    for type_data in types_data:
+        df_path = "/home/mddo/stage/M2S4/output/FY/diploid_/diploid_{}/df/{}.csv".format(i, type_data)
+        df = pd.read_csv(df_path)
+        test_size = 0.2
+        if isinstance(test_size, float):
+            test_size = round(test_size * len(df))
 
-    #     indices = df.index.tolist()
-    #     test_indices = random.sample(population=indices, k=test_size)
+        indices = df.index.tolist()
+        test_indices = random.sample(population=indices, k=test_size)
 
-    #     test_df = df.loc[test_indices]
-    #     test_df.to_csv("/home/mddo/stage/M2S4/output/FY/diploid_/diploid_{}/df/test/{}.csv".format(i,type_data),index=False)
-    #     train_df = df.drop(test_indices)
-    #     train_df.to_csv("/home/mddo/stage/M2S4/output/FY/diploid_/diploid_{}/df/train/{}.csv".format(i,type_data),index=False)
+        test_df = df.loc[test_indices]
+        test_df.to_csv("/home/mddo/stage/M2S4/output/FY/diploid_/diploid_{}/df/test/{}.csv".format(i,type_data),index=False)
+        train_df = df.drop(test_indices)
+        train_df.to_csv("/home/mddo/stage/M2S4/output/FY/diploid_/diploid_{}/df/train/{}.csv".format(i,type_data),index=False)
     # #--------------------# END GENERATE DATA BASE ON RATIO TRAINING AND TESTING#--------------------#
     
 
