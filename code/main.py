@@ -103,7 +103,7 @@ def main():
 
     ##--------------------# BEGIN TESTING_SESSION#--------------------##
     type_df = "HFI_NI_PROM_KNN_removed"
-    strain_name = "Sigma"
+    strain_name = "CPG"
     folder_number = 0
 
     test_df_path = "/home/mddo/stage/M2S4/output/{}/diploid_/diploid_{}/df/HFI_NI_PROM_KNN_removed.csv".format(strain_name,folder_number)
@@ -267,22 +267,22 @@ def main():
     # #--------------------#BEGIN GENERATE DATA BASE ON RATIO TRAINING AND TESTING#--------------------## 
     # ##only use for FY
 
-    types_data = ["HFI_NI_PROM_new"]
-    i = 0
-    for type_data in types_data:
-        df_path = "/home/mddo/stage/M2S4/output/FY/diploid_/diploid_{}/df/{}.csv".format(i, type_data)
-        df = pd.read_csv(df_path)
-        test_size = 0.2
-        if isinstance(test_size, float):
-            test_size = round(test_size * len(df))
+    # types_data = ["HFI_NI_PROM_new"]
+    # i = 0
+    # for type_data in types_data:
+    #     df_path = "/home/mddo/stage/M2S4/output/FY/diploid_/diploid_{}/df/{}.csv".format(i, type_data)
+    #     df = pd.read_csv(df_path)
+    #     test_size = 0.2
+    #     if isinstance(test_size, float):
+    #         test_size = round(test_size * len(df))
 
-        indices = df.index.tolist()
-        test_indices = random.sample(population=indices, k=test_size)
+    #     indices = df.index.tolist()
+    #     test_indices = random.sample(population=indices, k=test_size)
 
-        test_df = df.loc[test_indices]
-        test_df.to_csv("/home/mddo/stage/M2S4/output/FY/diploid_/diploid_{}/df/test/{}.csv".format(i,type_data),index=False)
-        train_df = df.drop(test_indices)
-        train_df.to_csv("/home/mddo/stage/M2S4/output/FY/diploid_/diploid_{}/df/train/{}.csv".format(i,type_data),index=False)
+    #     test_df = df.loc[test_indices]
+    #     test_df.to_csv("/home/mddo/stage/M2S4/output/FY/diploid_/diploid_{}/df/test/{}.csv".format(i,type_data),index=False)
+    #     train_df = df.drop(test_indices)
+    #     train_df.to_csv("/home/mddo/stage/M2S4/output/FY/diploid_/diploid_{}/df/train/{}.csv".format(i,type_data),index=False)
     # #--------------------# END GENERATE DATA BASE ON RATIO TRAINING AND TESTING#--------------------#
     
 
