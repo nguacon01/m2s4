@@ -275,7 +275,7 @@ def merge_df(hits_reads_file, hits_in_promoter_file, hits_in_promoter_ratio_file
 
     hits_reads_df["hits_count_pro"] = hits_promoter_df.orf.map(hits_promoter_df.set_index("orf")["hits_count_pro"].to_dict())
 
-    hits_reads_df["ratio_hits_prom"] = hits_promoter_df.orf.map(ratio_hits_prom_df.set_index("orf")["ratio_hits_prom"].to_dict())
+    # hits_reads_df["ratio_hits_prom"] = hits_promoter_df.orf.map(ratio_hits_prom_df.set_index("orf")["ratio_hits_prom"].to_dict())
 
     hits_reads_df["orf_len"] = hits_reads_df.orf.map(orf_len_df.set_index("orf")["orf_len"].to_dict())
 
@@ -285,15 +285,15 @@ def merge_df(hits_reads_file, hits_in_promoter_file, hits_in_promoter_ratio_file
 
     hits_reads_df["NI"] = hits_reads_df.orf.map(NI_df.set_index("orf")["NI"].to_dict())
 
-    hits_reads_df["NI_ratio"] = hits_reads_df.orf.map(NI_ratio_df.set_index("orf")["NI_ratio"].to_dict())
+    # hits_reads_df["NI_ratio"] = hits_reads_df.orf.map(NI_ratio_df.set_index("orf")["NI_ratio"].to_dict())
 
     hits_reads_df["HFI"] = hits_reads_df.orf.map(HFI_df.set_index("orf")["HFI_normalized"].to_dict())
 
-    hits_reads_df["HFI_ratio"] = hits_reads_df.orf.map(HFI_ratio_df.set_index("orf")["HFI_ratio"].to_dict())
+    # hits_reads_df["HFI_ratio"] = hits_reads_df.orf.map(HFI_ratio_df.set_index("orf")["HFI_ratio"].to_dict())
 
     orf_col = hits_reads_df["orf"]
 
-    final_df = hits_reads_df.drop(columns = ["orf","reads_by_len"])
+    final_df = hits_reads_df.drop(columns = ["orf"])
     print(final_df)
     missing_data_columns = final_df.columns[final_df.isna().any()].tolist()
     print(missing_data_columns)
