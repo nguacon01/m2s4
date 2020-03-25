@@ -275,7 +275,7 @@ def merge_df(hits_reads_file, hits_in_promoter_file, hits_in_promoter_ratio_file
 
     hits_reads_df["hits_count_pro"] = hits_promoter_df.orf.map(hits_promoter_df.set_index("orf")["hits_count_pro"].to_dict())
 
-    # hits_reads_df["ratio_hits_prom"] = hits_promoter_df.orf.map(ratio_hits_prom_df.set_index("orf")["ratio_hits_prom"].to_dict())
+    hits_reads_df["ratio_hits_prom"] = hits_promoter_df.orf.map(ratio_hits_prom_df.set_index("orf")["ratio_hits_prom"].to_dict())
 
     hits_reads_df["orf_len"] = hits_reads_df.orf.map(orf_len_df.set_index("orf")["orf_len"].to_dict())
 
@@ -285,11 +285,11 @@ def merge_df(hits_reads_file, hits_in_promoter_file, hits_in_promoter_ratio_file
 
     hits_reads_df["NI"] = hits_reads_df.orf.map(NI_df.set_index("orf")["NI"].to_dict())
 
-    # hits_reads_df["NI_ratio"] = hits_reads_df.orf.map(NI_ratio_df.set_index("orf")["NI_ratio"].to_dict())
+    hits_reads_df["NI_ratio"] = hits_reads_df.orf.map(NI_ratio_df.set_index("orf")["NI_ratio"].to_dict())
 
     hits_reads_df["HFI"] = hits_reads_df.orf.map(HFI_df.set_index("orf")["HFI_normalized"].to_dict())
 
-    # hits_reads_df["HFI_ratio"] = hits_reads_df.orf.map(HFI_ratio_df.set_index("orf")["HFI_ratio"].to_dict())
+    hits_reads_df["HFI_ratio"] = hits_reads_df.orf.map(HFI_ratio_df.set_index("orf")["HFI_ratio"].to_dict())
 
     orf_col = hits_reads_df["orf"]
 
@@ -470,23 +470,23 @@ def ratio_haploid_diploid(haploid_file, diploid_file, save_file):
                 orf_diplo = data_diplo_features[0]
                 figure_diplo = float(data_diplo_features[1])
                 if orf_haplo == orf_diplo:
-                    # prevent from divise by 0
-                    # if figure_haplo != 0 and figure_haplo != np.nan:
-                    #     ratio = figure_diplo/figure_haplo
-                    # else:
-                    #     ratio = np.nan
-                    # save.write(orf_haplo + " " + str(ratio) + "\n")
 
-                    if figure_diplo == 0 or figure_diplo == np.nan:
-                        if figure_haplo != 0 or figure_haplo != np.nan:
-                            ratio = figure_haplo/0.5
-                        else:
-                            ratio = 1
-                        print(orf_diplo + "-"+ str(ratio))
+                    ## prevent from divise by 0
+                    if figure_haplo != 0 and figure_haplo != np.nan:
+                        ratio = figure_diplo/figure_haplo
                     else:
-                        ratio = figure_haplo/figure_diplo
+                        ratio = np.nan
                     save.write(orf_haplo + " " + str(ratio) + "\n")
                     break
+
+                    # if figure_diplo != 0 and figure_diplo != np.nan:
+                    #     ratio = figure_haplo/figure_diplo
+                    # elif figure_haplo == 0 and figure_diplo == 0 :
+                    #     ratio = 1
+                    # else:
+                    #     ratio = figure_haplo/float(0.5)
+                    # save.write(orf_haplo + " " + str(ratio) + "\n")
+                    # break
 
 def generate_all_insertion_site_by_orf(insertion_position_file,orf_annotation_file, save_file):
     create_file(save_file)
