@@ -11,16 +11,18 @@ import json
 from sklearn.metrics import precision_recall_fscore_support
 import matplotlib_venn as venn
 # %%
-df_FY = pd.read_csv("/home/mddo/stage/M2S4/output/FY/predictions/test/normal_KNN_removed_0/predictions_forest_14_4_15_1206_99.0_98.0.csv")
-df_CCD = pd.read_csv("/home/mddo/stage/M2S4/output/CCD/predictions/test/normal_KNN_removed_0/predictions_forest_11_7_12_1320_98.0_92.0.csv")
+df_FY = pd.read_csv("/home/mddo/stage/M2S4/output/FY/diploid_/diploid_0/df/diploid_normal_KNN.csv")
+df_CCD = pd.read_csv("/home/mddo/stage/M2S4/output/CCD/diploid_/diploid_0/df/normal_raw.csv")
 
-FY_data = df_FY.loc[(df_FY["label"] == "ess")]
-CCD_data = df_CCD.loc[(df_CCD["predictions"] == "ess")]
+FY_data = df_FY.loc[(df_FY["label"] == "non_ess")]
+CCD_data = df_CCD.loc[(df_CCD["label"] == "non_ess")]
 
 df_compare = pd.DataFrame()
-df_compare["insertion_index_FY"] = FY_data["hits_count_pro"]
-df_compare["insertion_index_CCD"] = CCD_data["hits_count_pro"]
-sns.boxplot(data=df_compare)
+df_compare["insertion_index_FY"] = FY_data["NI"]
+df_compare["insertion_index_CCD"] = CCD_data["NI"]
+sns.set(style="whitegrid")
+# sns.boxplot(data=df_compare, showfliers = False)
+sns.boxplot(x = "label", y = "NI", data = df_FY.loc[(df_FY["label"] == "ess")],showmeans=True, showfliers = False)
 
 #%%
 sns.boxplot(data=df_compare)

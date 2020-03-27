@@ -223,7 +223,7 @@ def neightborhood_index(insertion_index_file,non_coding_windows_file,save_file):
     # HFI_file: save_free_hit_interval_file
     # you can add label file or not
     # impute_missing_data support linear regression method (linear) and K nearest neighbor method(KNN) or does not use any method (None)
-def merge_df(hits_reads_file, hits_in_promoter_file, hits_in_promoter_ratio_file, orf_len_file, insertion_index_file, NI_file, NI_ratio_file, HFI_file, HFI_ratio_file, label_file, impute_missing_data, save_file):
+def merge_df(hits_reads_file, hits_in_promoter_file, hits_in_promoter_ratio_file, orf_len_file, insertion_index_file,save_non_coding_windows_file, NI_file, NI_ratio_file, HFI_file, HFI_ratio_file, label_file, impute_missing_data, save_file):
 
     min_max_scaler = MinMaxScaler()
 
@@ -232,14 +232,14 @@ def merge_df(hits_reads_file, hits_in_promoter_file, hits_in_promoter_ratio_file
     hits_reads_df.columns = ["orf","hits_count","reads_count"]
     #normalizes values of hits count and reads count
     norm_cols_hits_reads = ["hits_count","reads_count"]
-    hits_reads_df[norm_cols_hits_reads]  = MinMaxScaler().fit_transform(hits_reads_df[norm_cols_hits_reads])
+    # hits_reads_df[norm_cols_hits_reads]  = MinMaxScaler().fit_transform(hits_reads_df[norm_cols_hits_reads])
 
     #hits per promoter
     hits_promoter_df = pd.read_csv(hits_in_promoter_file,sep=" ", header=None)
     hits_promoter_df.columns = ["orf","hits_count_pro","reads_count_pro"]
     #normalize values of hits per promoter
     norm_cols_hits_per_pro = ["hits_count_pro"]
-    hits_promoter_df[norm_cols_hits_per_pro]  = MinMaxScaler().fit_transform(hits_promoter_df[norm_cols_hits_per_pro])
+    # hits_promoter_df[norm_cols_hits_per_pro]  = MinMaxScaler().fit_transform(hits_promoter_df[norm_cols_hits_per_pro])
 
     #ratio hits in the 100 bp promoter between haploide and diploide
     ratio_hits_prom_df = pd.read_csv(hits_in_promoter_ratio_file, sep = " ", header= None)
@@ -250,7 +250,7 @@ def merge_df(hits_reads_file, hits_in_promoter_file, hits_in_promoter_ratio_file
     orf_len_df.columns = ["orf","orf_len"]
     #normalizes values of orf length
     norm_cols_orf_len = ["orf_len"]
-    orf_len_df[norm_cols_orf_len]  = MinMaxScaler().fit_transform(orf_len_df[norm_cols_orf_len])
+    # orf_len_df[norm_cols_orf_len]  = MinMaxScaler().fit_transform(orf_len_df[norm_cols_orf_len])
 
     #insertion index
     insertion_index_df = pd.read_csv(insertion_index_file,sep=" ",header=None)
@@ -271,6 +271,9 @@ def merge_df(hits_reads_file, hits_in_promoter_file, hits_in_promoter_ratio_file
     HFI_ratio_df = pd.read_csv(HFI_ratio_file,sep=" ",header=None)
     HFI_ratio_df.columns = ["orf","HFI_ratio"]
 
+    non_coding_windows_df = pd.read_csv(save_non_coding_windows_file, sep = " ", header = None)
+    non_coding_windows_df.columns = ["orf","non_coding_windows"]
+
     ##-----------------##
 
     hits_reads_df["hits_count_pro"] = hits_promoter_df.orf.map(hits_promoter_df.set_index("orf")["hits_count_pro"].to_dict())
@@ -290,6 +293,8 @@ def merge_df(hits_reads_file, hits_in_promoter_file, hits_in_promoter_ratio_file
     hits_reads_df["HFI"] = hits_reads_df.orf.map(HFI_df.set_index("orf")["HFI_normalized"].to_dict())
 
     hits_reads_df["HFI_ratio"] = hits_reads_df.orf.map(HFI_ratio_df.set_index("orf")["HFI_ratio"].to_dict())
+
+    # hits_reads_df["non_coding_windows"] = hits_reads_df.orf.map(non_coding_windows_df.set_index("orf")["non_coding_windows"].to_dict())
 
     orf_col = hits_reads_df["orf"]
 
@@ -472,21 +477,22 @@ def ratio_haploid_diploid(haploid_file, diploid_file, save_file):
                 if orf_haplo == orf_diplo:
 
                     ## prevent from divise by 0
-                    if figure_haplo != 0 and figure_haplo != np.nan:
-                        ratio = figure_diplo/figure_haplo
-                    else:
-                        ratio = np.nan
-                    save.write(orf_haplo + " " + str(ratio) + "\n")
-                    break
-
-                    # if figure_diplo != 0 and figure_diplo != np.nan:
-                    #     ratio = figure_haplo/figure_diplo
-                    # elif figure_haplo == 0 and figure_diplo == 0 :
-                    #     ratio = 1
+                    # if figure_haplo != 0 and figure_haplo != np.nan:
+                    #     ratio = figure_diplo/figure_haplo
                     # else:
-                    #     ratio = figure_haplo/float(0.5)
+                    #     ratio = np.nan
                     # save.write(orf_haplo + " " + str(ratio) + "\n")
                     # break
+                    
+                    if figure_diplo == 0 or figure_diplo == np.nan:
+                        if figure_haplo == 0:
+                            ratio = 1
+                        else:
+                            ratio = figure_haplo/float(0.5)
+                    else:
+                        ratio = figure_haplo/figure_diplo
+                    save.write(orf_haplo + " " + str(ratio) + "\n")
+                    break
 
 def generate_all_insertion_site_by_orf(insertion_position_file,orf_annotation_file, save_file):
     create_file(save_file)
@@ -519,33 +525,40 @@ def generate_all_insertion_site_by_orf(insertion_position_file,orf_annotation_fi
                     save.write("\n")
                     break
                  
+"""
+This function will remove all FP and FN genes from database based on the lists in error folder of each strains
+df_path = path of df that need to clean
+param : an array of strain_name, type_df : name of dataframe, type_session : test/train, threshold: frequent of gene appear as false predicted that we want to delete
 
+"""
 def remove_fp_gene(df_path, param):
     df = pd.read_csv(df_path)
     strain_name = param[0]
     type_df = param[1]
-    i = param[2]
+    folder_number = param[2]
+    type_session = param[3]
+    threshold = param[4]
     # if strain_name == "FY":
     #     session_name = "train"
     # else:
     #     session_name = "test"
-    false_positive_file = "/home/mddo/stage/M2S4/output/FY/error/train/{}_{}_FP.csv".format(type_df, i)
+    false_positive_file = "/home/mddo/stage/M2S4/output/FY/error/{}/{}_{}_FP.csv".format(type_session,type_df, folder_number)
     fp_df = pd.read_csv(false_positive_file)
     fp_df.columns = ["orf","freq"]
     print(false_positive_file)
 
-    false_negative_file = "/home/mddo/stage/M2S4/output/FY/error/train/{}_{}_FN.csv".format(type_df, i)
+    false_negative_file = "/home/mddo/stage/M2S4/output/FY/error/{}/{}_{}_FN.csv".format(type_session,type_df, folder_number)
     fn_df = pd.read_csv(false_negative_file)
     fn_df.columns = ["orf","freq"]
     print(false_negative_file)
 
-    orf_fp_drop = fp_df[fp_df["freq"] >= 5].orf
+    orf_fp_drop = fp_df[fp_df["freq"] >= threshold].orf
     orf_fp_drop_df = pd.DataFrame(orf_fp_drop)
     print(orf_fp_drop_df)
     condition_fp = df["orf"].isin(orf_fp_drop_df["orf"]) == True
     df.drop(df[condition_fp].index, inplace = True)
 
-    orf_fn_drop = fn_df[fn_df["freq"] >= 5].orf
+    orf_fn_drop = fn_df[fn_df["freq"] >= threshold].orf
     orf_fn_drop_df = pd.DataFrame(orf_fn_drop)
     print(orf_fn_drop_df)
     condition_fn = df["orf"].isin(orf_fn_drop_df["orf"]) == True
