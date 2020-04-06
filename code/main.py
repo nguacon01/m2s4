@@ -57,7 +57,7 @@ def main():
 ##--------------------#BEGIN TRAINING SESSION#--------------------#
     ## only use for FY
     # for i in range(100):
-    #     type_df = "normal_raw"
+    #     type_df = "HFI_NI_PROM_NEW_1_removed"
     #     file_dataframe = "/home/mddo/stage/M2S4/output/FY/diploid_/diploid_0/df/{}.csv".format(type_df)
 
     #     folder_number = 0
@@ -84,18 +84,18 @@ def main():
     #     training_RF(df, test_size = 0.2, grid_search = grid, type_df = type_df, folder_number = folder_number)
 
 ##--------------------#BEGIN TESTING_SESSION#--------------------##
-    type_df = "HFI_NI_PROM_NEW_removed"
-    strain_name = "CNT"
-    folder_number = 0
+    # type_df = "HFI_NI_PROM_NEW_1_removed"
+    # strain_name = "Sigma"
+    # folder_number = 0
 
-    test_df_path = "/home/mddo/stage/M2S4/output/{}/diploid_/diploid_{}/df/{}.csv".format(strain_name,folder_number,type_df)
-    testing_RF(test_df_path, type_df, strain_name, folder_number)
+    # test_df_path = "/home/mddo/stage/M2S4/output/{}/diploid_/diploid_{}/df/HFI_NI_PROM_NEW.csv".format(strain_name, folder_number)
+    # testing_RF(test_df_path, type_df, strain_name, folder_number)
 
 ##--------------------#Find false predictions #--------------------##
     # strain_names = ["FY"]
     # for strain_name in strain_names:
-    #     type_df = "HFI_NI_PROM_NEW"
-    #     type_session = "test"
+    #     type_df = "HFI_NI_PROM_NEW_1"
+    #     type_session = "train"
     #     folder_number = 0
 
     #     find_false_positive(type_session,type_df,strain_name, folder_number)
@@ -147,10 +147,11 @@ def main():
 
 ##--------------------#Remove false predited genes--------------------##
     # strains_name = ["ABP","ACF","ACN","ACP","ADD","AND","APH","AVI","BBQ","BHH","BMK","CCD","CGQ","CHM","CIB","CLG","CNM","CNT","CPG","Sigma"]
+    # strains_name = ["FY"]
     # for strain_name in strains_name:
-    #     type_df = "HFI_NI_PROM_NEW"
+    #     type_df = "HFI_NI_PROM_NEW_1"
     #     folder_number = 0
-    #     type_session = "test"
+    #     type_session = "train"
     #     threshold = 10
     #     param = [strain_name,type_df, folder_number,type_session,threshold]
     #     df_path = "/home/mddo/stage/M2S4/output/{}/diploid_/diploid_{}/df/{}.csv".format(strain_name,folder_number,type_df)
@@ -290,7 +291,7 @@ def main():
 
     # label_df.to_csv(save_file,index=False)
 
-##--------------------#BEGIN generate features HAPLOID#--------------------#
+##--------------------#BEGIN generate features HAPLOID#--------------------##
 
     # strain_name = "CCD"
 
@@ -348,10 +349,38 @@ def main():
 
     # # #--------------------#END generate features HAPLOID#--------------------#
 
+##--------------------#MEAN SCORE#--------------------##
+
+
+    # strain_names = ["ABP","ACF","ACN","ACP","ADD","AND","APH","AVI","BBQ","BHH","BMK","CCD","CGQ","CHM","CIB","CLG","CNM","CNT","CPG","Sigma"]
+    # # strain_names = ["FY"]
+    # type_df = "normal_KNN_tempo_1"
+    # folder_number = 0
+    # session_name = "test"
+    # params = [strain_names, folder_number, session_name]
+    # mean_score(type_df, params)
+
+    # strain_names = ["FY","ABP","ACF","ACN","ACP","ADD","AND","APH","AVI","BBQ","BHH","BMK","CCD","CGQ","CHM","CIB","CLG","CNM","CNT","CPG","Sigma"]
+    # type_df = "normal_KNN_tempo_1"
+    # folder_number = 0
+    # for strain_name in strain_names:
+    #     folder_link = "/home/mddo/stage/M2S4/output/{}/predictions/test/{}_{}".format(strain_name, type_df, folder_number)
+    #     files = glob.glob(folder_link+"/*.csv")
+    #     count_file = 0
+    #     total_ess_count = 0
+    #     for df_file in files:
+    #         df = pd.read_csv(df_file)
+    #         ess_predictions = df.loc[df["predictions"] == "ess"]
+    #         count_ess,_ = ess_predictions.shape
+    #         total_ess_count += count_ess
+    #         count_file += 1
+    #     average_ess_count = total_ess_count/count_file
+    #     print(strain_name +"\t"+ str(round(average_ess_count)))
+
+    # df = pd.read_csv("/home/mddo/stage/M2S4/output/FY/diploid_/diploid_0/df/normal_KNN.csv")
+    # print(df.corr())
+    
+
 if __name__ == "__main__":
     main()
-
-
-
-
 # %%

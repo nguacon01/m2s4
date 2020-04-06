@@ -9,6 +9,8 @@ from knn_impute import knn_impute
 import matplotlib.pyplot as plt
 import matplotlib
 import seaborn as sns
+import urllib.request
+import json
 
 
 #create file and folder
@@ -859,3 +861,45 @@ def generate_dataframe(strain_names_array, impute_missing_data):
             save_file_dataframe
         )
     # # #--------------------#END CREATE ORIGINAL DATA#--------------------## 
+
+def mean_score(type_df, params):
+    strain_names = params[0]
+    folder_number = params[1]
+    session_name = params[2]
+    acc_array = []
+    pre_array = []
+
+    acc_df = pd.DataFrame()
+    pre_df = pd.DataFrame()
+    for strain_name in strain_names:
+        accuracy_file = "/home/mddo/stage/M2S4/output/{}/accuracy/{}/accuracy_{}_{}.csv".format(strain_name, session_name, type_df, folder_number)
+        accuracy_df = pd.read_csv(accuracy_file)
+        accuracy_df.columns = ["forest","accuracy","precision","recall","fscore","total_tree"]
+        
+        mean_acc = accuracy_df["accuracy"].mean()
+        acc_array.append([strain_name,mean_acc])
+        mean_precision = accuracy_df["precision"].mean()
+        pre_array.append([strain_name,mean_precision])
+
+    acc_df = pd.DataFrame(acc_array)
+    acc_df.columns = ["orf","mean_accuracy"]
+    acc_df = acc_df.sort_values(by = "mean_accuracy", ascending = False)
+    pre_df = pd.DataFrame(pre_array)
+    pre_df.columns = ["orf","mean_precision"]
+    pre_df = pre_df.sort_values(by = "mean_precision", ascending = False)
+
+    print(acc_df)
+    print(pre_df)
+
+def get_json_from_SGD(strain_std_names):
+    data_array = []
+    for std_name in strain_std_names:
+        url = "https://yeastgenome.org/backend/locus/{}/regulation_details".format(std_name)
+        json_url = urllib.request.urlopen(url)
+        data = json.loads(json_url.read())
+        data_array.append(data)
+    return data_array
+
+    # with urllib.request.urlopen('http://python.org/') as response:
+    # html = response.read()
+
