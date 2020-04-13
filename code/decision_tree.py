@@ -50,10 +50,14 @@ def get_potential_splits(data, random_subspace):
     if random_subspace and random_subspace <= len(column_indices):
         column_indices = random.sample(population=column_indices, k=random_subspace)
     
-    for column_index in column_indices:          
+    #check each column from the column indices list
+    for column_index in column_indices:
+        #fetch all the values in the columns          
         values = data[:, column_index]
+        #select every unique values, put it in unique values array
         unique_values = np.unique(values)
         
+        #put unique values from each columns un potential_split array
         potential_splits[column_index] = unique_values
     
     return potential_splits
@@ -84,15 +88,21 @@ def calculate_overall_entropy(data_below, data_above):
     
     return overall_entropy
 
-
+# detemined the best position in columns to split data
+# return column and the value in this column to split data
 def determine_best_split(data, potential_splits):
     
     overall_entropy = 9999
+    #fetch columns from potential_splits array
     for column_index in potential_splits:
+        #fetch values frol potential split values
         for value in potential_splits[column_index]:
+            #split data into 2 parts, above and below
             data_below, data_above = split_data(data, split_column=column_index, split_value=value)
+            #calculate current overall entropy value from these 2 parts of data
             current_overall_entropy = calculate_overall_entropy(data_below, data_above)
             
+            #find the minimum entropy
             if current_overall_entropy <= overall_entropy:
                 overall_entropy = current_overall_entropy
                 best_split_column = column_index

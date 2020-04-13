@@ -39,7 +39,7 @@ def random_forest_predictions(test_df, forest):
     
     return random_forest_predictions
 
-def training_RF(df, test_size, grid_search, type_df, folder_number):
+def training_RF(df, test_size, grid_search, type_df, folder_number, strain_name):
     train_df, test_df = train_test_split(df, test_size)
     accuracy_arr = []
     mean_acc = 0.0
@@ -65,18 +65,20 @@ def training_RF(df, test_size, grid_search, type_df, folder_number):
     accuracy_arr.append(accuracy)
 
     #save file predictions 
-    create_folder("output/FY/predictions/train/{}_{}".format(type_df, folder_number))
-    test_df.to_csv("output/FY/predictions/train/{}_{}/predictions_forest_{}_{}_{}_{}_{}.csv".format(type_df,folder_number, n_tree, n_feature, n_max_depth, n_bootstrap,round(accuracy*100)),index=False)
+    create_folder("output/{}/predictions/train".format(strain_name))
+    create_folder("output/{}/predictions/train/{}_{}".format(strain_name, type_df, folder_number))
+    test_df.to_csv("output/{}/predictions/train/{}_{}/predictions_forest_{}_{}_{}_{}_{}.csv".format(strain_name, type_df,folder_number, n_tree, n_feature, n_max_depth, n_bootstrap,round(accuracy*100)),index=False)
 
     #save forest - save environment
-    create_folder("output/FY/forest/{}_{}".format(type_df, folder_number))
-    save_forest_path = "output/FY/forest/{}_{}/forest_{}_{}_{}_{}_{}.json".format(type_df,folder_number,n_tree, n_feature, n_max_depth, n_bootstrap,round(accuracy*100))
+    create_folder("output/{}/forest/{}_{}".format(strain_name,type_df, folder_number))
+    save_forest_path = "output/{}/forest/{}_{}/forest_{}_{}_{}_{}_{}.json".format(strain_name, type_df,folder_number,n_tree, n_feature, n_max_depth, n_bootstrap,round(accuracy*100))
     create_file(save_forest_path)
     with open(save_forest_path,"w") as save_forest:
         save_forest.write(json.dumps(forest))
     
     #save hyper parametres and accuracy associated
-    save_acc_hyper_para_path = "output/FY/accuracy/train/accuracy_{}_{}.csv".format(type_df, folder_number)
+    create_folder("output/{}/accuracy/train".format(strain_name))
+    save_acc_hyper_para_path = "output/{}/accuracy/train/accuracy_{}_{}.csv".format(strain_name,type_df, folder_number)
     create_file(save_acc_hyper_para_path)
     with open(save_acc_hyper_para_path,"a") as save_hyper:
         save_hyper.write("forest_{}_{}_{}_{}_{},{},{},{},{},{}\n".format(n_tree, n_feature, n_max_depth, n_bootstrap,round(accuracy*100), accuracy,precision,recall,fscore,total_number_of_tree))
@@ -97,57 +99,57 @@ def testing_RF(test_df_path, type_df, strain_name, folder_number):
     save_file_report = "/home/mddo/stage/M2S4/output/{}/accuracy/test/accuracy_{}_{}.csv".format(strain_name, type_df, folder_number)
     print("save_file_report: " + save_file_report)
 
-    #for each forest name from FY training accuracy file above, we test with test_df of each strains
-    # for forest_name in trained_forests:
-    #     # create_file(save_file_report)
-    #     with open(save_file_report,"a") as save:
-    #         #create forest path from forest name
-    #         forest_path = "/home/mddo/stage/M2S4/output/FY/forest/{}_{}/{}.json".format(type_df,folder_number,forest_name)
-    #         print(forest_path)
+    ## for each forest name from FY training accuracy file above, we test with test_df of each strains
+    for forest_name in trained_forests:
+        # create_file(save_file_report)
+        with open(save_file_report,"a") as save:
+            #create forest path from forest name
+            forest_path = "/home/mddo/stage/M2S4/output/FY/forest/{}_{}/{}.json".format(type_df,folder_number,forest_name)
+            print(forest_path)
 
-    #         #if forest path does not exist, ignore it
-    #         if not os.path.exists(forest_path):
-    #             continue
+            #if forest path does not exist, ignore it
+            if not os.path.exists(forest_path):
+                continue
 
-    #         #read forest file
-    #         with open(forest_path) as json_data:
-    #             #get forest attributes
-    #             parametre_info = forest_name
+            #read forest file
+            with open(forest_path) as json_data:
+                #get forest attributes
+                parametre_info = forest_name
                     
-    #             #load forest
-    #             forest = json.load(json_data)
-    #             total_number_of_tree = len(forest)
+                #load forest
+                forest = json.load(json_data)
+                total_number_of_tree = len(forest)
                     
-    #             # diploid_files_data = glob.glob("/home/mddo/stage/M2S4/data/diploid/*.out")
-    #             # for i in range(len(diploid_files_data)):
-    #             #define test data
-    #             test_df = pd.read_csv(test_df_path)
+                # diploid_files_data = glob.glob("/home/mddo/stage/M2S4/data/diploid/*.out")
+                # for i in range(len(diploid_files_data)):
+                #define test data
+                test_df = pd.read_csv(test_df_path)
 
-    #             #predict data from other strains
-    #             predictions = random_forest_predictions(test_df, forest)
-    #             predictions_array = np.asanyarray(predictions)
+                #predict data from other strains
+                predictions = random_forest_predictions(test_df, forest)
+                predictions_array = np.asanyarray(predictions)
 
-    #             #create predicted label column in test_df file
-    #             test_df["predictions"] = predictions_array
+                #create predicted label column in test_df file
+                test_df["predictions"] = predictions_array
 
-    #             #create folder which contains all the predicted dataframe of other strains for each forests
-    #             create_folder("/home/mddo/stage/M2S4/output/{}/predictions/test".format(strain_name))
-    #             create_folder("/home/mddo/stage/M2S4/output/{}/predictions/test/{}_{}".format(strain_name,type_df, folder_number))
-    #             print("/home/mddo/stage/M2S4/output/{}/predictions/test/{}_{}".format(strain_name,type_df, folder_number))
+                #create folder which contains all the predicted dataframe of other strains for each forests
+                create_folder("/home/mddo/stage/M2S4/output/{}/predictions/test".format(strain_name))
+                create_folder("/home/mddo/stage/M2S4/output/{}/predictions/test/{}_{}".format(strain_name,type_df, folder_number))
+                print("/home/mddo/stage/M2S4/output/{}/predictions/test/{}_{}".format(strain_name,type_df, folder_number))
 
-    #             #calculate accuracy after predict
-    #             accuracy = calculate_accuracy(predictions,test_df.label)
-    #             #calculate precision score, recall score, f1 score
-    #             precision_recall_fscore = precision_recall_fscore_support(test_df["label"], test_df["predictions"],average = "binary", pos_label="ess")
-    #             precision = precision_recall_fscore[0]
-    #             recall = precision_recall_fscore[1]
-    #             fscore = precision_recall_fscore[2]
+                #calculate accuracy after predict
+                accuracy = calculate_accuracy(predictions,test_df.label)
+                #calculate precision score, recall score, f1 score
+                precision_recall_fscore = precision_recall_fscore_support(test_df["label"], test_df["predictions"],average = "binary", pos_label="ess")
+                precision = precision_recall_fscore[0]
+                recall = precision_recall_fscore[1]
+                fscore = precision_recall_fscore[2]
 
-    #             # save predictions output as csv file
+                # save predictions output as csv file
                 
-    #             test_df.to_csv("/home/mddo/stage/M2S4/output/{}/predictions/test/{}_{}/predictions_{}_{}.csv".format(strain_name,type_df,folder_number, parametre_info, round(accuracy*100)),index=False)
-    #             print("/home/mddo/stage/M2S4/output/{}/predictions/test/{}_{}/predictions_{}_{}.csv".format(strain_name,type_df,folder_number, parametre_info, round(accuracy*100)))
-    #             print(str(accuracy) + "," + parametre_info+"\n")
-    #             #save all scores into accuracy file, store it in test folder
-    #             save.write("{},{},{},{},{},{}\n".format(parametre_info,accuracy,precision, recall, fscore, total_number_of_tree))
+                test_df.to_csv("/home/mddo/stage/M2S4/output/{}/predictions/test/{}_{}/predictions_{}_{}.csv".format(strain_name,type_df,folder_number, parametre_info, round(accuracy*100)),index=False)
+                print("/home/mddo/stage/M2S4/output/{}/predictions/test/{}_{}/predictions_{}_{}.csv".format(strain_name,type_df,folder_number, parametre_info, round(accuracy*100)))
+                print(str(accuracy) + "," + parametre_info+"\n")
+                #save all scores into accuracy file, store it in test folder
+                save.write("{},{},{},{},{},{}\n".format(parametre_info,accuracy,precision, recall, fscore, total_number_of_tree))
                 

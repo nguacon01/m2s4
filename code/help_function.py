@@ -234,14 +234,14 @@ def merge_df(hits_reads_file, hits_in_promoter_file, hits_in_promoter_ratio_file
     hits_reads_df.columns = ["orf","hits_count","reads_count"]
     #normalizes values of hits count and reads count
     norm_cols_hits_reads = ["hits_count","reads_count"]
-    # hits_reads_df[norm_cols_hits_reads]  = MinMaxScaler().fit_transform(hits_reads_df[norm_cols_hits_reads])
+    hits_reads_df[norm_cols_hits_reads]  = MinMaxScaler().fit_transform(hits_reads_df[norm_cols_hits_reads])
 
     #hits per promoter
     hits_promoter_df = pd.read_csv(hits_in_promoter_file,sep=" ", header=None)
     hits_promoter_df.columns = ["orf","hits_count_pro","reads_count_pro"]
     #normalize values of hits per promoter
     norm_cols_hits_per_pro = ["hits_count_pro"]
-    # hits_promoter_df[norm_cols_hits_per_pro]  = MinMaxScaler().fit_transform(hits_promoter_df[norm_cols_hits_per_pro])
+    hits_promoter_df[norm_cols_hits_per_pro]  = MinMaxScaler().fit_transform(hits_promoter_df[norm_cols_hits_per_pro])
 
     #ratio hits in the 100 bp promoter between haploide and diploide
     ratio_hits_prom_df = pd.read_csv(hits_in_promoter_ratio_file, sep = " ", header= None)
@@ -252,7 +252,7 @@ def merge_df(hits_reads_file, hits_in_promoter_file, hits_in_promoter_ratio_file
     orf_len_df.columns = ["orf","orf_len"]
     #normalizes values of orf length
     norm_cols_orf_len = ["orf_len"]
-    # orf_len_df[norm_cols_orf_len]  = MinMaxScaler().fit_transform(orf_len_df[norm_cols_orf_len])
+    orf_len_df[norm_cols_orf_len]  = MinMaxScaler().fit_transform(orf_len_df[norm_cols_orf_len])
 
     #insertion index
     insertion_index_df = pd.read_csv(insertion_index_file,sep=" ",header=None)
@@ -629,17 +629,19 @@ def compare_false_prediction_files(FY_false_prediction_files, other_file):
 
     intersection.to_csv("{}_compare_with_FY.csv".format(other_file), index = False)
 
-def plot_accuracy_precision(strain_name, session_name, type_data, folder_number):
-    accuracy_file = "/home/mddo/stage/M2S4/output/{}/accuracy/{}/accuracy_{}_{}.csv".format(strain_name, session_name, type_data,folder_number)
-    create_folder("/home/mddo/stage/M2S4/images/{}".format(strain_name))
-    create_folder("/home/mddo/stage/M2S4/images/{}/acc_and_precision/".format(strain_name))
-    save_figure = "/home/mddo/stage/M2S4/images/{}/acc_and_precision/{}_{}.png".format(strain_name,type_data, folder_number)
-    accuracy_df = pd.read_csv(accuracy_file)
-    accuracy_df.columns = ["forest","accuracy","precision","recall","fscrore","total_tree"]
+def plot_accuracy_precision(strain_names, session_name, type_data, folder_number):
+    for strain_name in strain_names:
 
-    accuracy = accuracy_df["accuracy"]
-    precision = accuracy_df["precision"]
-    total_tree = accuracy_df["total_tree"]
+        accuracy_file = "/home/mddo/stage/M2S4/output/{}/accuracy/{}/accuracy_{}_{}.csv".format(strain_name, session_name, type_data,folder_number)
+        create_folder("/home/mddo/stage/M2S4/images/{}".format(strain_name))
+        create_folder("/home/mddo/stage/M2S4/images/{}/acc_and_precision/".format(strain_name))
+        save_figure = "/home/mddo/stage/M2S4/images/{}/acc_and_precision/{}_{}.png".format(strain_name,type_data, folder_number)
+        accuracy_df = pd.read_csv(accuracy_file)
+        accuracy_df.columns = ["forest","accuracy","precision","recall","fscrore","total_tree"]
+
+        accuracy = accuracy_df["accuracy"]
+        precision = accuracy_df["precision"]
+        total_tree = accuracy_df["total_tree"]
 
     ax = plt.gca()
     sns.set_style("whitegrid")
@@ -666,27 +668,27 @@ def find_missing_data(df_path, save_file):
     nan_df = df[df.isna().any(axis=1)]
     nan_df.to_csv(save_file, index = False)
 
-def map_all_essential_genes(fy_prediction_file, other_strains_array):
+def map_all_essential_genes(FY_pre,prediction_array):
+
+    fy_prediction_file = FY_pre
     fy_prediction_df = pd.read_csv(fy_prediction_file)
     map_df = pd.DataFrame()
     ## select all true positive, put it in new dataframe
-    map_df = fy_prediction_df.loc[(fy_prediction_df["label"] == "ess") & (fy_prediction_df["label"] == fy_prediction_df["predictions"])]
-    map_df = map_df.drop(columns = ["hits_count","reads_count","hits_count_pro","orf_len","insertion_index","NI","HFI","predictions"])
-    map_df.columns = ["orf","label_FY"]
+    fy_prediction_df = fy_prediction_df.loc[(fy_prediction_df["label"] == "ess")]
+    map_df["orf"] = fy_prediction_df["orf"]
+    map_df["label_FY"] = fy_prediction_df["label"]
 
-    for strain_name, strain_prediction_file in other_strains_array.items():
-        strain_prediction_df = pd.read_csv(strain_prediction_file)
+    for strain_name,prediction_file in prediction_array.items():
+        strain_prediction_df = pd.read_csv(prediction_file)
 
         ## Select True Positive in other strains prediction
         map_TP_strain = pd.DataFrame()
-        map_TP_strain = strain_prediction_df.loc[(strain_prediction_df["label"] == "ess") & (strain_prediction_df["label"] == strain_prediction_df["predictions"])]
-        map_TP_strain = map_TP_strain.drop(columns = ["hits_count","reads_count","hits_count_pro","orf_len","insertion_index","NI","HFI","label"])
-        map_TP_strain.columns = ["orf","predictions"]
-
-
+        strain_prediction_df = strain_prediction_df.loc[(strain_prediction_df["label"] == "ess") & (strain_prediction_df["label"] == strain_prediction_df["predictions"])]
+        map_TP_strain["orf"] = strain_prediction_df["orf"]
+        map_TP_strain["predictions"] = strain_prediction_df["predictions"]
         map_df["predictions_{}".format(strain_name)] = map_df.orf.map(map_TP_strain.set_index("orf")["predictions"].to_dict())
-    map_df = map_df.dropna(how="any")
-    map_df.to_csv("/home/mddo/stage/M2S4/code/TP_common_0.csv", index = False)
+    # map_df = map_df.dropna(how="any")
+    map_df.to_csv("/home/mddo/stage/M2S4/data/core_ess_HFI_NI_PROM_NEW_removed.csv", index = False)
 
 def create_data_haploid(strain_name):
     # #--------------------#BEGIN generate features HAPLOID#--------------------#
@@ -888,8 +890,8 @@ def mean_score(type_df, params):
     pre_df.columns = ["orf","mean_precision"]
     pre_df = pre_df.sort_values(by = "mean_precision", ascending = False)
 
-    print(acc_df)
-    print(pre_df)
+    acc_df.to_csv("/home/mddo/stage/M2S4/data/mean_score/accuracy_{}.csv".format(type_df), index=False)
+    pre_df.to_csv("/home/mddo/stage/M2S4/data/mean_score/precision_{}.csv".format(type_df), index=False)
 
 def get_json_from_SGD(strain_std_names):
     data_array = []

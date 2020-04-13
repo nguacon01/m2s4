@@ -5,15 +5,16 @@ from random_forest import *
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
-from sklearn import metrics
+from sklearn.preprocessing import MinMaxScaler, StandardScaler
 import glob
 import json
-import matplotlib_venn as venn
 def main():
 
 ##--------------------#BEGIN CREATE ORIGINAL DATA#--------------------## 
-    # strains_name = ["ABP","ACF","ACN","ACP","ADD","AND","APH","AVI","BBQ","BHH","BMK","CCD","CGQ","CHM","CIB","CLG","CNM","CNT","CPG","Sigma"]
+    # strains_name = ["FY","ABP","ACF","ACN","ACP","ADD","AND","APH","AVI","BBQ","BHH","BMK","CCD","CGQ","CHM","CIB","CLG","CNM","CNT","CPG","Sigma"]
+    # session_name = "test"
     # for strain_name in strains_name:
+    #     create_folder("/home/mddo/stage/M2S4/output/{}/diploid_/diploid_0/df/{}".format(strain_name,session_name))
     #     i = 0
     #     save_hits_reads_file = "/home/mddo/stage/M2S4/output/{}/haploid/hits_reads_per_orf.out".format(strain_name)
     #     save_hits_in_promoter_file = "/home/mddo/stage/M2S4/output/{}/haploid/hits_in_promoter.out".format(strain_name)
@@ -36,7 +37,7 @@ def main():
 
     #     create_folder("/home/mddo/stage/M2S4/output/{}/diploid_/diploid_{}".format(strain_name, i))
     #     create_folder("/home/mddo/stage/M2S4/output/{}/diploid_/diploid_{}/df".format(strain_name, i))
-    #     save_file_dataframe = "/home/mddo/stage/M2S4/output/{}/diploid_/diploid_{}/df/HFI_NI_PROM_NEW.csv".format(strain_name, i)
+    #     save_file_dataframe = "/home/mddo/stage/M2S4/output/{}/diploid_/diploid_{}/df/{}/core_HFI_NI_PROM_NEW.csv".format(strain_name, i,session_name)
     #     # # #---------------merge data file--------------#
     #     merge_df(
     #         save_hits_reads_file, 
@@ -56,9 +57,10 @@ def main():
 
 ##--------------------#BEGIN TRAINING SESSION#--------------------#
     ## only use for FY
+    # strain_name = "Sigma"
+    # type_df = "core_HFI_NI_PROM_NEW"
     # for i in range(100):
-    #     type_df = "HFI_NI_PROM_NEW_1_removed"
-    #     file_dataframe = "/home/mddo/stage/M2S4/output/FY/diploid_/diploid_0/df/{}.csv".format(type_df)
+    #     file_dataframe = "/home/mddo/stage/M2S4/output/FY/diploid_/diploid_0/df/train/{}.csv".format(type_df)
 
     #     folder_number = 0
         
@@ -81,21 +83,21 @@ def main():
     #     }
     #     print(grid)
 
-    #     training_RF(df, test_size = 0.2, grid_search = grid, type_df = type_df, folder_number = folder_number)
+    #     training_RF(df, test_size = 0.2, grid_search = grid, type_df = type_df, folder_number = folder_number, strain_name = strain_name)
 
 ##--------------------#BEGIN TESTING_SESSION#--------------------##
-    # type_df = "HFI_NI_PROM_NEW_1_removed"
-    # strain_name = "Sigma"
-    # folder_number = 0
+    type_df = "core_HFI_NI_PROM_NEW"
+    strain_name = "CCD"
+    folder_number = 0
 
-    # test_df_path = "/home/mddo/stage/M2S4/output/{}/diploid_/diploid_{}/df/HFI_NI_PROM_NEW.csv".format(strain_name, folder_number)
-    # testing_RF(test_df_path, type_df, strain_name, folder_number)
+    test_df_path = "/home/mddo/stage/M2S4/output/{}/diploid_/diploid_{}/df/HFI_NI_PROM_NEW_removed.csv".format(strain_name, folder_number)
+    testing_RF(test_df_path, type_df, strain_name, folder_number)
 
 ##--------------------#Find false predictions #--------------------##
     # strain_names = ["FY"]
     # for strain_name in strain_names:
-    #     type_df = "HFI_NI_PROM_NEW_1"
-    #     type_session = "train"
+    #     type_df = "core_HFI_NI_PROM_NEW"
+    #     type_session = "test"
     #     folder_number = 0
 
     #     find_false_positive(type_session,type_df,strain_name, folder_number)
@@ -147,9 +149,9 @@ def main():
 
 ##--------------------#Remove false predited genes--------------------##
     # strains_name = ["ABP","ACF","ACN","ACP","ADD","AND","APH","AVI","BBQ","BHH","BMK","CCD","CGQ","CHM","CIB","CLG","CNM","CNT","CPG","Sigma"]
-    # strains_name = ["FY"]
+    # # strains_name = ["FY"]
     # for strain_name in strains_name:
-    #     type_df = "HFI_NI_PROM_NEW_1"
+    #     type_df = "HFI_NI_PROM_NEW"
     #     folder_number = 0
     #     type_session = "train"
     #     threshold = 10
@@ -350,13 +352,11 @@ def main():
     # # #--------------------#END generate features HAPLOID#--------------------#
 
 ##--------------------#MEAN SCORE#--------------------##
-
-
-    # strain_names = ["ABP","ACF","ACN","ACP","ADD","AND","APH","AVI","BBQ","BHH","BMK","CCD","CGQ","CHM","CIB","CLG","CNM","CNT","CPG","Sigma"]
+    # strain_names = ["FY","ABP","ACF","ACN","ACP","ADD","AND","APH","AVI","BBQ","BHH","BMK","CCD","CGQ","CHM","CIB","CLG","CNM","CNT","CPG","Sigma"]
     # # strain_names = ["FY"]
-    # type_df = "normal_KNN_tempo_1"
+    # type_df = "core_HFI_NI_PROM_NEW"
     # folder_number = 0
-    # session_name = "test"
+    # session_name = "train"
     # params = [strain_names, folder_number, session_name]
     # mean_score(type_df, params)
 
@@ -375,11 +375,40 @@ def main():
     #         total_ess_count += count_ess
     #         count_file += 1
     #     average_ess_count = total_ess_count/count_file
-    #     print(strain_name +"\t"+ str(round(average_ess_count)))
+    #     print(strain_name +","+ str(round(average_ess_count)))
 
     # df = pd.read_csv("/home/mddo/stage/M2S4/output/FY/diploid_/diploid_0/df/normal_KNN.csv")
     # print(df.corr())
-    
+
+##--------------------#FIND CORE ESSENTIAL#--------------------##
+
+    # other_trains_array = ["FY","ABP","ACF","ACN","ACP","ADD","AND","APH","AVI","BBQ","BHH","BMK","CCD","CGQ","CHM","CIB","CLG","CNM","CNT","CPG","Sigma"]
+    # session_name = "test"
+    # type_df = "HFI_NI_PROM_NEW_removed"
+    # folder_number = 0
+    # FY_pre = "/home/mddo/stage/M2S4/output/Sigma/diploid_/diploid_0/df/HFI_NI_PROM_NEW_removed.csv"
+    # ABP_pre = "/home/mddo/stage/M2S4/output/ABP/predictions/test/HFI_NI_PROM_NEW_removed_0/predictions_forest_19_4_15_1323_99.0_90.0.csv"
+    # ACF_pre = "/home/mddo/stage/M2S4/output/ACF/predictions/test/HFI_NI_PROM_NEW_removed_0/predictions_forest_14_8_19_1310_99.0_89.0.csv"
+    # ACN_pre = "/home/mddo/stage/M2S4/output/ACN/predictions/test/HFI_NI_PROM_NEW_removed_0/predictions_forest_14_6_14_1315_98.0_90.0.csv"
+    # ACP_pre = "/home/mddo/stage/M2S4/output/ACP/predictions/test/HFI_NI_PROM_NEW_removed_0/predictions_forest_11_11_11_1258_99.0_92.0.csv"
+    # ADD_pre = "/home/mddo/stage/M2S4/output/ADD/predictions/test/HFI_NI_PROM_NEW_removed_0/predictions_forest_13_8_11_1227_99.0_90.0.csv"
+    # AND_pre = "/home/mddo/stage/M2S4/output/AND/predictions/test/HFI_NI_PROM_NEW_removed_0/predictions_forest_10_10_12_1401_99.0_90.0.csv"
+    # APH_pre = "/home/mddo/stage/M2S4/output/APH/predictions/test/HFI_NI_PROM_NEW_removed_0/predictions_forest_11_7_12_1316_99.0_90.0.csv"
+    # AVI_pre = "/home/mddo/stage/M2S4/output/AVI/predictions/test/HFI_NI_PROM_NEW_removed_0/predictions_forest_16_3_17_1361_99.0_89.0.csv"
+    # BBQ_pre = "/home/mddo/stage/M2S4/output/BBQ/predictions/test/HFI_NI_PROM_NEW_removed_0/predictions_forest_15_11_13_1333_99.0_90.0.csv"
+    # BHH_pre = "/home/mddo/stage/M2S4/output/BHH/predictions/test/HFI_NI_PROM_NEW_removed_0/predictions_forest_15_11_13_1333_99.0_90.0.csv"
+    # BMK_pre = "/home/mddo/stage/M2S4/output/BMK/predictions/test/HFI_NI_PROM_NEW_removed_0/predictions_forest_15_7_15_1373_99.0_89.0.csv"
+    # CCD_pre = "/home/mddo/stage/M2S4/output/CCD/predictions/test/HFI_NI_PROM_NEW_removed_0/predictions_forest_13_8_11_1227_99.0_91.0.csv"
+    # CGQ_pre = "/home/mddo/stage/M2S4/output/CGQ/predictions/test/HFI_NI_PROM_NEW_removed_0/predictions_forest_10_11_19_1428_99.0_90.0.csv"
+    # CHM_pre = "/home/mddo/stage/M2S4/output/CHM/predictions/test/HFI_NI_PROM_NEW_removed_0/predictions_forest_14_6_14_1315_98.0_88.0.csv"
+    # CIB_pre = "/home/mddo/stage/M2S4/output/CIB/predictions/test/HFI_NI_PROM_NEW_removed_0/predictions_forest_13_6_11_1382_99.0_90.0.csv"
+    # CLG_pre = "/home/mddo/stage/M2S4/output/CLG/predictions/test/HFI_NI_PROM_NEW_removed_0/predictions_forest_10_11_19_1428_99.0_92.0.csv"
+    # CNM_pre = "/home/mddo/stage/M2S4/output/CNM/predictions/test/HFI_NI_PROM_NEW_removed_0/predictions_forest_10_10_12_1401_99.0_90.0.csv"
+    # CNT_pre = "/home/mddo/stage/M2S4/output/CNT/predictions/test/HFI_NI_PROM_NEW_removed_0/predictions_forest_10_10_12_1401_99.0_89.0.csv"
+    # CPG_pre = "/home/mddo/stage/M2S4/output/CPG/predictions/test/HFI_NI_PROM_NEW_removed_0/predictions_forest_11_11_11_1258_99.0_91.0.csv"
+    # Sigma_pre = "/home/mddo/stage/M2S4/output/Sigma/predictions/test/HFI_NI_PROM_NEW_removed_0/predictions_forest_11_11_16_1497_99.0_91.0.csv"
+    # prediction_array = {"ABP":ABP_pre,"ACF":ACF_pre,"ACN":ACN_pre,"ACP":ACP_pre,"ADD":ADD_pre,"AND":AND_pre,"APH":APH_pre,"AVI":AVI_pre,"BBQ":BBQ_pre,"BHH":BHH_pre,"BMK":BMK_pre,"CCD":CCD_pre,"CGQ":CGQ_pre,"CHM":CHM_pre,"CIB":CIB_pre,"CLG":CLG_pre,"CNM":CNM_pre,"CNT":CNT_pre,"CPG":CPG_pre,"Sigma":Sigma_pre}
+    # map_all_essential_genes(FY_pre,prediction_array)
 
 if __name__ == "__main__":
     main()

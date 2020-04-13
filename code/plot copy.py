@@ -10,6 +10,7 @@ from random import seed
 import json
 from sklearn.metrics import precision_recall_fscore_support
 import matplotlib_venn as venn
+from help_function import *
 # %%
 df_FY = pd.read_csv("/home/mddo/stage/M2S4/output/FY/diploid_/diploid_0/df/diploid_normal_KNN.csv")
 df_CCD = pd.read_csv("/home/mddo/stage/M2S4/output/CCD/diploid_/diploid_0/df/normal_raw.csv")
@@ -89,12 +90,12 @@ plt.yticks(size = 20)
 fig.savefig('test2png.png', dpi=100)
 
 # %%
-strain_names = ["FY"]
+strain_names = ["FY","ABP","ACF","ACN","ACP","ADD","AND","APH","AVI","BBQ","BHH","BMK","CCD","CGQ","CHM","CIB","CLG","CNM","CNT","CPG","Sigma"]
 acc_df_total = pd.DataFrame()
 pre_df_total = pd.DataFrame()
 for strain_name in strain_names:
     session_name = "test"
-    type_data = "normal_KNN_removed"
+    type_data = "HFI_NI_PROM_NEW_removed"
     folder_number = 0
 
     accuracy_file = "/home/mddo/stage/M2S4/output/{}/accuracy/{}/accuracy_{}_{}.csv".format(strain_name, session_name, type_data,folder_number)
@@ -108,10 +109,8 @@ for strain_name in strain_names:
     precision = accuracy_df["precision"]
     total_tree = accuracy_df["total_tree"]
     acc_df_total["acc_{}".format(strain_name)] = accuracy_df["accuracy"]
-    acc_df_total["prec_{}".format(strain_name)] = accuracy_df["precision"]
-    print(acc_df_total)
+    pre_df_total["prec_{}".format(strain_name)] = accuracy_df["precision"]
 
-    print(pre_df_total)
 
 ax = plt.gca()
 sns.set_style("whitegrid")
@@ -122,13 +121,59 @@ acc_df_total.plot(kind='line',ax=ax)
 # accuracy_df.plot(kind="line")
 
 fig = matplotlib.pyplot.gcf()
-fig.set_size_inches(18.5, 5.5)
+fig.set_size_inches(18.5, 10.5)
 plt.rcParams["figure.figsize"] = (20,2)
-# plt.title("{} prediction accuracy and precision".format(strain_name), size = 20)
 plt.xticks(size = 14)
 plt.yticks(size = 14)
 plt.xlabel("Iteration", size = 18)
 plt.ylabel("Accuracy", size = 18)
+plt.ylim(0.85, 1)
 
+
+# %%
+strain_names = ["FY","ABP","ACF","ACN","ACP","ADD","AND","APH","AVI","BBQ","BHH","BMK","CCD","CGQ","CHM","CIB","CLG","CNM","CNT","CPG","Sigma"]
+    # strain_names = ["FY"]
+type_df = "HFI_NI_PROM_NEW_removed"
+folder_number = 0
+session_name = "test"
+params = [strain_names, folder_number, session_name]
+mean_score(type_df, params)
+
+# %%
+df = pd.read_csv("/home/mddo/stage/M2S4/output/FY/diploid_/diploid_0/df/HFI_NI_PROM_NEW_removed.csv")
+
+
+# %%
+sns.boxplot(x = df["NI"], y = "label", data = df)
+
+# %%
+df.loc[df["NI"] > 1.1, "NI"] = 1.1
+
+# %%
+sns.boxplot(x = df["NI"], y = "label", data = df)
+
+# %%
+# strain_names = ["FY","ABP","ACF","ACN","ACP","ADD","AND","APH","AVI","BBQ","BHH","BMK","CCD","CGQ","CHM","CIB","CLG","CNM","CNT","CPG","Sigma"]
+# type_df = "HFI_NI_PROM_NEW_removed"
+# folder_number = 0
+# for strain_name in strain_names:
+#     df_file = "/home/mddo/stage/M2S4/output/{}/diploid_/diploid_{}/df/{}.csv".format(strain_name,folder_number,type_df)
+#     df = pd.read_csv(df_file)
+#     df.loc[df["NI"] > 1.1, "NI"] = 1.1
+#     df.loc[df["hits_count"] >= 0.12, "hits_count"] = 0.12
+#     df.loc[df["reads_count"] >= 0.04, "reads_count"] = 0.04
+#     df.loc[df["insertion_index"] >= 0.025, "insertion_index"] = 0.025
+#     df.loc[df["HFI_ratio"] >= 5, "HFI_ratio"] = 5
+#     df.loc[df["NI_ratio"] >= 2, "NI_ratio"] = 2
+#     df.loc[df["ratio_hits_prom"] >= 4, "ratio_hits_prom"] = 4
+#     df.loc[df["reads_by_len"] >= 0.4, "reads_by_len"] = 0.4
+#     df = df.drop(columns = ["orf_len"])
+#     df.to_csv("/home/mddo/stage/M2S4/output/{}/diploid_/diploid_{}/df/{}_1.csv".format(strain_name,folder_number,type_df), index=False)
+
+# %%
+df = pd.read_csv("/home/mddo/stage/M2S4/output/FY/accuracy/train/accuracy_HFI_NI_PROM_NEW_removed_1_0.csv")
+
+# %%
+df.mean()
 
 # %%
