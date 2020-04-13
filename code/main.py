@@ -86,21 +86,21 @@ def main():
     #     training_RF(df, test_size = 0.2, grid_search = grid, type_df = type_df, folder_number = folder_number, strain_name = strain_name)
 
 ##--------------------#BEGIN TESTING_SESSION#--------------------##
-    type_df = "core_HFI_NI_PROM_NEW"
-    strain_name = "CCD"
-    folder_number = 0
+    # type_df = "core_HFI_NI_PROM_NEW"
+    # strain_name = "CCD"
+    # folder_number = 0
 
-    test_df_path = "/home/mddo/stage/M2S4/output/{}/diploid_/diploid_{}/df/HFI_NI_PROM_NEW_removed.csv".format(strain_name, folder_number)
-    testing_RF(test_df_path, type_df, strain_name, folder_number)
+    # test_df_path = "/home/mddo/stage/M2S4/output/{}/diploid_/diploid_{}/df/HFI_NI_PROM_NEW_removed.csv".format(strain_name, folder_number)
+    # testing_RF(test_df_path, type_df, strain_name, folder_number)
 
 ##--------------------#Find false predictions #--------------------##
-    # strain_names = ["FY"]
-    # for strain_name in strain_names:
-    #     type_df = "core_HFI_NI_PROM_NEW"
-    #     type_session = "test"
-    #     folder_number = 0
+    strain_names = ["FY","ABP","ACF","ACN","ACP","ADD","AND","APH","AVI","BBQ","BHH","BMK","CCD","CGQ","CHM","CIB","CLG","CNM","CNT","CPG","Sigma"]
+    for strain_name in strain_names:
+        type_df = "core_HFI_NI_PROM_NEW"
+        type_session = "train"
+        folder_number = 0
 
-    #     find_false_positive(type_session,type_df,strain_name, folder_number)
+        find_false_positive(type_session,type_df,strain_name, folder_number)
 
 ##--------------------#Create plot of accuracy and precision during training session or testing session--------------------##
     # strain_names = ["FY","ABP","ACF","ACN","ACP","ADD","AND","APH","AVI","BBQ","BHH","BMK","CCD","CGQ","CHM","CIB","CLG","CNM","CNT","CPG","Sigma"]

@@ -11,6 +11,7 @@ import json
 from sklearn.metrics import precision_recall_fscore_support
 import matplotlib_venn as venn
 from help_function import *
+from sklearn.metrics import precision_recall_curve
 # %%
 df_FY = pd.read_csv("/home/mddo/stage/M2S4/output/FY/diploid_/diploid_0/df/diploid_normal_KNN.csv")
 df_CCD = pd.read_csv("/home/mddo/stage/M2S4/output/CCD/diploid_/diploid_0/df/normal_raw.csv")
@@ -171,9 +172,21 @@ sns.boxplot(x = df["NI"], y = "label", data = df)
 #     df.to_csv("/home/mddo/stage/M2S4/output/{}/diploid_/diploid_{}/df/{}_1.csv".format(strain_name,folder_number,type_df), index=False)
 
 # %%
-df = pd.read_csv("/home/mddo/stage/M2S4/output/FY/accuracy/train/accuracy_HFI_NI_PROM_NEW_removed_1_0.csv")
-
+df = pd.read_csv("/home/mddo/stage/M2S4/output/FY/accuracy/train/accuracy_core_HFI_NI_PROM_NEW_0.csv")
+df.columns = ["forest","accuracy","precision","recall",'fscore',"total_tree"]
 # %%
-df.mean()
-
+df = pd.read_csv("/home/mddo/stage/M2S4/output/FY/predictions/train/core_HFI_NI_PROM_NEW_0/predictions_forest_25_5_11_1245_97.0.csv")
+# %%
+df["label"] = (df["label"] == "ess").astype(int)
+df["predictions"] = (df["predictions"] == "ess").astype(int)
+lr_precision, lr_recall, _ = precision_recall_curve(df["label"], df["predictions"])
+# %%
+plt.plot(lr_recall, lr_precision, marker='.', label='Logistic')
+# axis labels
+plt.xlabel('Recall')
+plt.ylabel('Precision')
+# show the legend
+plt.legend()
+# show the plot
+plt.show()
 # %%
