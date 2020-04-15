@@ -868,30 +868,24 @@ def mean_score(type_df, params):
     strain_names = params[0]
     folder_number = params[1]
     session_name = params[2]
-    acc_array = []
-    pre_array = []
-
-    acc_df = pd.DataFrame()
-    pre_df = pd.DataFrame()
+    array = []
     for strain_name in strain_names:
         accuracy_file = "/home/mddo/stage/M2S4/output/{}/accuracy/{}/accuracy_{}_{}.csv".format(strain_name, session_name, type_df, folder_number)
+        print(accuracy_file)
         accuracy_df = pd.read_csv(accuracy_file)
         accuracy_df.columns = ["forest","accuracy","precision","recall","fscore","total_tree"]
         
-        mean_acc = accuracy_df["accuracy"].mean()
-        acc_array.append([strain_name,mean_acc])
+        mean_accuracy = accuracy_df["accuracy"].mean()
         mean_precision = accuracy_df["precision"].mean()
-        pre_array.append([strain_name,mean_precision])
+        mean_recall = accuracy_df["recall"].mean()
 
-    acc_df = pd.DataFrame(acc_array)
-    acc_df.columns = ["orf","mean_accuracy"]
+        array.append([strain_name,mean_accuracy,mean_precision,mean_recall])
+
+    acc_df = pd.DataFrame(array)
+    acc_df.columns = ["orf","mean_accuracy","mean_precision","mean_recall"]
     acc_df = acc_df.sort_values(by = "mean_accuracy", ascending = False)
-    pre_df = pd.DataFrame(pre_array)
-    pre_df.columns = ["orf","mean_precision"]
-    pre_df = pre_df.sort_values(by = "mean_precision", ascending = False)
 
-    acc_df.to_csv("/home/mddo/stage/M2S4/data/mean_score/accuracy_{}.csv".format(type_df), index=False)
-    pre_df.to_csv("/home/mddo/stage/M2S4/data/mean_score/precision_{}.csv".format(type_df), index=False)
+    acc_df.to_csv("/home/mddo/stage/M2S4/data/mean_score/mean_score_{}.csv".format(type_df), index=False)
 
 def get_json_from_SGD(strain_std_names):
     data_array = []

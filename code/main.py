@@ -94,27 +94,28 @@ def main():
     # testing_RF(test_df_path, type_df, strain_name, folder_number)
 
 ##--------------------#Find false predictions #--------------------##
-    strain_names = ["FY","ABP","ACF","ACN","ACP","ADD","AND","APH","AVI","BBQ","BHH","BMK","CCD","CGQ","CHM","CIB","CLG","CNM","CNT","CPG","Sigma"]
-    for strain_name in strain_names:
-        type_df = "core_HFI_NI_PROM_NEW"
-        type_session = "train"
-        folder_number = 0
+    # strain_names = ["FY","ABP","ACF","ACN","ACP","ADD","AND","APH","AVI","BBQ","BHH","BMK","CCD","CGQ","CHM","CIB","CLG","CNM","CNT","CPG","Sigma"]
+    # for strain_name in strain_names:
+    #     type_df = "core_HFI_NI_PROM_NEW"
+    #     type_session = "train"
+    #     folder_number = 0
 
-        find_false_positive(type_session,type_df,strain_name, folder_number)
+    #     find_false_positive(type_session,type_df,strain_name, folder_number)
 
 ##--------------------#Create plot of accuracy and precision during training session or testing session--------------------##
     # strain_names = ["FY","ABP","ACF","ACN","ACP","ADD","AND","APH","AVI","BBQ","BHH","BMK","CCD","CGQ","CHM","CIB","CLG","CNM","CNT","CPG","Sigma"]
     # acc_df_total = pd.DataFrame()
     # pre_df_total = pd.DataFrame()
+    # recall_df_total = pd.DataFrame()
     # for strain_name in strain_names:
     #     session_name = "test"
-    #     type_data = "normal_KNN_removed"
+    #     type_data = "core_HFI_NI_PROM_NEW"
     #     folder_number = 0
 
     #     accuracy_file = "/home/mddo/stage/M2S4/output/{}/accuracy/{}/accuracy_{}_{}.csv".format(strain_name, session_name, type_data,folder_number)
     #     create_folder("/home/mddo/stage/M2S4/images/{}".format(strain_name))
-    #     create_folder("/home/mddo/stage/M2S4/images/{}/acc_and_precision/".format(strain_name))
-    #     save_figure = "/home/mddo/stage/M2S4/images/{}/acc_and_precision/{}_{}.png".format(strain_name,type_data, folder_number)
+    #     create_folder("/home/mddo/stage/M2S4/images/{}/acc_precision_recall/".format(strain_name))
+    #     save_figure = "/home/mddo/stage/M2S4/images/{}/acc_precision_recall/{}_{}.png".format(strain_name,type_data, folder_number)
     #     accuracy_df = pd.read_csv(accuracy_file)
     #     accuracy_df.columns = ["forest","accuracy","precision","recall","fscrore","total_tree"]
 
@@ -123,28 +124,26 @@ def main():
     #     total_tree = accuracy_df["total_tree"]
     #     acc_df_total["acc_{}".format(strain_name)] = accuracy_df["accuracy"]
     #     pre_df_total["prec_{}".format(strain_name)] = accuracy_df["precision"]
-    #     print(acc_df_total)
-
-    #     print(pre_df_total)
-
+    #     recall_df_total["recall_{}".format(strain_name)] = accuracy_df["recall"]
     # ax = plt.gca()
     # sns.set_style("whitegrid")
 
-    # acc_df_total.plot(kind='line',ax=ax)
+    # recall_df_total.plot(kind='line',ax=ax)
     # # accuracy_df.plot(kind='line',y='precision', color='red', ax=ax)
     # # accuracy_df = accuracy_df.drop(columns = ["total_tree"])
     # # accuracy_df.plot(kind="line")
 
     # fig = matplotlib.pyplot.gcf()
     # fig.set_size_inches(18.5, 10.5)
-    # plt.rcParams["figure.figsize"] = (20,2)
+    # plt.rcParams["figure.figsize"] = (10,2)
     # # plt.title("{} prediction accuracy and precision".format(strain_name), size = 20)
     # plt.xticks(size = 14)
     # plt.yticks(size = 14)
     # plt.xlabel("Iteration", size = 18)
-    # plt.ylabel("Accuracy", size = 18)
+    # plt.ylabel("Recall", size = 18)
+    # plt.xlim(0,60)
 
-    # plt.savefig("/home/mddo/stage/M2S4/images/acc.png")
+    # plt.savefig("/home/mddo/stage/M2S4/images/recall_{}.png".format(type_data))
     ##--------------------------------##
 
 ##--------------------#Remove false predited genes--------------------##
@@ -352,18 +351,20 @@ def main():
     # # #--------------------#END generate features HAPLOID#--------------------#
 
 ##--------------------#MEAN SCORE#--------------------##
-    # strain_names = ["FY","ABP","ACF","ACN","ACP","ADD","AND","APH","AVI","BBQ","BHH","BMK","CCD","CGQ","CHM","CIB","CLG","CNM","CNT","CPG","Sigma"]
-    # # strain_names = ["FY"]
-    # type_df = "core_HFI_NI_PROM_NEW"
-    # folder_number = 0
-    # session_name = "train"
-    # params = [strain_names, folder_number, session_name]
-    # mean_score(type_df, params)
+    strain_names = ["FY","ABP","ACF","ACN","ACP","ADD","AND","APH","AVI","BBQ","BHH","BMK","CCD","CGQ","CHM","CIB","CLG","CNM","CNT","CPG","Sigma"]
+    # strain_names = ["FY"]
+    type_df = "HFI_NI_PROM_NEW_removed"
+    folder_number = 0
+    session_name = "test"
+    params = [strain_names, folder_number, session_name]
+    mean_score(type_df, params)
 
     # strain_names = ["FY","ABP","ACF","ACN","ACP","ADD","AND","APH","AVI","BBQ","BHH","BMK","CCD","CGQ","CHM","CIB","CLG","CNM","CNT","CPG","Sigma"]
-    # type_df = "normal_KNN_tempo_1"
+    # type_df = "core_HFI_NI_PROM_NEW"
     # folder_number = 0
+    # total_ess_array = []
     # for strain_name in strain_names:
+        
     #     folder_link = "/home/mddo/stage/M2S4/output/{}/predictions/test/{}_{}".format(strain_name, type_df, folder_number)
     #     files = glob.glob(folder_link+"/*.csv")
     #     count_file = 0
@@ -374,8 +375,10 @@ def main():
     #         count_ess,_ = ess_predictions.shape
     #         total_ess_count += count_ess
     #         count_file += 1
-    #     average_ess_count = total_ess_count/count_file
-    #     print(strain_name +","+ str(round(average_ess_count)))
+    #     average_ess_count = round(total_ess_count/count_file)
+    #     total_ess_array.append([strain_name,average_ess_count])
+    # df = pd.DataFrame(total_ess_array)
+    # df.to_csv("/home/mddo/stage/M2S4/data/mean_score/total_ess_{}.csv".format(type_df), index=False)
 
     # df = pd.read_csv("/home/mddo/stage/M2S4/output/FY/diploid_/diploid_0/df/normal_KNN.csv")
     # print(df.corr())

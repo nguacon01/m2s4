@@ -190,3 +190,62 @@ plt.legend()
 # show the plot
 plt.show()
 # %%
+
+# %%
+df = pd.read_csv("/home/mddo/stage/M2S4/data/mean_score/mean_score_core_HFI_NI_PROM_NEW.csv")
+
+fig = plt.figure()
+ax1 = fig.add_subplot(111)
+ax1 = sns.barplot(x = "orf", y = "mean_accuracy", data = df)
+ax2 = ax1.twinx()
+ax2 = sns.lineplot(x = "orf", y = "mean_precision", data = df)
+ax2.grid(False)
+ax3 = ax1.twinx()
+ax3 = sns.lineplot(x = "orf", y = "mean_recall", data = df)
+ax3.grid(False)
+
+
+ax = plt.gca()
+sns.set_style("whitegrid")
+
+# sns.barplot(x = "orf", y = "mean_precision", data = df)
+fig = matplotlib.pyplot.gcf()
+fig.set_size_inches(18.5, 10.5)
+plt.rcParams["figure.figsize"] = (20,2)
+plt.xticks(size = 14)
+plt.yticks(size = 14)
+plt.xlabel("ORF", size = 18)
+plt.ylabel("Precision", size = 18)
+plt.show()
+
+# %%
+df = pd.read_csv("/home/mddo/stage/M2S4/output/FY/diploid_/diploid_0/df/train/core_HFI_NI_PROM_NEW.csv")
+count_values = df["label"].value_counts()
+print(count_values)
+count_values.plot(kind="bar")
+fig.set_size_inches(18.5, 10.5)
+plt.rcParams["figure.figsize"] = (20,2)
+plt.xlabel("Label", size = 18)
+plt.ylabel("Quantity", size = 18)
+plt.xticks(size = 18)
+plt.yticks(size = 18)
+# %%
+df = pd.read_csv("/home/mddo/stage/M2S4/data/mean_score/total_ess_core_HFI_NI_PROM_NEW.csv")
+df = df.sort_values(ascending = False, by = ["total_ess"])
+
+ax = plt.gca()
+sns.set_style("whitegrid")
+sns.barplot(x = "orf", y = "total_ess", data = df)
+fig.set_size_inches(18.5, 10.5)
+plt.rcParams["figure.figsize"] = (20,20)
+plt.xlabel("ORF", size = 18)
+plt.ylabel("Quantity", size = 18)
+plt.xticks(size = 18)
+plt.yticks(size = 18)
+
+# %%
+df = pd.read_csv("/home/mddo/stage/M2S4/data/mean_score/total_ess_core_HFI_NI_PROM_NEW.csv")
+df = df.sort_values(ascending = False, by = ["total_ess"])
+df.to_csv("/home/mddo/stage/M2S4/data/mean_score/total_ess_core_HFI_NI_PROM_NEW.csv", index=False)
+
+# %%
