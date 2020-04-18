@@ -31,13 +31,13 @@ def main():
     #     save_NI_ratio_haplo_diplo = "/home/mddo/stage/M2S4/output/{}/diploid_/diploid_{}/diplo_NI_ratio_haplo_diplo_NEW.out".format(strain_name,i)
     #     save_HFI_ratio_haplo_diplo = "/home/mddo/stage/M2S4/output/{}/diploid_/diploid_{}/diplo_HFI_ratio_haplo_diplo.out".format(strain_name,i)
 
-    #     label_df = "/home/mddo/stage/M2S4/data/label_balance.csv"
+    #     label_df = "/home/mddo/stage/M2S4/data/label_imbalance.csv"
 
     #     impute_missing_data = "None"
 
     #     create_folder("/home/mddo/stage/M2S4/output/{}/diploid_/diploid_{}".format(strain_name, i))
     #     create_folder("/home/mddo/stage/M2S4/output/{}/diploid_/diploid_{}/df".format(strain_name, i))
-    #     save_file_dataframe = "/home/mddo/stage/M2S4/output/{}/diploid_/diploid_{}/df/balance_HFI_NI_PROM_NEW.csv".format(strain_name, i)
+    #     save_file_dataframe = "/home/mddo/stage/M2S4/output/{}/diploid_/diploid_{}/df/imbalance_HFI_NI_PROM_NEW.csv".format(strain_name, i)
     #     # # #---------------merge data file--------------#
     #     merge_df(
     #         save_hits_reads_file, 
@@ -57,37 +57,37 @@ def main():
 
 ##--------------------#BEGIN TRAINING SESSION#--------------------#
     ## only use for FY
-    # strain_name = "FY"
-    # type_df = "balance_HFI_NI_PROM_NEW"
-    # for i in range(100):
-    #     file_dataframe = "/home/mddo/stage/M2S4/output/{}/diploid_/diploid_0/df/{}.csv".format(strain_name, type_df)
+    strain_name = "FY"
+    type_df = "imbalance_HFI_NI_PROM_NEW"
+    for i in range(100):
+        file_dataframe = "/home/mddo/stage/M2S4/output/{}/diploid_/diploid_0/df/{}.csv".format(strain_name, type_df)
 
-    #     folder_number = 0
+        folder_number = 0
         
-    #     df = pd.read_csv(file_dataframe)
+        df = pd.read_csv(file_dataframe)
 
-    #     row_num, feature_num = df.shape
-    #     n_columns = feature_num - 2
+        row_num, feature_num = df.shape
+        n_columns = feature_num - 2
 
-    #     #create search grid
-    #     n_tree = random.sample(population = list(range(10,30)), k = 1)
-    #     n_feature = random.sample(population = list(range(3,n_columns+1)), k = 1)
-    #     n_max_depth = random.sample(population = list(range(10,20)), k = 1)
-    #     n_bootstrap = random.sample(population = list(range(1200,1500)), k = 1)
+        #create search grid
+        n_tree = random.sample(population = list(range(10,30)), k = 1)
+        n_feature = random.sample(population = list(range(3,n_columns+1)), k = 1)
+        n_max_depth = random.sample(population = list(range(10,20)), k = 1)
+        n_bootstrap = random.sample(population = list(range(1200,1500)), k = 1)
 
-    #     grid= {
-    #         'n_tree' : n_tree[0],
-    #         'n_feature' : n_feature[0],
-    #         'n_max_depth' : n_max_depth[0],
-    #         'n_bootstrap' : n_bootstrap[0]
-    #     }
-    #     print(grid)
+        grid= {
+            'n_tree' : n_tree[0],
+            'n_feature' : n_feature[0],
+            'n_max_depth' : n_max_depth[0],
+            'n_bootstrap' : n_bootstrap[0]
+        }
+        print(grid)
 
-    #     training_RF(df, test_size = 0.2, grid_search = grid, type_df = type_df, folder_number = folder_number, strain_name = strain_name)
+        training_RF(df, test_size = 0.2, grid_search = grid, type_df = type_df, folder_number = folder_number, strain_name = strain_name)
 
 ##--------------------#BEGIN TESTING_SESSION#--------------------##
     # type_df = "balance_HFI_NI_PROM_NEW"
-    # strain_name = "Sigma"
+    # strain_name = "FY"
     # folder_number = 0
 
     # test_df_path = "/home/mddo/stage/M2S4/output/{}/diploid_/diploid_{}/df/balance_HFI_NI_PROM_NEW.csv".format(strain_name, folder_number)
@@ -95,7 +95,7 @@ def main():
 
 ##--------------------#Find false predictions #--------------------##
     # strain_names = ["ABP","ACF","ACN","ACP","ADD","AND","APH","AVI","BBQ","BHH","BMK","CCD","CGQ","CHM","CIB","CLG","CNM","CNT","CPG","Sigma"]
-    # # strain_names = ["FY"]
+    # strain_names = ["FY"]
     # for strain_name in strain_names:
     #     type_df = "balance_HFI_NI_PROM_NEW"
     #     type_session = "test"
