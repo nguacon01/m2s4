@@ -386,6 +386,7 @@ def find_false_positive(type_session, type_df, strain_name, folder_number):
 
         report_FP = result_df_FP["orf"].value_counts()
         report_FP_df = pd.DataFrame(report_FP)
+        create_folder("/home/mddo/stage/M2S4/output/{}/error/{}".format(strain_name, type_session))
         report_FP_df.to_csv("/home/mddo/stage/M2S4/output/{}/error/{}/{}_{}_FP.csv".format(strain_name, type_session,type_df, folder_number))
 
         report_FN = result_df_FN["orf"].value_counts()
@@ -549,10 +550,10 @@ def remove_fp_gene(df_path, param):
     fp_df.columns = ["orf","freq"]
     print(false_positive_file)
 
-    false_negative_file = "/home/mddo/stage/M2S4/output/FY/error/{}/{}_{}_FN.csv".format(type_session,type_df, folder_number)
-    fn_df = pd.read_csv(false_negative_file)
-    fn_df.columns = ["orf","freq"]
-    print(false_negative_file)
+    # false_negative_file = "/home/mddo/stage/M2S4/output/FY/error/{}/{}_{}_FN.csv".format(type_session,type_df, folder_number)
+    # fn_df = pd.read_csv(false_negative_file)
+    # fn_df.columns = ["orf","freq"]
+    # print(false_negative_file)
 
     orf_fp_drop = fp_df[fp_df["freq"] >= threshold].orf
     orf_fp_drop_df = pd.DataFrame(orf_fp_drop)
@@ -560,11 +561,11 @@ def remove_fp_gene(df_path, param):
     condition_fp = df["orf"].isin(orf_fp_drop_df["orf"]) == True
     df.drop(df[condition_fp].index, inplace = True)
 
-    orf_fn_drop = fn_df[fn_df["freq"] >= threshold].orf
-    orf_fn_drop_df = pd.DataFrame(orf_fn_drop)
-    print(orf_fn_drop_df)
-    condition_fn = df["orf"].isin(orf_fn_drop_df["orf"]) == True
-    df.drop(df[condition_fn].index, inplace = True)
+    # orf_fn_drop = fn_df[fn_df["freq"] >= threshold].orf
+    # orf_fn_drop_df = pd.DataFrame(orf_fn_drop)
+    # print(orf_fn_drop_df)
+    # condition_fn = df["orf"].isin(orf_fn_drop_df["orf"]) == True
+    # df.drop(df[condition_fn].index, inplace = True)
     
     df.to_csv(df_path+"_removed.csv", index = False)
 
@@ -641,6 +642,7 @@ def plot_accuracy_precision(strain_names, session_name, type_data, folder_number
 
         accuracy = accuracy_df["accuracy"]
         precision = accuracy_df["precision"]
+        recall = accuracy_df["recall"]
         total_tree = accuracy_df["total_tree"]
 
     ax = plt.gca()
@@ -648,17 +650,18 @@ def plot_accuracy_precision(strain_names, session_name, type_data, folder_number
 
     accuracy_df.plot(kind='line',y='accuracy',ax=ax)
     accuracy_df.plot(kind='line',y='precision', color='red', ax=ax)
+    accuracy_df.plot(kind='line',y='recall', color='orange', ax=ax)
     # accuracy_df = accuracy_df.drop(columns = ["total_tree"])
     # accuracy_df.plot(kind="line")
 
     fig = matplotlib.pyplot.gcf()
-    fig.set_size_inches(18.5, 10.5)
+    fig.set_size_inches(18.5, 5.5)
     plt.rcParams["figure.figsize"] = (20,2)
-    plt.title("{} prediction accuracy and precision".format(strain_name), size = 20)
+    plt.title("{} prediction accuracy, precision, recall".format(strain_name), size = 20)
     plt.xticks(size = 14)
     plt.yticks(size = 14)
     plt.xlabel("Numer of trees in forest", size = 18)
-    plt.ylabel("Accuracy & Precision", size = 18)
+    # plt.ylabel("Accuracy & Precision", size = 18)
 
     plt.savefig(save_figure)
 
@@ -885,7 +888,7 @@ def mean_score(type_df, params):
     acc_df.columns = ["orf","mean_accuracy","mean_precision","mean_recall"]
     acc_df = acc_df.sort_values(by = "mean_accuracy", ascending = False)
 
-    acc_df.to_csv("/home/mddo/stage/M2S4/data/mean_score/mean_score_{}.csv".format(type_df), index=False)
+    acc_df.to_csv("/home/mddo/stage/M2S4/data/mean_score/mean_score_{}_{}.csv".format(session_name,type_df), index=False)
 
 def get_json_from_SGD(strain_std_names):
     data_array = []

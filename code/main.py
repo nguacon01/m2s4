@@ -31,13 +31,13 @@ def main():
     #     save_NI_ratio_haplo_diplo = "/home/mddo/stage/M2S4/output/{}/diploid_/diploid_{}/diplo_NI_ratio_haplo_diplo_NEW.out".format(strain_name,i)
     #     save_HFI_ratio_haplo_diplo = "/home/mddo/stage/M2S4/output/{}/diploid_/diploid_{}/diplo_HFI_ratio_haplo_diplo.out".format(strain_name,i)
 
-    #     label_df = "/home/mddo/stage/M2S4/data/FY/final_annot.csv"
+    #     label_df = "/home/mddo/stage/M2S4/data/label_balance.csv"
 
     #     impute_missing_data = "None"
 
     #     create_folder("/home/mddo/stage/M2S4/output/{}/diploid_/diploid_{}".format(strain_name, i))
     #     create_folder("/home/mddo/stage/M2S4/output/{}/diploid_/diploid_{}/df".format(strain_name, i))
-    #     save_file_dataframe = "/home/mddo/stage/M2S4/output/{}/diploid_/diploid_{}/df/{}/core_HFI_NI_PROM_NEW.csv".format(strain_name, i,session_name)
+    #     save_file_dataframe = "/home/mddo/stage/M2S4/output/{}/diploid_/diploid_{}/df/balance_HFI_NI_PROM_NEW.csv".format(strain_name, i)
     #     # # #---------------merge data file--------------#
     #     merge_df(
     #         save_hits_reads_file, 
@@ -57,10 +57,10 @@ def main():
 
 ##--------------------#BEGIN TRAINING SESSION#--------------------#
     ## only use for FY
-    # strain_name = "Sigma"
-    # type_df = "core_HFI_NI_PROM_NEW"
+    # strain_name = "FY"
+    # type_df = "balance_HFI_NI_PROM_NEW"
     # for i in range(100):
-    #     file_dataframe = "/home/mddo/stage/M2S4/output/FY/diploid_/diploid_0/df/train/{}.csv".format(type_df)
+    #     file_dataframe = "/home/mddo/stage/M2S4/output/{}/diploid_/diploid_0/df/{}.csv".format(strain_name, type_df)
 
     #     folder_number = 0
         
@@ -86,30 +86,31 @@ def main():
     #     training_RF(df, test_size = 0.2, grid_search = grid, type_df = type_df, folder_number = folder_number, strain_name = strain_name)
 
 ##--------------------#BEGIN TESTING_SESSION#--------------------##
-    # type_df = "core_HFI_NI_PROM_NEW"
-    # strain_name = "CCD"
+    # type_df = "balance_HFI_NI_PROM_NEW"
+    # strain_name = "Sigma"
     # folder_number = 0
 
-    # test_df_path = "/home/mddo/stage/M2S4/output/{}/diploid_/diploid_{}/df/HFI_NI_PROM_NEW_removed.csv".format(strain_name, folder_number)
+    # test_df_path = "/home/mddo/stage/M2S4/output/{}/diploid_/diploid_{}/df/balance_HFI_NI_PROM_NEW.csv".format(strain_name, folder_number)
     # testing_RF(test_df_path, type_df, strain_name, folder_number)
 
 ##--------------------#Find false predictions #--------------------##
-    # strain_names = ["FY","ABP","ACF","ACN","ACP","ADD","AND","APH","AVI","BBQ","BHH","BMK","CCD","CGQ","CHM","CIB","CLG","CNM","CNT","CPG","Sigma"]
+    # strain_names = ["ABP","ACF","ACN","ACP","ADD","AND","APH","AVI","BBQ","BHH","BMK","CCD","CGQ","CHM","CIB","CLG","CNM","CNT","CPG","Sigma"]
+    # # strain_names = ["FY"]
     # for strain_name in strain_names:
-    #     type_df = "core_HFI_NI_PROM_NEW"
-    #     type_session = "train"
+    #     type_df = "balance_HFI_NI_PROM_NEW"
+    #     type_session = "test"
     #     folder_number = 0
 
     #     find_false_positive(type_session,type_df,strain_name, folder_number)
 
 ##--------------------#Create plot of accuracy and precision during training session or testing session--------------------##
-    # strain_names = ["FY","ABP","ACF","ACN","ACP","ADD","AND","APH","AVI","BBQ","BHH","BMK","CCD","CGQ","CHM","CIB","CLG","CNM","CNT","CPG","Sigma"]
+    # strain_names = ["ABP","ACF","ACN","ACP","ADD","AND","APH","AVI","BBQ","BHH","BMK","CCD","CGQ","CHM","CIB","CLG","CNM","CNT","CPG","Sigma"]
     # acc_df_total = pd.DataFrame()
     # pre_df_total = pd.DataFrame()
     # recall_df_total = pd.DataFrame()
     # for strain_name in strain_names:
     #     session_name = "test"
-    #     type_data = "core_HFI_NI_PROM_NEW"
+    #     type_data = "balance_HFI_NI_PROM_NEW"
     #     folder_number = 0
 
     #     accuracy_file = "/home/mddo/stage/M2S4/output/{}/accuracy/{}/accuracy_{}_{}.csv".format(strain_name, session_name, type_data,folder_number)
@@ -128,7 +129,7 @@ def main():
     # ax = plt.gca()
     # sns.set_style("whitegrid")
 
-    # recall_df_total.plot(kind='line',ax=ax)
+    # pre_df_total.plot(kind='line',ax=ax)
     # # accuracy_df.plot(kind='line',y='precision', color='red', ax=ax)
     # # accuracy_df = accuracy_df.drop(columns = ["total_tree"])
     # # accuracy_df.plot(kind="line")
@@ -140,20 +141,20 @@ def main():
     # plt.xticks(size = 14)
     # plt.yticks(size = 14)
     # plt.xlabel("Iteration", size = 18)
-    # plt.ylabel("Recall", size = 18)
+    # plt.ylabel("Precision", size = 18)
     # plt.xlim(0,60)
 
-    # plt.savefig("/home/mddo/stage/M2S4/images/recall_{}.png".format(type_data))
+    # plt.savefig("/home/mddo/stage/M2S4/images/accuracy_{}.png".format(type_data))
     ##--------------------------------##
 
 ##--------------------#Remove false predited genes--------------------##
-    # strains_name = ["ABP","ACF","ACN","ACP","ADD","AND","APH","AVI","BBQ","BHH","BMK","CCD","CGQ","CHM","CIB","CLG","CNM","CNT","CPG","Sigma"]
+    # strains_name = ["FY","ABP","ACF","ACN","ACP","ADD","AND","APH","AVI","BBQ","BHH","BMK","CCD","CGQ","CHM","CIB","CLG","CNM","CNT","CPG","Sigma"]
     # # strains_name = ["FY"]
     # for strain_name in strains_name:
     #     type_df = "HFI_NI_PROM_NEW"
     #     folder_number = 0
     #     type_session = "train"
-    #     threshold = 10
+    #     threshold = 5
     #     param = [strain_name,type_df, folder_number,type_session,threshold]
     #     df_path = "/home/mddo/stage/M2S4/output/{}/diploid_/diploid_{}/df/{}.csv".format(strain_name,folder_number,type_df)
     #     remove_fp_gene(df_path, param)
@@ -232,7 +233,7 @@ def main():
 ##--------------------#SEPERATE TRAINING SET AND TESTING TEST#--------------------## 
     # ##only use for FY
 
-    # types_data = ["HFI_NI_PROM_new"]
+    # types_data = ["normal_ft_engine"]
     # i = 0
     # for type_data in types_data:
     #     df_path = "/home/mddo/stage/M2S4/output/FY/diploid_/diploid_{}/df/{}.csv".format(i, type_data)
@@ -263,34 +264,6 @@ def main():
 
     #     total_df["accuracy_{}".format(strain_name)] = accuracy_df["precisions"]
     # print(total_df.mean().sort_values(ascending = False))
-
-##--------------------#SWICH GENE LABELS ##--------------------##
-    # type_df = "HFI_NI_PROM_NEW"
-    # fn_file = "/home/mddo/stage/M2S4/output/FY/error/train/{}_0_FN.csv".format(type_df)
-    # fp_file = "/home/mddo/stage/M2S4/output/FY/error/train/{}_0_FP.csv".format(type_df)
-    # label_file = "/home/mddo/stage/M2S4/data/FY/final_annot_tempo.csv"
-    # save_file = "/home/mddo/stage/M2S4/data/FY/final_annot_HFI_NI_PROM_NEW_tempo_1.csv"
-
-    # fn_df = pd.read_csv(fn_file)
-    # fn_df.columns = ["orf","freq"]
-
-    # fp_df = pd.read_csv(fp_file)
-    # fp_df.columns = ["orf","freq"]
-
-    # label_df = pd.read_csv(label_file)
-
-    # orf_fp_drop = fp_df[fp_df["freq"] >= 10].orf
-    # orf_fp_drop_df = pd.DataFrame(orf_fp_drop)
-    # condition_fp = label_df["orf"].isin(orf_fp_drop_df["orf"]) == True
-    # label_df.loc[label_df[condition_fp].index, "label"] = "ess"
-    
-
-    # orf_fn_drop = fn_df[fn_df["freq"] >= 20].orf
-    # orf_fn_drop_df = pd.DataFrame(orf_fn_drop)
-    # condition_fn = label_df["orf"].isin(orf_fn_drop_df["orf"]) == True
-    # label_df.loc[label_df[condition_fn].index, "label"] = "non_ess"
-
-    # label_df.to_csv(save_file,index=False)
 
 ##--------------------#BEGIN generate features HAPLOID#--------------------##
 
@@ -351,13 +324,13 @@ def main():
     # # #--------------------#END generate features HAPLOID#--------------------#
 
 ##--------------------#MEAN SCORE#--------------------##
-    strain_names = ["FY","ABP","ACF","ACN","ACP","ADD","AND","APH","AVI","BBQ","BHH","BMK","CCD","CGQ","CHM","CIB","CLG","CNM","CNT","CPG","Sigma"]
-    # strain_names = ["FY"]
-    type_df = "HFI_NI_PROM_NEW_removed"
-    folder_number = 0
-    session_name = "test"
-    params = [strain_names, folder_number, session_name]
-    mean_score(type_df, params)
+    # strain_names = ["ABP","ACF","ACN","ACP","ADD","AND","APH","AVI","BBQ","BHH","BMK","CCD","CGQ","CHM","CIB","CLG","CNM","CNT","CPG","Sigma"]
+    # # strain_names = ["FY"]
+    # type_df = "balance_HFI_NI_PROM_NEW"
+    # folder_number = 0
+    # session_name = "test"
+    # params = [strain_names, folder_number, session_name]
+    # mean_score(type_df, params)
 
     # strain_names = ["FY","ABP","ACF","ACN","ACP","ADD","AND","APH","AVI","BBQ","BHH","BMK","CCD","CGQ","CHM","CIB","CLG","CNM","CNT","CPG","Sigma"]
     # type_df = "core_HFI_NI_PROM_NEW"
@@ -413,6 +386,12 @@ def main():
     # prediction_array = {"ABP":ABP_pre,"ACF":ACF_pre,"ACN":ACN_pre,"ACP":ACP_pre,"ADD":ADD_pre,"AND":AND_pre,"APH":APH_pre,"AVI":AVI_pre,"BBQ":BBQ_pre,"BHH":BHH_pre,"BMK":BMK_pre,"CCD":CCD_pre,"CGQ":CGQ_pre,"CHM":CHM_pre,"CIB":CIB_pre,"CLG":CLG_pre,"CNM":CNM_pre,"CNT":CNT_pre,"CPG":CPG_pre,"Sigma":Sigma_pre}
     # map_all_essential_genes(FY_pre,prediction_array)
 
+    # strain_names = ["FY"] 
+    # session_name = "test" 
+    # type_data = "core_HFI_NI_PROM_NEW" 
+    # folder_number = 0
+    # plot_accuracy_precision(strain_names, session_name, type_data, folder_number)
+    
 if __name__ == "__main__":
     main()
 # %%

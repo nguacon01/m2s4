@@ -405,3 +405,6 @@ if __name__ == "__main__":
     #             FY_HFI_NI_PROM_KNN_FP_file = "/home/mddo/stage/M2S4/output/FY/error/train/{}_0_full_{}.csv".format(type_df, false_type)
     #             other_HFI_NI_PROM_KNN_FP_file = "/home/mddo/stage/M2S4/output/{}/error/test/{}_0_full_{}.csv".format(strain_name, type_df, false_type)
     #             compare_false_prediction_files(FY_HFI_NI_PROM_KNN_FP_file, other_HFI_NI_PROM_KNN_FP_file)
+
+
+    

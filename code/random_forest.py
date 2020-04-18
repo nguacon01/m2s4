@@ -24,9 +24,10 @@ def random_forest_algorithm(train_df, n_tree, n_bootstrap, n_feature, dt_max_dep
     
     for i in range(n_tree):
         df_bootstrapped = bootstrapping(train_df, n_bootstrap)
+        features = df_bootstrapped.columns
         tree = decision_tree_algorithm(df_bootstrapped, max_depth=dt_max_depth, random_subspace=n_feature)
         forest.append(tree)
-    return forest
+    return forest, features
 def random_forest_predictions(test_df, forest):
     df_predictions = {}
     for i in range(len(forest)):
@@ -48,7 +49,7 @@ def training_RF(df, test_size, grid_search, type_df, folder_number, strain_name)
     n_max_depth = grid_search['n_max_depth'] 
     n_bootstrap = grid_search['n_bootstrap'] 
 
-    forest = random_forest_algorithm(train_df, n_tree = n_tree, n_bootstrap = n_bootstrap, n_feature = n_feature, dt_max_depth = n_max_depth)
+    forest, features = random_forest_algorithm(train_df, n_tree = n_tree, n_bootstrap = n_bootstrap, n_feature = n_feature, dt_max_depth = n_max_depth)
     total_number_of_tree = len(forest)
     predictions = random_forest_predictions(test_df, forest)
 
