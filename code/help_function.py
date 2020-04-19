@@ -3,6 +3,7 @@ import random
 import pandas as pd
 import numpy as np
 from sklearn.preprocessing import MinMaxScaler, StandardScaler
+from sklearn.metrics import confusion_matrix
 # from sklearn.impute import KNNImputer
 import glob
 from knn_impute import knn_impute
@@ -340,11 +341,14 @@ def merge_df(hits_reads_file, hits_in_promoter_file, hits_in_promoter_ratio_file
     final_df['label'].replace(' ', np.nan, inplace=True)
     final_df = final_df.dropna(subset=['label'])
     final_df.reset_index(drop = True)
+
+    final_df = final_df.drop(columns = ["reads_count","reads_by_len","HFI_ratio"])
     
     # #generate csv file
     final_df.to_csv(save_file,index=False)
 
 #this function find the genes frequenly have false positive results after prediction   
+#generate a file of confussion matrix too
 """
     type_session: name of the session: train or test
 """
@@ -356,6 +360,13 @@ def find_false_positive(type_session, type_df, strain_name, folder_number):
     with open (accuracy_file_path) as accuracy_file:
         df_array_FP = []
         df_array_FN = []
+        df_array_TP = []
+        df_array_TN = []
+        count = 0
+        count_FP_TT = 0
+        count_FN_TT = 0
+        count_TP_TT = 0
+        count_TN_TT = 0
         for accuracy in accuracy_file:
             acc_elements = accuracy.strip().split(",")
             forest_name = acc_elements[0]
@@ -372,12 +383,20 @@ def find_false_positive(type_session, type_df, strain_name, folder_number):
             predictions = df["predictions"]
 
             #filter all the wrong predictions
-            df_FP = df.loc[(labels == "non_ess") & (labels != predictions)]
-            df_FN = df.loc[(labels == "ess") & (labels != predictions)]
+            df_FP = df.loc[(labels == "non_ess") & (predictions == "ess")]
+            df_FN = df.loc[(labels == "ess") & (predictions == "non_ess")]
+
+            count_TN, count_FP, count_FN, count_TP = confusion_matrix(labels, predictions).ravel()
+            print([count_TN, count_FP, count_FN, count_TP])
+            count_FP_TT += count_FP
+            count_FN_TT += count_FN
+            count_TN_TT += count_TN
+            count_TP_TT += count_TP
             #put it in array
             df_array_FP.append(df_FP)
             df_array_FN.append(df_FN)
-        
+            count += 1
+        # export file of false predicted genes frequency
         result_df_FP = pd.concat(df_array_FP)
         result_df_FN = pd.concat(df_array_FN)
         
@@ -387,11 +406,24 @@ def find_false_positive(type_session, type_df, strain_name, folder_number):
         report_FP = result_df_FP["orf"].value_counts()
         report_FP_df = pd.DataFrame(report_FP)
         create_folder("/home/mddo/stage/M2S4/output/{}/error/{}".format(strain_name, type_session))
-        report_FP_df.to_csv("/home/mddo/stage/M2S4/output/{}/error/{}/{}_{}_FP.csv".format(strain_name, type_session,type_df, folder_number))
+        report_FP_df.to_csv("/home/mddo/stage/M2S4/output/{}/error/{}/{}_{}_FP.csv".format(strain_name, type_session,type_df, folder_number), index = False)
 
         report_FN = result_df_FN["orf"].value_counts()
         report_FN_df = pd.DataFrame(report_FN)
-        report_FN_df.to_csv("/home/mddo/stage/M2S4/output/{}/error/{}/{}_{}_FN.csv".format(strain_name, type_session,type_df, folder_number))
+        report_FN_df.to_csv("/home/mddo/stage/M2S4/output/{}/error/{}/{}_{}_FN.csv".format(strain_name, type_session,type_df, folder_number), index = False)
+
+        #export file TP - TN - FP - FN
+        TP = round(count_TP_TT / count)
+        TN = round(count_TN_TT / count)
+        FP = round(count_FP_TT / count)
+        FN = round(count_FN_TT / count)
+        confussion_matrix = pd.DataFrame()
+        confussion_matrix["tp"] = [TP]
+        confussion_matrix["tn"] = [TN]
+        confussion_matrix["fn"] = [FN]
+        confussion_matrix["fp"] = [FP]
+        confussion_matrix.to_csv("/home/mddo/stage/M2S4/output/{}/error/{}/confussion_matrix_{}_{}.csv".format(strain_name, type_session,type_df, folder_number), index = False)
+
 
 def frequency_false_positive():
     df = pd.read_csv("output/false_positive.out",sep = " ", header = None)
