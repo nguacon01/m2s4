@@ -89,7 +89,8 @@ def training_RF(df, test_size, grid_search, type_df, folder_number, strain_name)
 def testing_RF(test_df_path, type_df, strain_name, folder_number):
     
     #read file training accuracy of FY, fetch all the forests which were trained
-    train_accuracy_file = "/home/mddo/stage/M2S4/output/{}/accuracy/train/accuracy_{}_{}.csv".format(strain_name, type_df, folder_number)
+    train_accuracy_file = "/home/mddo/stage/M2S4/output/FY/accuracy/train/accuracy_{}_0.csv".format(type_df)
+    
     print("train_accuracy_file: " + train_accuracy_file)
     train_accuracy_df = pd.read_csv(train_accuracy_file)
     train_accuracy_df.columns = ["forest","accuracy","precision","recall","fscore","total_tree"]
@@ -105,7 +106,7 @@ def testing_RF(test_df_path, type_df, strain_name, folder_number):
         # create_file(save_file_report)
         with open(save_file_report,"a") as save:
             #create forest path from forest name
-            forest_path = "/home/mddo/stage/M2S4/output/{}/forest/{}_{}/{}.json".format(strain_name, type_df,folder_number,forest_name)
+            forest_path = "/home/mddo/stage/M2S4/output/FY/forest/{}_0/{}.json".format(type_df,forest_name)
             print(forest_path)
 
             #if forest path does not exist, ignore it

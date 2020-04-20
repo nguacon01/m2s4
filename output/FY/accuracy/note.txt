@@ -1,0 +1,2 @@
+test core_HFI_NI_PROM_NEW_0: test on trained model of each strain
+test core_HFI_NI_PROM_NEW_1: test on FY trained model for each strain

@@ -5,7 +5,6 @@ from random_forest import *
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
-from sklearn.preprocessing import MinMaxScaler, StandardScaler
 import glob
 import json
 def main():
@@ -259,12 +258,12 @@ def main():
     #     training_RF(df, test_size = 0.2, grid_search = grid, type_df = type_df, folder_number = folder_number, strain_name = strain_name)
 
 ##--------------------#BEGIN TESTING_SESSION#--------------------##
-    # type_df = "core_HFI_NI_PROM_NEW"
-    # strain_name = "Sigma"
-    # folder_number = 0
+    type_df = "balance_8f_HFI_NI_PROM_NEW"
+    strain_name = "Sigma"
+    folder_number = 1
 
-    # test_df_path = "/home/mddo/stage/M2S4/output/{}/diploid_/diploid_{}/df/test/core_HFI_NI_PROM_NEW.csv".format(strain_name, folder_number)
-    # testing_RF(test_df_path, type_df, strain_name, folder_number)
+    test_df_path = "/home/mddo/stage/M2S4/output/{}/diploid_/diploid_0/df/test/{}.csv".format(strain_name, type_df)
+    testing_RF(test_df_path, type_df, strain_name, folder_number)
     
 
 
@@ -273,13 +272,11 @@ def main():
 
 
 ##--------------------#Find false predictions #--------------------##
-    # strain_names = ["ABP","ACF","ACN","ACP","ADD","AND","APH","AVI","BBQ","BHH","BMK","CCD","CGQ","CHM","CIB","CLG","CNM","CNT","CPG","Sigma"]
-    # strain_names = ["FY"]
-    # for strain_name in strain_names:
-    #     type_df = "balance_HFI_NI_PROM_NEW"
-    #     type_session = "test"
-    #     folder_number = 0
-    #     find_false_positive(type_session,type_df,strain_name, folder_number)
+    # strain_names = ["FY","ABP","ACF","ACN","ACP","ADD","AND","APH","AVI","BBQ","BHH","BMK","CCD","CGQ","CHM","CIB","CLG","CNM","CNT","CPG","Sigma"]
+    # type_df = "balance_HFI_NI_PROM_NEW"
+    # type_session = "test"
+    # folder_number = 0
+    # find_false_positive(type_session,type_df,strain_names, folder_number)
 
 ##--------------------#Remove false predited genes--------------------##
     # strains_name = ["FY","ABP","ACF","ACN","ACP","ADD","AND","APH","AVI","BBQ","BHH","BMK","CCD","CGQ","CHM","CIB","CLG","CNM","CNT","CPG","Sigma"]
@@ -294,7 +291,7 @@ def main():
     #     remove_fp_gene(df_path, param)
 
 ##--------------------#MEAN SCORE#--------------------##
-    # strain_names = ["ABP","ACF","ACN","ACP","ADD","AND","APH","AVI","BBQ","BHH","BMK","CCD","CGQ","CHM","CIB","CLG","CNM","CNT","CPG","Sigma"]
+    # strain_names = ["FY","ABP","ACF","ACN","ACP","ADD","AND","APH","AVI","BBQ","BHH","BMK","CCD","CGQ","CHM","CIB","CLG","CNM","CNT","CPG","Sigma"]
     # # strain_names = ["FY"]
     # type_df = "balance_HFI_NI_PROM_NEW"
     # folder_number = 0
@@ -353,14 +350,15 @@ def main():
     
 ##--------------------#Create plot of accuracy and precision during training session or testing session--------------------##
     # strain_names = ["ABP","ACF","ACN","ACP","ADD","AND","APH","AVI","BBQ","BHH","BMK","CCD","CGQ","CHM","CIB","CLG","CNM","CNT","CPG","Sigma"]
+    # strain_names = ["FY"]
     # acc_df_total = pd.DataFrame()
     # pre_df_total = pd.DataFrame()
     # recall_df_total = pd.DataFrame()
+    # session_name = "test
+    # "
+    # type_data = "balance_HFI_NI_PROM_NEW"
+    # folder_number = 0
     # for strain_name in strain_names:
-    #     session_name = "test"
-    #     type_data = "balance_HFI_NI_PROM_NEW"
-    #     folder_number = 0
-
     #     accuracy_file = "/home/mddo/stage/M2S4/output/{}/accuracy/{}/accuracy_{}_{}.csv".format(strain_name, session_name, type_data,folder_number)
     #     create_folder("/home/mddo/stage/M2S4/images/{}".format(strain_name))
     #     create_folder("/home/mddo/stage/M2S4/images/{}/acc_precision_recall/".format(strain_name))
@@ -372,27 +370,27 @@ def main():
     #     precision = accuracy_df["precision"]
     #     total_tree = accuracy_df["total_tree"]
     #     acc_df_total["acc_{}".format(strain_name)] = accuracy_df["accuracy"]
-    #     pre_df_total["prec_{}".format(strain_name)] = accuracy_df["precision"]
-    #     recall_df_total["recall_{}".format(strain_name)] = accuracy_df["recall"]
+    #     acc_df_total["prec_{}".format(strain_name)] = accuracy_df["precision"]
+    #     acc_df_total["recall_{}".format(strain_name)] = accuracy_df["recall"]
     # ax = plt.gca()
     # sns.set_style("whitegrid")
 
-    # pre_df_total.plot(kind='line',ax=ax)
+    # acc_df_total.plot(kind='line',ax=ax)
     # # accuracy_df.plot(kind='line',y='precision', color='red', ax=ax)
     # # accuracy_df = accuracy_df.drop(columns = ["total_tree"])
     # # accuracy_df.plot(kind="line")
 
     # fig = matplotlib.pyplot.gcf()
-    # fig.set_size_inches(18.5, 10.5)
+    # fig.set_size_inches(18.5, 5.5)
     # plt.rcParams["figure.figsize"] = (10,2)
     # # plt.title("{} prediction accuracy and precision".format(strain_name), size = 20)
     # plt.xticks(size = 14)
     # plt.yticks(size = 14)
     # plt.xlabel("Iteration", size = 18)
-    # plt.ylabel("Precision", size = 18)
-    # plt.xlim(0,60)
+    # # plt.ylabel("Precision", size = 18)
+    # # plt.xlim(0,60)
 
-    # plt.savefig("/home/mddo/stage/M2S4/images/accuracy_{}.png".format(type_data))
+    # plt.savefig("/home/mddo/stage/M2S4/images/accuracy_{}_{}.png".format(session_name,type_data))
 
 ##--------------------#create accuracy table and predictions table #--------------------##
     # strain_names = ["FY","ABP","ACF","ACN","ACP","ADD","AND","APH","AVI","BBQ","BHH","BMK","CCD","CGQ","CHM","CIB","CLG","CNM","CNT","CPG","Sigma"]
@@ -407,6 +405,15 @@ def main():
     #     total_df["accuracy_{}".format(strain_name)] = accuracy_df["precisions"]
     # print(total_df.mean().sort_values(ascending = False))
 
+##--------------------# CONFUSION MATRIX #--------------------##
+    # strain_names = ["FY","ABP","ACF","ACN","ACP","ADD","AND","APH","AVI","BBQ","BHH","BMK","CCD","CGQ","CHM","CIB","CLG","CNM","CNT","CPG","Sigma"]
+    # # strain_names = ["FY"]
+    # type_df = "balance_HFI_NI_PROM_NEW"
+    # folder_number = 0
+    # session_name = "test"
+    # params = [strain_names, folder_number, session_name]
+
+    # plot_confusion_matrix(session_name,type_df,strain_names,folder_number)
 
 
 

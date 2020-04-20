@@ -352,77 +352,48 @@ def merge_df(hits_reads_file, hits_in_promoter_file, hits_in_promoter_ratio_file
 """
     type_session: name of the session: train or test
 """
-def find_false_positive(type_session, type_df, strain_name, folder_number):
+def find_false_positive(type_session, type_df, strain_names, folder_number):
     
     # file_paths = glob.glob("/home/mddo/stage/M2S4/output/predictions/{}/{}/*.csv".format(type_session, type_df))
+    for train_name in strain_names:
+        accuracy_file_path = "/home/mddo/stage/M2S4/output/{}/accuracy/{}/accuracy_{}_{}.csv".format(strain_name, type_session, type_df, folder_number)
+        with open (accuracy_file_path) as accuracy_file:
+            df_array_FP = []
+            df_array_FN = []
+            for accuracy in accuracy_file:
+                acc_elements = accuracy.strip().split(",")
+                forest_name = acc_elements[0]
+                acc_value = float(acc_elements[1])
+                total_tree = acc_elements[2]
+                if type_session == "test":
+                    report_path = "/home/mddo/stage/M2S4/output/{}/predictions/{}/{}_{}/predictions_{}_{}.0.csv".format(strain_name,type_session, type_df,folder_number, forest_name, round(acc_value*100))
+                else:
+                    report_path = "/home/mddo/stage/M2S4/output/{}/predictions/{}/{}_{}/predictions_{}.csv".format(strain_name,type_session, type_df,folder_number, forest_name)
+                
+                
+                df = pd.read_csv(report_path)
+                labels = df["label"]
+                predictions = df["predictions"]
 
-    accuracy_file_path = "/home/mddo/stage/M2S4/output/{}/accuracy/{}/accuracy_{}_{}.csv".format(strain_name, type_session, type_df, folder_number)
-    with open (accuracy_file_path) as accuracy_file:
-        df_array_FP = []
-        df_array_FN = []
-        df_array_TP = []
-        df_array_TN = []
-        count = 0
-        count_FP_TT = 0
-        count_FN_TT = 0
-        count_TP_TT = 0
-        count_TN_TT = 0
-        for accuracy in accuracy_file:
-            acc_elements = accuracy.strip().split(",")
-            forest_name = acc_elements[0]
-            acc_value = float(acc_elements[1])
-            total_tree = acc_elements[2]
-            if type_session == "test":
-                report_path = "/home/mddo/stage/M2S4/output/{}/predictions/{}/{}_{}/predictions_{}_{}.0.csv".format(strain_name,type_session, type_df,folder_number, forest_name, round(acc_value*100))
-            else:
-                report_path = "/home/mddo/stage/M2S4/output/{}/predictions/{}/{}_{}/predictions_{}.csv".format(strain_name,type_session, type_df,folder_number, forest_name)
+                #filter all the wrong predictions
+                df_FP = df.loc[(labels == "non_ess") & (predictions == "ess")]
+                df_FN = df.loc[(labels == "ess") & (predictions == "non_ess")]
+
+            # export file of false predicted genes frequency
+            result_df_FP = pd.concat(df_array_FP)
+            result_df_FN = pd.concat(df_array_FN)
             
-            
-            df = pd.read_csv(report_path)
-            labels = df["label"]
-            predictions = df["predictions"]
+            result_df_FP.drop(result_df_FP.columns.difference(["orf","label","predictions"]), 1, inplace=True)
+            result_df_FN.drop(result_df_FN.columns.difference(["orf","label","predictions"]), 1, inplace=True)
 
-            #filter all the wrong predictions
-            df_FP = df.loc[(labels == "non_ess") & (predictions == "ess")]
-            df_FN = df.loc[(labels == "ess") & (predictions == "non_ess")]
+            report_FP = result_df_FP["orf"].value_counts()
+            report_FP_df = pd.DataFrame(report_FP)
+            create_folder("/home/mddo/stage/M2S4/output/{}/error/{}".format(strain_name, type_session))
+            report_FP_df.to_csv("/home/mddo/stage/M2S4/output/{}/error/{}/{}_{}_FP.csv".format(strain_name, type_session,type_df, folder_number), index = False)
 
-            count_TN, count_FP, count_FN, count_TP = confusion_matrix(labels, predictions).ravel()
-            print([count_TN, count_FP, count_FN, count_TP])
-            count_FP_TT += count_FP
-            count_FN_TT += count_FN
-            count_TN_TT += count_TN
-            count_TP_TT += count_TP
-            #put it in array
-            df_array_FP.append(df_FP)
-            df_array_FN.append(df_FN)
-            count += 1
-        # export file of false predicted genes frequency
-        result_df_FP = pd.concat(df_array_FP)
-        result_df_FN = pd.concat(df_array_FN)
-        
-        result_df_FP.drop(result_df_FP.columns.difference(["orf","label","predictions"]), 1, inplace=True)
-        result_df_FN.drop(result_df_FN.columns.difference(["orf","label","predictions"]), 1, inplace=True)
-
-        report_FP = result_df_FP["orf"].value_counts()
-        report_FP_df = pd.DataFrame(report_FP)
-        create_folder("/home/mddo/stage/M2S4/output/{}/error/{}".format(strain_name, type_session))
-        report_FP_df.to_csv("/home/mddo/stage/M2S4/output/{}/error/{}/{}_{}_FP.csv".format(strain_name, type_session,type_df, folder_number), index = False)
-
-        report_FN = result_df_FN["orf"].value_counts()
-        report_FN_df = pd.DataFrame(report_FN)
-        report_FN_df.to_csv("/home/mddo/stage/M2S4/output/{}/error/{}/{}_{}_FN.csv".format(strain_name, type_session,type_df, folder_number), index = False)
-
-        #export file TP - TN - FP - FN
-        TP = round(count_TP_TT / count)
-        TN = round(count_TN_TT / count)
-        FP = round(count_FP_TT / count)
-        FN = round(count_FN_TT / count)
-        confussion_matrix = pd.DataFrame()
-        confussion_matrix["tp"] = [TP]
-        confussion_matrix["tn"] = [TN]
-        confussion_matrix["fn"] = [FN]
-        confussion_matrix["fp"] = [FP]
-        confussion_matrix.to_csv("/home/mddo/stage/M2S4/output/{}/error/{}/confussion_matrix_{}_{}.csv".format(strain_name, type_session,type_df, folder_number), index = False)
+            report_FN = result_df_FN["orf"].value_counts()
+            report_FN_df = pd.DataFrame(report_FN)
+            report_FN_df.to_csv("/home/mddo/stage/M2S4/output/{}/error/{}/{}_{}_FN.csv".format(strain_name, type_session,type_df, folder_number), index = False)
 
 
 def frequency_false_positive():
@@ -607,42 +578,67 @@ This function is about to plot all the confusion matrix which is existen in accu
 session: train/test
 type_df: HFI_NI_PROM / HFI_NI_PROM_nan / HFI_NI_PROM_dropna / HFI_NI_PROM_zerofill / .....
 """
-def plot_confusion_matrix(session, type_df, strain_name):
-    accuracy_file = "/home/mddo/stage/M2S4/output/FY/accuracy/{}/accuracy_{}.csv".format(session,type_df)
-    accuracy_df = pd.read_csv(accuracy_file)
-    accuracy_df_array = np.asanyarray(accuracy_df)
-    
-    for acc_df_element in accuracy_df_array:
-        forest_name = acc_df_element[0]
-        acc_value = acc_df_element[1]
-        total_tree = acc_df_element[2]
-        if session == "train":
-            prediction_path = "/home/mddo/stage/M2S4/output/{}/predictions/{}/{}/predictions_{}.csv".format(strain_name,session,type_df,forest_name)
-        else:
-            prediction_path = "/home/mddo/stage/M2S4/output/{}/predictions/{}/{}/predictions_{}.csv".format(strain_name,session,type_df,forest_name)
-        plt.figure(figsize=(10,10))
-        df = pd.read_csv(prediction_path)
-        confusion_matrix = pd.crosstab(df['label'],df['predictions'], rownames = ['Actual'], colnames=['Predict'])
-        ax = sns.heatmap(confusion_matrix,
+def plot_confusion_matrix(type_session, type_df, strain_names, folder_number):
+    count = 0
+    count_FP_TT = 0
+    count_FN_TT = 0
+    count_TP_TT = 0
+    count_TN_TT = 0
+    for strain_name in strain_names:
+        accuracy_file_path = "/home/mddo/stage/M2S4/output/{}/accuracy/{}/accuracy_{}_{}.csv".format(strain_name, type_session, type_df, folder_number)
+        
+        with open (accuracy_file_path) as accuracy_file:
+            for accuracy in accuracy_file:
+                acc_elements = accuracy.strip().split(",")
+                forest_name = acc_elements[0]
+                acc_value = float(acc_elements[1])
+                total_tree = acc_elements[2]
+                if type_session == "test":
+                    report_path = "/home/mddo/stage/M2S4/output/{}/predictions/{}/{}_{}/predictions_{}_{}.0.csv".format(strain_name,type_session, type_df,folder_number, forest_name, round(acc_value*100))
+                else:
+                    report_path = "/home/mddo/stage/M2S4/output/{}/predictions/{}/{}_{}/predictions_{}.csv".format(strain_name,type_session, type_df,folder_number, forest_name)
+                
+                
+                df = pd.read_csv(report_path)
+                labels = df["label"]
+                predictions = df["predictions"]
+
+                count_TN, count_FP, count_FN, count_TP = confusion_matrix(labels, predictions).ravel()
+                print([count_TN, count_FP, count_FN, count_TP])
+                count_FP_TT += count_FP
+                count_FN_TT += count_FN
+                count_TN_TT += count_TN
+                count_TP_TT += count_TP
+                count += 1
+            
+            #export file TP - TN - FP - FN
+            TP = round(count_TP_TT / count)
+            TN = round(count_TN_TT / count)
+            FP = round(count_FP_TT / count)
+            FN = round(count_FN_TT / count)
+            confusion_mtx = np.array([[TP, FN],[FP, TN]])
+
+            sns.heatmap(confusion_mtx,
                     annot=True,
                     annot_kws={"size": 22,},
                     fmt='g',
                     vmin=0, vmax=600,
                     linewidths=.5,
-                    cbar=False)
-        plt.xticks(size=20)
-        plt.yticks(size=20)
-        plt.xlabel("Predict",size=14)
-        plt.ylabel("Actual", size=14)
+                    xticklabels = ["ess","non-ess"],
+                    yticklabels = ["ess","non-ess"]
+            )
+            fig = matplotlib.pyplot.gcf()
+            fig.set_size_inches(10.5, 10.5)
+            plt.xticks(size=20)
+            plt.yticks(size=20)
+            plt.xlabel("Actual",size=14)
+            plt.ylabel("Predict", size=14)
+            plt.title("Confusion matrix of model {} on {} strain".format(type_df, strain_name), size = 14)
 
-        bottom, top = ax.get_ylim()
-        ax.set_ylim(bottom + 0.5, top - 0.5)
-
-        # plt.rcParams.update({'font.size': 14})
-        # plt.show()
-        save_folder_path = "/home/mddo/stage/M2S4/images/{}/{}/{}/".format(strain_name,session,type_df)
-        create_folder(save_folder_path)
-        plt.savefig(save_folder_path + "/confusion_matrix_{}.png".format(forest_name))
+            # bottom, top = ax.get_ylim()
+            # ax.set_ylim(bottom + 0.5, top - 0.5)
+            plt.savefig("/home/mddo/stage/M2S4/images/{}/confusion_matrix_{}_{}.png".format(strain_name, type_session,type_df, folder_number))
+            plt.clf()
 
 def compare_false_prediction_files(FY_false_prediction_files, other_file):
     FY_false_prediction_df = pd.read_csv(FY_false_prediction_files)
@@ -915,11 +911,12 @@ def mean_score(type_df, params):
         mean_accuracy = accuracy_df["accuracy"].mean()
         mean_precision = accuracy_df["precision"].mean()
         mean_recall = accuracy_df["recall"].mean()
+        mean_f1 = accuracy_df["fscore"].mean()
 
-        array.append([strain_name,mean_accuracy,mean_precision,mean_recall])
+        array.append([strain_name,mean_accuracy,mean_precision,mean_recall,mean_f1])
 
     acc_df = pd.DataFrame(array)
-    acc_df.columns = ["orf","mean_accuracy","mean_precision","mean_recall"]
+    acc_df.columns = ["orf","mean_accuracy","mean_precision","mean_recall","mean_fscore"]
     acc_df = acc_df.sort_values(by = "mean_accuracy", ascending = False)
 
     acc_df.to_csv("/home/mddo/stage/M2S4/data/mean_score/mean_score_{}_{}.csv".format(session_name,type_df), index=False)
