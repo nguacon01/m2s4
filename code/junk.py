@@ -108,7 +108,7 @@ def main():
 
 
 
-    # #--------------------#BEGIN generate features DIPLOID#--------------------#
+##--------------------#BEGIN generate features DIPLOID#--------------------#
     # strain_name = "CCD"
     # i = 0
     # create_folder("/home/mddo/stage/M2S4/output/{}/diploid_/diploid_{}".format(strain_name,i))

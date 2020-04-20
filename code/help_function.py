@@ -703,7 +703,7 @@ def find_missing_data(df_path, save_file):
     nan_df = df[df.isna().any(axis=1)]
     nan_df.to_csv(save_file, index = False)
 
-def map_all_essential_genes(FY_pre,prediction_array):
+def map_all_essential_genes(FY_pre,prediction_array, type_df):
 
     fy_prediction_file = FY_pre
     fy_prediction_df = pd.read_csv(fy_prediction_file)
@@ -723,7 +723,9 @@ def map_all_essential_genes(FY_pre,prediction_array):
         map_TP_strain["predictions"] = strain_prediction_df["predictions"]
         map_df["predictions_{}".format(strain_name)] = map_df.orf.map(map_TP_strain.set_index("orf")["predictions"].to_dict())
     # map_df = map_df.dropna(how="any")
-    map_df.to_csv("/home/mddo/stage/M2S4/data/core_ess_HFI_NI_PROM_NEW_removed.csv", index = False)
+    map_df = map_df.replace(r'', np.na,inplace=True)
+    map_df = map_df.dropna(how="any")
+    map_df.to_csv("/home/mddo/stage/M2S4/data/core_ess_{}.csv".format(type_df), index = False)
 
 def create_data_haploid(strain_name):
     # #--------------------#BEGIN generate features HAPLOID#--------------------#
