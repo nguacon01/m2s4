@@ -408,3 +408,15 @@ if __name__ == "__main__":
 
 
     
+    ### choose 214k insertion position in trains that have insertion position more than FY
+    files = glob.glob("/home/mddo/stage/M2S4/reads_per_pos/*.txt")
+    for file in files:
+        element = file.strip().split("/")
+        strain_name = element[-1].split(".")[0]
+        df = pd.read_csv(file, sep = " ")
+        nbRow, _ = df.shape
+        if nbRow >= 214375:
+            bootstrap_indices = np.random.choice(nbRow, 214375, replace=False)
+            # bootstrap_indices = np.random.randint(low=0,high=nbRow, size=214375)
+            df_bootstrapped = df.iloc[bootstrap_indices].sort_index(ascending=True)
+            df_bootstrapped.to_csv("/home/mddo/stage/M2S4/214k/{}.txt".format(strain_name), sep = " ", header=False, index = False)

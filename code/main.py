@@ -9,6 +9,36 @@ import glob
 import json
 def main():
 
+# #--------------------#BEGIN generate all_insertion_site for each strain DIPLOID #--------------------#
+    # list_file_to_read = glob.glob("/home/mddo/stage/M2S4/reads_per_pos/*.txt")
+    # diploid_inserition_position_file = "/home/mddo/stage/M2S4/data/diplo-all-rel_readPerPos_v2.txt"
+    # for file_path in list_file_to_read:
+    #     file_path_element = file_path.strip().split("/")
+    #     strain_name = file_path_element[-1].split("-")[0]
+    #     i = 0
+
+    #     insertion_position_diploid_read_file = "/home/mddo/stage/M2S4/data/{}/diploid/file_{}_diploid_insertion_positions.out".format(strain_name,i) # insertion positions of transposon in diploid
+    #     orf_annot = "/home/mddo/stage/M2S4/data/annotations/sace_R64_annotation_genesonly_simplified.gff" #positions of orfs
+    #     create_folder("/home/mddo/stage/M2S4/output/{}/diploid_/diploid_{}".format(strain_name,i))
+    #     save_file = "/home/mddo/stage/M2S4/output/{}/diploid_/diploid_{}/all_rel_insertionsitesinORF.out".format(strain_name,i)
+
+    #     generate_all_insertion_site_by_orf(insertion_position_diploid_read_file,orf_annot,save_file)
+    # #--------------------#FINISH generate all_insertion_site for each strain#--------------------#
+
+
+    # #--------------------#BEGIN generate all_insertion_site for each strain HAPLOID #--------------------#
+    ##read all the insertion positions profile of each strain
+    list_files_to_read = glob.glob("/home/mddo/stage/M2S4/214k/*.txt")
+    ##read file annotation
+    orf_annot_file = "/home/mddo/stage/M2S4/data/annotations/sace_R64_annotation_genesonly_simplified.gff"
+    
+    for file_path in list_files_to_read:
+        strain_name = file_path.strip().split("/")[-1].split("-")[0]
+        save_file = "/home/mddo/stage/M2S4/output/{}/214k/all_rel_insertionsitesinORF.out".format(strain_name)
+        generate_all_insertion_site_by_orf(file_path, orf_annot_file, save_file)
+
+    # #--------------------#FINISH generate all_insertion_site for each strain#--------------------#
+
 ##--------------------#BEGIN generate features HAPLOID#--------------------##
     # strain_name = "CCD"
 
@@ -258,12 +288,12 @@ def main():
     #     training_RF(df, test_size = 0.2, grid_search = grid, type_df = type_df, folder_number = folder_number, strain_name = strain_name)
 
 ##--------------------#BEGIN TESTING_SESSION#--------------------##
-    type_df = "balance_8f_HFI_NI_PROM_NEW"
-    strain_name = "Sigma"
-    folder_number = 1
+    # type_df = "imbalance_HFI_NI_PROM_NEW"
+    # strain_name = "Sigma"
+    # folder_number = 0
 
-    test_df_path = "/home/mddo/stage/M2S4/output/{}/diploid_/diploid_0/df/test/{}.csv".format(strain_name, type_df)
-    testing_RF(test_df_path, type_df, strain_name, folder_number)
+    # test_df_path = "/home/mddo/stage/M2S4/output/{}/diploid_/diploid_{}/df/{}.csv".format(strain_name, folder_number,type_df)
+    # testing_RF(test_df_path, type_df, strain_name, folder_number)
     
 
 
@@ -273,7 +303,8 @@ def main():
 
 ##--------------------#Find false predictions #--------------------##
     # strain_names = ["FY","ABP","ACF","ACN","ACP","ADD","AND","APH","AVI","BBQ","BHH","BMK","CCD","CGQ","CHM","CIB","CLG","CNM","CNT","CPG","Sigma"]
-    # type_df = "balance_HFI_NI_PROM_NEW"
+    # # strain_names = ["FY"]
+    # type_df = "imbalance_HFI_NI_PROM_NEW"
     # type_session = "test"
     # folder_number = 0
     # find_false_positive(type_session,type_df,strain_names, folder_number)
@@ -349,13 +380,12 @@ def main():
     # plot_accuracy_precision(strain_names, session_name, type_data, folder_number)
     
 ##--------------------#Create plot of accuracy and precision during training session or testing session--------------------##
-    # strain_names = ["ABP","ACF","ACN","ACP","ADD","AND","APH","AVI","BBQ","BHH","BMK","CCD","CGQ","CHM","CIB","CLG","CNM","CNT","CPG","Sigma"]
-    # strain_names = ["FY"]
+    # strain_names = ["FY","ABP","ACF","ACN","ACP","ADD","AND","APH","AVI","BBQ","BHH","BMK","CCD","CGQ","CHM","CIB","CLG","CNM","CNT","CPG","Sigma"]
+    # # strain_names = ["FY"]
     # acc_df_total = pd.DataFrame()
     # pre_df_total = pd.DataFrame()
     # recall_df_total = pd.DataFrame()
-    # session_name = "test
-    # "
+    # session_name = "test"
     # type_data = "balance_HFI_NI_PROM_NEW"
     # folder_number = 0
     # for strain_name in strain_names:
@@ -370,27 +400,36 @@ def main():
     #     precision = accuracy_df["precision"]
     #     total_tree = accuracy_df["total_tree"]
     #     acc_df_total["acc_{}".format(strain_name)] = accuracy_df["accuracy"]
-    #     acc_df_total["prec_{}".format(strain_name)] = accuracy_df["precision"]
-    #     acc_df_total["recall_{}".format(strain_name)] = accuracy_df["recall"]
-    # ax = plt.gca()
-    # sns.set_style("whitegrid")
+    #     pre_df_total["prec_{}".format(strain_name)] = accuracy_df["precision"]
+    #     recall_df_total["recall_{}".format(strain_name)] = accuracy_df["recall"]
+    # array = ["accuracy","precision","recall"]
+    # for key in array:
+    #     if key == "accuracy":
+    #         df_plot = acc_df_total
+    #     elif key == "precision":
+    #         df_plot = pre_df_total
+    #     else:
+    #         df_plot = recall_df_total
+    #     ax = plt.gca()
+    #     sns.set_style("whitegrid")
 
-    # acc_df_total.plot(kind='line',ax=ax)
-    # # accuracy_df.plot(kind='line',y='precision', color='red', ax=ax)
-    # # accuracy_df = accuracy_df.drop(columns = ["total_tree"])
-    # # accuracy_df.plot(kind="line")
+    #     df_plot.plot(kind='line',ax=ax)
+    #     # accuracy_df.plot(kind='line',y='precision', color='red', ax=ax)
+    #     # accuracy_df = accuracy_df.drop(columns = ["total_tree"])
+    #     # accuracy_df.plot(kind="line")
 
-    # fig = matplotlib.pyplot.gcf()
-    # fig.set_size_inches(18.5, 5.5)
-    # plt.rcParams["figure.figsize"] = (10,2)
-    # # plt.title("{} prediction accuracy and precision".format(strain_name), size = 20)
-    # plt.xticks(size = 14)
-    # plt.yticks(size = 14)
-    # plt.xlabel("Iteration", size = 18)
-    # # plt.ylabel("Precision", size = 18)
-    # # plt.xlim(0,60)
+    #     fig = matplotlib.pyplot.gcf()
+    #     fig.set_size_inches(18.5, 8.5)
+    #     plt.rcParams["figure.figsize"] = (10,2)
+    #     # plt.title("{} prediction accuracy and precision".format(strain_name), size = 20)
+    #     plt.xticks(size = 14)
+    #     plt.yticks(size = 14)
+    #     plt.xlabel("Iteration", size = 18)
+    #     plt.ylabel(key, size = 18)
+    #     # plt.xlim(0,60)
 
-    # plt.savefig("/home/mddo/stage/M2S4/images/accuracy_{}_{}.png".format(session_name,type_data))
+    #     plt.savefig("/home/mddo/stage/M2S4/images/{}_{}_{}.png".format(key, session_name,type_data))
+    #     plt.clf()
 
 ##--------------------#create accuracy table and predictions table #--------------------##
     # strain_names = ["FY","ABP","ACF","ACN","ACP","ADD","AND","APH","AVI","BBQ","BHH","BMK","CCD","CGQ","CHM","CIB","CLG","CNM","CNT","CPG","Sigma"]
@@ -407,15 +446,18 @@ def main():
 
 ##--------------------# CONFUSION MATRIX #--------------------##
     # strain_names = ["FY","ABP","ACF","ACN","ACP","ADD","AND","APH","AVI","BBQ","BHH","BMK","CCD","CGQ","CHM","CIB","CLG","CNM","CNT","CPG","Sigma"]
-    # # strain_names = ["FY"]
+    # strain_names = ["FY"]
     # type_df = "balance_HFI_NI_PROM_NEW"
     # folder_number = 0
-    # session_name = "test"
+    # session_name = "train"
     # params = [strain_names, folder_number, session_name]
 
     # plot_confusion_matrix(session_name,type_df,strain_names,folder_number)
 
-
+    # strain_names = ["FY","ABP","ACF","ACN","ACP","ADD","AND","APH","AVI","BBQ","BHH","BMK","CCD","CGQ","CHM","CIB","CLG","CNM","CNT","CPG","Sigma"]
+    # for strain_name in strain_names:
+    #     create_folder("/home/mddo/stage/M2S4/output/{}/214k".format(strain_name))
+    
 
 if __name__ == "__main__":
     main()

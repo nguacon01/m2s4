@@ -355,7 +355,7 @@ def merge_df(hits_reads_file, hits_in_promoter_file, hits_in_promoter_ratio_file
 def find_false_positive(type_session, type_df, strain_names, folder_number):
     
     # file_paths = glob.glob("/home/mddo/stage/M2S4/output/predictions/{}/{}/*.csv".format(type_session, type_df))
-    for train_name in strain_names:
+    for strain_name in strain_names:
         accuracy_file_path = "/home/mddo/stage/M2S4/output/{}/accuracy/{}/accuracy_{}_{}.csv".format(strain_name, type_session, type_df, folder_number)
         with open (accuracy_file_path) as accuracy_file:
             df_array_FP = []
@@ -376,10 +376,12 @@ def find_false_positive(type_session, type_df, strain_names, folder_number):
                 predictions = df["predictions"]
 
                 #filter all the wrong predictions
-                df_FP = df.loc[(labels == "non_ess") & (predictions == "ess")]
-                df_FN = df.loc[(labels == "ess") & (predictions == "non_ess")]
-
-            # export file of false predicted genes frequency
+                df_FP = df.loc[(labels == "non_ess") & (labels != predictions)]
+                df_FN = df.loc[(labels == "ess") & (labels != predictions)]
+                #put it in array
+                df_array_FP.append(df_FP)
+                df_array_FN.append(df_FN)
+            
             result_df_FP = pd.concat(df_array_FP)
             result_df_FN = pd.concat(df_array_FN)
             
@@ -388,13 +390,11 @@ def find_false_positive(type_session, type_df, strain_names, folder_number):
 
             report_FP = result_df_FP["orf"].value_counts()
             report_FP_df = pd.DataFrame(report_FP)
-            create_folder("/home/mddo/stage/M2S4/output/{}/error/{}".format(strain_name, type_session))
-            report_FP_df.to_csv("/home/mddo/stage/M2S4/output/{}/error/{}/{}_{}_FP.csv".format(strain_name, type_session,type_df, folder_number), index = False)
+            report_FP_df.to_csv("/home/mddo/stage/M2S4/output/{}/error/{}/{}_{}_FP.csv".format(strain_name, type_session,type_df, folder_number))
 
             report_FN = result_df_FN["orf"].value_counts()
             report_FN_df = pd.DataFrame(report_FN)
-            report_FN_df.to_csv("/home/mddo/stage/M2S4/output/{}/error/{}/{}_{}_FN.csv".format(strain_name, type_session,type_df, folder_number), index = False)
-
+            report_FN_df.to_csv("/home/mddo/stage/M2S4/output/{}/error/{}/{}_{}_FN.csv".format(strain_name, type_session,type_df, folder_number))
 
 def frequency_false_positive():
     df = pd.read_csv("output/false_positive.out",sep = " ", header = None)
