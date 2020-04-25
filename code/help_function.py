@@ -461,7 +461,8 @@ def generate_random_diploid_insertion_position(diploid_insertion_position_read_f
         #sort new data
         picked_line.sort()
         #create new file data and write it
-        file_path = "/home/mddo/stage/M2S4/data/{}/diploid/file_{}_diploid_insertion_positions.out".format(strain_name,i)
+        create_folder("/home/mddo/stage/M2S4/data/{}/214k".format(strain_name))
+        file_path = "/home/mddo/stage/M2S4/data/{}/214k/file_{}_diploid_214k_insertion_positions.out".format(strain_name,i)
         create_file(file_path)
         with open(file_path,"w") as save:
             for line in picked_line:
