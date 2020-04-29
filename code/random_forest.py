@@ -98,7 +98,7 @@ def testing_RF(test_df_path, type_df, strain_name, folder_number):
 
     #create path of report save file of testing session, for each differents strains
     create_folder("/home/mddo/stage/M2S4/output/{}/accuracy/test".format(strain_name))
-    save_file_report = "/home/mddo/stage/M2S4/output/{}/accuracy/test/accuracy_{}_{}.csv".format(strain_name, type_df, folder_number)
+    save_file_report = "/home/mddo/stage/M2S4/output/{}/accuracy/test/accuracy_214k_{}_{}.csv".format(strain_name, type_df, folder_number)
     print("save_file_report: " + save_file_report)
 
     ## for each forest name from FY training accuracy file above, we test with test_df of each strains
@@ -136,7 +136,7 @@ def testing_RF(test_df_path, type_df, strain_name, folder_number):
 
                 #create folder which contains all the predicted dataframe of other strains for each forests
                 create_folder("/home/mddo/stage/M2S4/output/{}/predictions/test".format(strain_name))
-                create_folder("/home/mddo/stage/M2S4/output/{}/predictions/test/{}_{}".format(strain_name,type_df, folder_number))
+                create_folder("/home/mddo/stage/M2S4/output/{}/predictions/test/214k_{}_{}".format(strain_name,type_df, folder_number))
                 print("/home/mddo/stage/M2S4/output/{}/predictions/test/{}_{}".format(strain_name,type_df, folder_number))
 
                 #calculate accuracy after predict
@@ -149,7 +149,7 @@ def testing_RF(test_df_path, type_df, strain_name, folder_number):
 
                 # save predictions output as csv file
                 
-                test_df.to_csv("/home/mddo/stage/M2S4/output/{}/predictions/test/{}_{}/predictions_{}_{}.csv".format(strain_name,type_df,folder_number, parametre_info, round(accuracy*100)),index=False)
+                test_df.to_csv("/home/mddo/stage/M2S4/output/{}/predictions/test/214k_{}_{}/predictions_{}_{}.csv".format(strain_name,type_df,folder_number, parametre_info, round(accuracy*100)),index=False)
                 print("/home/mddo/stage/M2S4/output/{}/predictions/test/{}_{}/predictions_{}_{}.csv".format(strain_name,type_df,folder_number, parametre_info, round(accuracy*100)))
                 print(str(accuracy) + "," + parametre_info+"\n")
                 #save all scores into accuracy file, store it in test folder

@@ -342,7 +342,7 @@ def merge_df(hits_reads_file, hits_in_promoter_file, hits_in_promoter_ratio_file
     final_df = final_df.dropna(subset=['label'])
     final_df.reset_index(drop = True)
 
-    final_df = final_df.drop(columns = ["reads_count","reads_by_len","HFI_ratio"])
+    # final_df = final_df.drop(columns = ["reads_by_len"])
     
     # #generate csv file
     final_df.to_csv(save_file,index=False)
@@ -909,10 +909,10 @@ def mean_score(type_df, params):
         accuracy_df = pd.read_csv(accuracy_file)
         accuracy_df.columns = ["forest","accuracy","precision","recall","fscore","total_tree"]
         
-        mean_accuracy = accuracy_df["accuracy"].mean()
-        mean_precision = accuracy_df["precision"].mean()
-        mean_recall = accuracy_df["recall"].mean()
-        mean_f1 = accuracy_df["fscore"].mean()
+        mean_accuracy = np.round(accuracy_df["accuracy"].mean()*100,2)
+        mean_precision = np.round(accuracy_df["precision"].mean()*100,2)
+        mean_recall = np.round(accuracy_df["recall"].mean()*100,2)
+        mean_f1 = np.round(accuracy_df["fscore"].mean()*100,2)
 
         array.append([strain_name,mean_accuracy,mean_precision,mean_recall,mean_f1])
 
@@ -920,7 +920,7 @@ def mean_score(type_df, params):
     acc_df.columns = ["orf","mean_accuracy","mean_precision","mean_recall","mean_fscore"]
     acc_df = acc_df.sort_values(by = "mean_accuracy", ascending = False)
 
-    acc_df.to_csv("/home/mddo/stage/M2S4/data/mean_score/mean_score_{}_{}.csv".format(session_name,type_df), index=False)
+    acc_df.to_csv("/home/mddo/stage/M2S4/data/mean_score/mean_score_{}_{}_{}.csv".format(session_name,type_df, folder_number), index=False)
 
 def get_json_from_SGD(strain_std_names):
     data_array = []

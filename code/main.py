@@ -41,66 +41,66 @@ def main():
     # #--------------------#FINISH generate all_insertion_site for each strain#--------------------#
 
 ##--------------------#BEGIN generate features HAPLOID#--------------------##
-    strain_name = "CLG"
+    # strain_name = "CLG"
 
-    insertion_position_read_file = "/home/mddo/stage/M2S4/214k/{}-rel_readPerPos_v2.txt".format(strain_name) # insertion positions of transposon in haploide FY strain
+    # insertion_position_read_file = "/home/mddo/stage/M2S4/214k/{}-rel_readPerPos_v2.txt".format(strain_name) # insertion positions of transposon in haploide FY strain
 
-    annotation_100bpPromoters_file = "/home/mddo/stage/M2S4/data/annotations/sace_R64_annotation_100bppromoters.gff" #positions of promoters
-    annotation_genesonly_simplified_file = "/home/mddo/stage/M2S4/data/annotations/sace_R64_annotation_genesonly_simplified.gff" #positions of orfs
-    annotation_noncoding_10kb_NI_file = "/home/mddo/stage/M2S4/data/annotations/all_subtracts_noncoding_10kbNI_genes.bed" #positions of 10kb non coding regions around orfs
-    annotation_insertionsitesinORF_file = "/home/mddo/stage/M2S4/output/{}/214k/all_rel_insertionsitesinORF.out".format(strain_name) #all insertion positions in orfs
+    # annotation_100bpPromoters_file = "/home/mddo/stage/M2S4/data/annotations/sace_R64_annotation_100bppromoters.gff" #positions of promoters
+    # annotation_genesonly_simplified_file = "/home/mddo/stage/M2S4/data/annotations/sace_R64_annotation_genesonly_simplified.gff" #positions of orfs
+    # annotation_noncoding_10kb_NI_file = "/home/mddo/stage/M2S4/data/annotations/all_subtracts_noncoding_10kbNI_genes.bed" #positions of 10kb non coding regions around orfs
+    # annotation_insertionsitesinORF_file = "/home/mddo/stage/M2S4/output/{}/214k/all_rel_insertionsitesinORF.out".format(strain_name) #all insertion positions in orfs
 
-    # #--------------------#define save files#--------------------#
-    save_hits_reads_file = "/home/mddo/stage/M2S4/output/{}/214k/hits_reads_per_orf.out".format(strain_name)
-    save_hits_in_promoter_file = "/home/mddo/stage/M2S4/output/{}/214k/hits_in_promoter.out".format(strain_name)
-    save_hits_per_10kbNI_file = "/home/mddo/stage/M2S4/output/{}/214k/hits_per_10kbNI.out".format(strain_name)
-    save_orf_length_file = "/home/mddo/stage/M2S4/output/{}/214k/orf_length.out".format(strain_name)
-    save_insertion_index_file = "/home/mddo/stage/M2S4/output/{}/214k/insertion_index.out".format(strain_name)
-    save_non_coding_windows_file = "/home/mddo/stage/M2S4/output/{}/214k/non_coding_windows.out".format(strain_name)
-    save_neighborhood_index_file = "/home/mddo/stage/M2S4/output/{}/214k/NI.out".format(strain_name)
-    save_free_hit_interval_file = "/home/mddo/stage/M2S4/output/{}/214k/HFI.out".format(strain_name)
-    save_total_hits_count_10kb_NI = "/home/mddo/stage/M2S4/output/{}/214k/total_hits_count_10kb_NI.out".format(strain_name)
-    save_annotation_500bp_promoter_file = "/home/mddo/stage/M2S4/output/{}/214k/annotation_500bppromoters.out".format(strain_name)
-    save_hits_between_100_500bpprom = "/home/mddo/stage/M2S4/output/{}/214k/hits_between_100_500bppromoter.out".format(strain_name)
-    save_ratio_hits_in_100_500bppromoter_file = "/home/mddo/stage/M2S4/output/{}/214k/ratio_hits_between_100_500bppromoter.out".format(strain_name)
+    # # #--------------------#define save files#--------------------#
+    # save_hits_reads_file = "/home/mddo/stage/M2S4/output/{}/214k/hits_reads_per_orf.out".format(strain_name)
+    # save_hits_in_promoter_file = "/home/mddo/stage/M2S4/output/{}/214k/hits_in_promoter.out".format(strain_name)
+    # save_hits_per_10kbNI_file = "/home/mddo/stage/M2S4/output/{}/214k/hits_per_10kbNI.out".format(strain_name)
+    # save_orf_length_file = "/home/mddo/stage/M2S4/output/{}/214k/orf_length.out".format(strain_name)
+    # save_insertion_index_file = "/home/mddo/stage/M2S4/output/{}/214k/insertion_index.out".format(strain_name)
+    # save_non_coding_windows_file = "/home/mddo/stage/M2S4/output/{}/214k/non_coding_windows.out".format(strain_name)
+    # save_neighborhood_index_file = "/home/mddo/stage/M2S4/output/{}/214k/NI.out".format(strain_name)
+    # save_free_hit_interval_file = "/home/mddo/stage/M2S4/output/{}/214k/HFI.out".format(strain_name)
+    # save_total_hits_count_10kb_NI = "/home/mddo/stage/M2S4/output/{}/214k/total_hits_count_10kb_NI.out".format(strain_name)
+    # save_annotation_500bp_promoter_file = "/home/mddo/stage/M2S4/output/{}/214k/annotation_500bppromoters.out".format(strain_name)
+    # save_hits_between_100_500bpprom = "/home/mddo/stage/M2S4/output/{}/214k/hits_between_100_500bppromoter.out".format(strain_name)
+    # save_ratio_hits_in_100_500bppromoter_file = "/home/mddo/stage/M2S4/output/{}/214k/ratio_hits_between_100_500bppromoter.out".format(strain_name)
 
-    # #--------------------#generate data files#--------------------#
-    #hits count reads count generate
-    hits_read_count(insertion_position_read_file,annotation_genesonly_simplified_file,save_hits_reads_file)
+    # # #--------------------#generate data files#--------------------#
+    # #hits count reads count generate
+    # hits_read_count(insertion_position_read_file,annotation_genesonly_simplified_file,save_hits_reads_file)
 
-    #promoter hits count
-    hits_read_count(insertion_position_read_file,annotation_100bpPromoters_file,save_hits_in_promoter_file)
+    # #promoter hits count
+    # hits_read_count(insertion_position_read_file,annotation_100bpPromoters_file,save_hits_in_promoter_file)
 
-    # hits count between 500 and 100 bp promoter
-    # hits_read_count(insertion_position_read_file,save_annotation_500bp_promoter_file,save_hits_between_100_500bpprom)
+    # # hits count between 500 and 100 bp promoter
+    # # hits_read_count(insertion_position_read_file,save_annotation_500bp_promoter_file,save_hits_between_100_500bpprom)
 
-    #10kb NI hits count
-    hits_read_count(insertion_position_read_file,annotation_noncoding_10kb_NI_file,save_hits_per_10kbNI_file)
+    # #10kb NI hits count
+    # hits_read_count(insertion_position_read_file,annotation_noncoding_10kb_NI_file,save_hits_per_10kbNI_file)
 
-    # #total hits count in 10kb NI
-    total_hits_count_10kb(save_hits_per_10kbNI_file,save_total_hits_count_10kb_NI)
+    # # #total hits count in 10kb NI
+    # total_hits_count_10kb(save_hits_per_10kbNI_file,save_total_hits_count_10kb_NI)
 
-    # #calculate orf length
-    length_ORF(annotation_genesonly_simplified_file,save_orf_length_file)
+    # # #calculate orf length
+    # length_ORF(annotation_genesonly_simplified_file,save_orf_length_file)
 
-    # #calculate insertion index
-    insertion_index(save_hits_reads_file,save_orf_length_file,save_insertion_index_file)
+    # # #calculate insertion index
+    # insertion_index(save_hits_reads_file,save_orf_length_file,save_insertion_index_file)
 
-    # #calculate non coding windows
-    non_coding_windows(save_total_hits_count_10kb_NI, annotation_noncoding_10kb_NI_file, save_non_coding_windows_file)
+    # # #calculate non coding windows
+    # non_coding_windows(save_total_hits_count_10kb_NI, annotation_noncoding_10kb_NI_file, save_non_coding_windows_file)
 
-    # #calculate neighborhood index
-    neightborhood_index(save_insertion_index_file, save_non_coding_windows_file, save_neighborhood_index_file)
+    # # #calculate neighborhood index
+    # neightborhood_index(save_insertion_index_file, save_non_coding_windows_file, save_neighborhood_index_file)
 
-    #calculate hit free interval
-    hit_free_interval(annotation_insertionsitesinORF_file, save_free_hit_interval_file)
+    # #calculate hit free interval
+    # hit_free_interval(annotation_insertionsitesinORF_file, save_free_hit_interval_file)
 
 ##--------------------#BEGIN generate features DIPLOID#--------------------#
     # strain_name = "CCD"
     # i = 0
-    # create_folder("/home/mddo/stage/M2S4/output/{}/diploid_/diploid_{}".format(strain_name,i))
+    # create_folder("/home/mddo/stage/M2S4/output/{}/diploid_214k/diploid_{}".format(strain_name,i))
 
-    # insertion_position_diploid_read_file = "/home/mddo/stage/M2S4/data/{}/diploid/file_{}_diploid_insertion_positions.out".format(strain_name,i) # insertion positions of transposon in diploid
+    # insertion_position_diploid_read_file = "/home/mddo/stage/M2S4/data/{}/214k/file_{}_diploid_214k_insertion_positions.out".format(strain_name,i) # insertion positions of transposon in diploid
 
     # annotation_100bpPromoters_file = "/home/mddo/stage/M2S4/data/annotations/sace_R64_annotation_100bppromoters.gff" #positions of promoters
     # annotation_genesonly_simplified_file = "/home/mddo/stage/M2S4/data/annotations/sace_R64_annotation_genesonly_simplified.gff" #positions of orfs
@@ -110,23 +110,23 @@ def main():
     
     # #--------------------#define diploide save files#--------------------#
     # #diploid save files reference to the insertion positions files generated 
-    # save_diploid_hits_reads_file = "/home/mddo/stage/M2S4/output/{}/diploid_/diploid_{}/diplo_hits_reads_per_orf.out".format(strain_name,i)
-    # save_diploid_hits_in_promoter_file = "/home/mddo/stage/M2S4/output/{}/diploid_/diploid_{}/diplo_hits_in_promoter.out".format(strain_name,i)
-    # save_diploid_hits_per_10kbNI_file = "/home/mddo/stage/M2S4/output/{}/diploid_/diploid_{}/diplo_hits_per_10kbNI.out".format(strain_name,i)
-    # save_diploid_orf_length_file = "/home/mddo/stage/M2S4/output/{}/diploid_/diploid_{}/diplo_orf_length.out".format(strain_name,i)
-    # save_diploid_insertion_index_file = "/home/mddo/stage/M2S4/output/{}/diploid_/diploid_{}/diplo_insertion_index.out".format(strain_name,i)
-    # save_diploid_non_coding_windows_file = "/home/mddo/stage/M2S4/output/{}/diploid_/diploid_{}/diplo_non_coding_windows.out".format(strain_name,i)
-    # save_diploid_neighborhood_index_file = "/home/mddo/stage/M2S4/output/{}/diploid_/diploid_{}/diplo_NI.out".format(strain_name,i)
-    # save_diploid_hit_free_interval_file = "/home/mddo/stage/M2S4/output/{}/diploid_/diploid_{}/diplo_HFI.out".format(strain_name,i)
-    # save_diploid_total_hits_count_10kb_NI = "/home/mddo/stage/M2S4/output/{}/diploid_/diploid_{}/diplo_total_hits_count_10kb_NI.out".format(strain_name,i)
-    # save_diploid_annotation_500bp_promoter_file = "/home/mddo/stage/M2S4/output/{}/diploid_/diploid_{}/diplo_annotation_500bppromoters.out".format(strain_name,i)
-    # save_diploid_hits_between_100_500bpprom = "/home/mddo/stage/M2S4/output/{}/diploid_/diploid_{}/diplo_hits_between_100_500bppromoter.out".format(strain_name,i)
-    # save_diploid_ratio_hits_in_100_500bppromoter_file = "/home/mddo/stage/M2S4/output/{}/diploid_/diploid_{}/diplo_ratio_hits_between_100_500bppromoter.out".format(strain_name,i)
+    # save_diploid_hits_reads_file = "/home/mddo/stage/M2S4/output/{}/diploid_214k/diploid_{}/diplo_hits_reads_per_orf.out".format(strain_name,i)
+    # save_diploid_hits_in_promoter_file = "/home/mddo/stage/M2S4/output/{}/diploid_214k/diploid_{}/diplo_hits_in_promoter.out".format(strain_name,i)
+    # save_diploid_hits_per_10kbNI_file = "/home/mddo/stage/M2S4/output/{}/diploid_214k/diploid_{}/diplo_hits_per_10kbNI.out".format(strain_name,i)
+    # save_diploid_orf_length_file = "/home/mddo/stage/M2S4/output/{}/diploid_214k/diploid_{}/diplo_orf_length.out".format(strain_name,i)
+    # save_diploid_insertion_index_file = "/home/mddo/stage/M2S4/output/{}/diploid_214k/diploid_{}/diplo_insertion_index.out".format(strain_name,i)
+    # save_diploid_non_coding_windows_file = "/home/mddo/stage/M2S4/output/{}/diploid_214k/diploid_{}/diplo_non_coding_windows.out".format(strain_name,i)
+    # save_diploid_neighborhood_index_file = "/home/mddo/stage/M2S4/output/{}/diploid_214k/diploid_{}/diplo_NI.out".format(strain_name,i)
+    # save_diploid_hit_free_interval_file = "/home/mddo/stage/M2S4/output/{}/diploid_214k/diploid_{}/diplo_HFI.out".format(strain_name,i)
+    # save_diploid_total_hits_count_10kb_NI = "/home/mddo/stage/M2S4/output/{}/diploid_214k/diploid_{}/diplo_total_hits_count_10kb_NI.out".format(strain_name,i)
+    # save_diploid_annotation_500bp_promoter_file = "/home/mddo/stage/M2S4/output/{}/diploid_214k/diploid_{}/diplo_annotation_500bppromoters.out".format(strain_name,i)
+    # save_diploid_hits_between_100_500bpprom = "/home/mddo/stage/M2S4/output/{}/diploid_214k/diploid_{}/diplo_hits_between_100_500bppromoter.out".format(strain_name,i)
+    # save_diploid_ratio_hits_in_100_500bppromoter_file = "/home/mddo/stage/M2S4/output/{}/diploid_214k/diploid_{}/diplo_ratio_hits_between_100_500bppromoter.out".format(strain_name,i)
 
     
-    # save_hits_in_100_500bppromoter_ratio_haplo_diplo = "/home/mddo/stage/M2S4/output/{}/diploid_/diploid_{}/diplo_hits_between_100_500bppromoter_ratio_haplo_diplo.out".format(strain_name,i)
-    # save_NI_ratio_haplo_diplo = "/home/mddo/stage/M2S4/output/{}/diploid_/diploid_{}/diplo_NI_ratio.out".format(strain_name,i)
-    # save_HFI_ratio_haplo_diplo = "/home/mddo/stage/M2S4/output/{}/diploid_/diploid_{}/diplo_HFI_ratio_haplo_diplo.out".format(strain_name,i)
+    # save_hits_in_100_500bppromoter_ratio_haplo_diplo = "/home/mddo/stage/M2S4/output/{}/diploid_214k/diploid_{}/diplo_hits_between_100_500bppromoter_ratio_haplo_diplo.out".format(strain_name,i)
+    # save_NI_ratio_haplo_diplo = "/home/mddo/stage/M2S4/output/{}/diploid_214k/diploid_{}/diplo_NI_ratio.out".format(strain_name,i)
+    # save_HFI_ratio_haplo_diplo = "/home/mddo/stage/M2S4/output/{}/diploid_214k/diploid_{}/diplo_HFI_ratio_haplo_diplo.out".format(strain_name,i)
 
     # # #--------------------#generate data files#--------------------#
     # #hits count reads count generate
@@ -184,43 +184,45 @@ def main():
     ##---------------Generate ratio file: NI, HFI, hits_in_promoter between haploid and diploid--------------#
     ##--a small note: because the HFI in haploide is alway smaller than diploide, so instead of calculating HFI_haplo/HFI_diplo, we calculate ratio HFI_diplo/HFI_haplo
     ##--we will obtain a ratio which is less than 1. So it take less calculation for the downstream analyses
-    # strains_name = ["ABP","ACF","ACN","ACP","ADD","AND","APH","AVI","BBQ","BHH","BMK","CCD","CGQ","CHM","CIB","CLG","CNM","CNT","CPG","Sigma"]
+    # strains_name = ["ABP","ACF","ADD","APH","BHH","BMK","CCD","CGQ","CLG"]
     # for strain_name in strains_name:
-    #     ratio_type = "hits_in_promoter"
+    #     ratio_type = "HFI"
     #     i = 0
-    #     save_file_ratio = "/home/mddo/stage/M2S4/output/{}/diploid_/diploid_{}/diplo_{}_ratio_haplo_diplo_NEW.out".format(strain_name,i,ratio_type)
-    #     haploid_file = "/home/mddo/stage/M2S4/output/{}/haploid/{}.out".format(strain_name,ratio_type)
-    #     diploid_file = "/home/mddo/stage/M2S4/output/{}/diploid_/diploid_{}/diplo_{}.out".format(strain_name,i,ratio_type)
+    #     save_file_ratio = "/home/mddo/stage/M2S4/output/{}/diploid_214k/diploid_{}/diplo_{}_ratio_haplo_diplo.out".format(strain_name,i,ratio_type)
+    #     haploid_file = "/home/mddo/stage/M2S4/output/{}/214k/{}.out".format(strain_name,ratio_type)
+    #     diploid_file = "/home/mddo/stage/M2S4/output/{}/diploid_214k/diploid_{}/diplo_{}.out".format(strain_name,i,ratio_type)
     #     ratio_haploid_diploid(haploid_file, diploid_file, save_file_ratio)
 
 ##--------------------#BEGIN CREATE ORIGINAL DATA#--------------------## 
     # strains_name = ["FY","ABP","ACF","ACN","ACP","ADD","AND","APH","AVI","BBQ","BHH","BMK","CCD","CGQ","CHM","CIB","CLG","CNM","CNT","CPG","Sigma"]
+    # strains_name = ["ABP","ACF","ADD","APH","BHH","BMK","CCD","CGQ","CLG"]
     # session_name = "test"
     # for strain_name in strains_name:
-    #     create_folder("/home/mddo/stage/M2S4/output/{}/diploid_/diploid_0/df/{}".format(strain_name,session_name))
+    #     # create_folder("/home/mddo/stage/M2S4/output/{}/diploid_214k/diploid_0/df/{}".format(strain_name,session_name))
     #     i = 0
-    #     save_hits_reads_file = "/home/mddo/stage/M2S4/output/{}/haploid/hits_reads_per_orf.out".format(strain_name)
-    #     save_hits_in_promoter_file = "/home/mddo/stage/M2S4/output/{}/haploid/hits_in_promoter.out".format(strain_name)
-    #     save_hits_per_10kbNI_file = "/home/mddo/stage/M2S4/output/{}/haploid/hits_per_10kbNI.out".format(strain_name)
-    #     save_orf_length_file = "/home/mddo/stage/M2S4/output/{}/haploid/orf_length.out".format(strain_name)
-    #     save_insertion_index_file = "/home/mddo/stage/M2S4/output/{}/haploid/insertion_index.out".format(strain_name)
-    #     save_non_coding_windows_file = "/home/mddo/stage/M2S4/output/{}/haploid/non_coding_windows.out".format(strain_name)
-    #     save_neighborhood_index_file = "/home/mddo/stage/M2S4/output/{}/haploid/NI.out".format(strain_name)
-    #     save_hit_free_interval_file = "/home/mddo/stage/M2S4/output/{}/haploid/HFI.out".format(strain_name)
-    #     save_total_hits_count_10kb_NI = "/home/mddo/stage/M2S4/output/{}/haploid/total_hits_count_10kb_NI.out".format(strain_name)
-    #     save_ratio_hits_in_promoter_file = "/home/mddo/stage/M2S4/output/{}/haploid/ratio_hits_in_promoter.out".format(strain_name)
+    #     save_hits_reads_file = "/home/mddo/stage/M2S4/output/{}/214k/hits_reads_per_orf.out".format(strain_name)
+    #     save_hits_in_promoter_file = "/home/mddo/stage/M2S4/output/{}/214k/hits_in_promoter.out".format(strain_name)
+    #     save_hits_per_10kbNI_file = "/home/mddo/stage/M2S4/output/{}/214k/hits_per_10kbNI.out".format(strain_name)
+    #     save_orf_length_file = "/home/mddo/stage/M2S4/output/{}/214k/orf_length.out".format(strain_name)
+    #     save_insertion_index_file = "/home/mddo/stage/M2S4/output/{}/214k/insertion_index.out".format(strain_name)
+    #     save_non_coding_windows_file = "/home/mddo/stage/M2S4/output/{}/214k/non_coding_windows.out".format(strain_name)
+    #     save_neighborhood_index_file = "/home/mddo/stage/M2S4/output/{}/214k/NI.out".format(strain_name)
+    #     save_hit_free_interval_file = "/home/mddo/stage/M2S4/output/{}/214k/HFI.out".format(strain_name)
+    #     save_total_hits_count_10kb_NI = "/home/mddo/stage/M2S4/output/{}/214k/total_hits_count_10kb_NI.out".format(strain_name)
+    #     save_ratio_hits_in_promoter_file = "/home/mddo/stage/M2S4/output/{}/214k/ratio_hits_in_promoter.out".format(strain_name)
 
-    #     save_hits_in_promoter_ratio_haplo_diplo = "/home/mddo/stage/M2S4/output/{}/diploid_/diploid_{}/diplo_hits_in_promoter_ratio_haplo_diplo_NEW.out".format(strain_name,i)
-    #     save_NI_ratio_haplo_diplo = "/home/mddo/stage/M2S4/output/{}/diploid_/diploid_{}/diplo_NI_ratio_haplo_diplo_NEW.out".format(strain_name,i)
-    #     save_HFI_ratio_haplo_diplo = "/home/mddo/stage/M2S4/output/{}/diploid_/diploid_{}/diplo_HFI_ratio_haplo_diplo.out".format(strain_name,i)
+    #     save_hits_in_promoter_ratio_haplo_diplo = "/home/mddo/stage/M2S4/output/{}/diploid_214k/diploid_{}/diplo_hits_in_promoter_ratio_haplo_diplo_NEW.out".format(strain_name,i)
+    #     save_NI_ratio_haplo_diplo = "/home/mddo/stage/M2S4/output/{}/diploid_214k/diploid_{}/diplo_NI_ratio_haplo_diplo_NEW.out".format(strain_name,i)
+    #     save_HFI_ratio_haplo_diplo = "/home/mddo/stage/M2S4/output/{}/diploid_214k/diploid_{}/diplo_HFI_ratio_haplo_diplo.out".format(strain_name,i)
 
     #     label_df = "/home/mddo/stage/M2S4/data/label_balance.csv"
 
     #     impute_missing_data = "None"
 
-    #     create_folder("/home/mddo/stage/M2S4/output/{}/diploid_/diploid_{}".format(strain_name, i))
-    #     create_folder("/home/mddo/stage/M2S4/output/{}/diploid_/diploid_{}/df".format(strain_name, i))
-    #     save_file_dataframe = "/home/mddo/stage/M2S4/output/{}/diploid_/diploid_{}/df/balance_8f_HFI_NI_PROM_NEW.csv".format(strain_name, i)
+    #     create_folder("/home/mddo/stage/M2S4/output/{}/diploid_214k/diploid_{}".format(strain_name, i))
+    #     create_folder("/home/mddo/stage/M2S4/output/{}/diploid_214k/diploid_{}/df".format(strain_name, i))
+    #     create_folder("/home/mddo/stage/M2S4/output/{}/diploid_214k/diploid_{}/df/{}".format(strain_name, i,session_name))
+    #     save_file_dataframe = "/home/mddo/stage/M2S4/output/{}/diploid_214k/diploid_{}/df/214k_balance_HFI_NI_PROM_NEW.csv".format(strain_name, i)
     #     # # #---------------merge data file--------------#
     #     merge_df(
     #         save_hits_reads_file, 
@@ -289,11 +291,11 @@ def main():
     #     training_RF(df, test_size = 0.2, grid_search = grid, type_df = type_df, folder_number = folder_number, strain_name = strain_name)
 
 ##--------------------#BEGIN TESTING_SESSION#--------------------##
-    # type_df = "imbalance_HFI_NI_PROM_NEW"
-    # strain_name = "Sigma"
+    # type_df = "balance_HFI_NI_PROM_NEW"
+    # strain_name = "CLG"
     # folder_number = 0
 
-    # test_df_path = "/home/mddo/stage/M2S4/output/{}/diploid_/diploid_{}/df/{}.csv".format(strain_name, folder_number,type_df)
+    # test_df_path = "/home/mddo/stage/M2S4/output/{}/diploid_214k/diploid_{}/df/214k_{}.csv".format(strain_name, folder_number,type_df)
     # testing_RF(test_df_path, type_df, strain_name, folder_number)
     
 
@@ -325,16 +327,16 @@ def main():
 ##--------------------#MEAN SCORE#--------------------##
     # strain_names = ["FY","ABP","ACF","ACN","ACP","ADD","AND","APH","AVI","BBQ","BHH","BMK","CCD","CGQ","CHM","CIB","CLG","CNM","CNT","CPG","Sigma"]
     # # strain_names = ["FY"]
-    # type_df = "balance_HFI_NI_PROM_NEW"
-    # folder_number = 0
+    # type_df = "core_HFI_NI_PROM_NEW"
+    # folder_number = 1
     # session_name = "test"
     # params = [strain_names, folder_number, session_name]
     # mean_score(type_df, params)
 
 ##--------------------#COUNT ESSENTIAL PREDICTED GENES#--------------------##
     # strain_names = ["FY","ABP","ACF","ACN","ACP","ADD","AND","APH","AVI","BBQ","BHH","BMK","CCD","CGQ","CHM","CIB","CLG","CNM","CNT","CPG","Sigma"]
-    # type_df = "balance_HFI_NI_PROM_NEW"
-    # folder_number = 0
+    # type_df = "core_HFI_NI_PROM_NEW"
+    # folder_number = 1
     # total_ess_array = []
     # for strain_name in strain_names:
     #     folder_link = "/home/mddo/stage/M2S4/output/{}/predictions/test/{}_{}".format(strain_name, type_df, folder_number)
@@ -351,7 +353,7 @@ def main():
     #     total_ess_array.append([strain_name,average_ess_count])
     # df = pd.DataFrame(total_ess_array)
     # df.columns = ["strain","qtt"]
-    # df.to_csv("/home/mddo/stage/M2S4/data/mean_score/total_ess_{}.csv".format(type_df), index=False)
+    # df.to_csv("/home/mddo/stage/M2S4/data/mean_score/total_ess_{}_{}.csv".format(type_df, folder_number), index=False)
 
 ##--------------------#FIND CORE ESSENTIAL#--------------------##
 
@@ -382,55 +384,55 @@ def main():
     
 ##--------------------#Create plot of accuracy and precision during training session or testing session--------------------##
     # strain_names = ["FY","ABP","ACF","ACN","ACP","ADD","AND","APH","AVI","BBQ","BHH","BMK","CCD","CGQ","CHM","CIB","CLG","CNM","CNT","CPG","Sigma"]
-    # # strain_names = ["FY"]
-    # acc_df_total = pd.DataFrame()
-    # pre_df_total = pd.DataFrame()
-    # recall_df_total = pd.DataFrame()
-    # session_name = "test"
-    # type_data = "balance_HFI_NI_PROM_NEW"
-    # folder_number = 0
-    # for strain_name in strain_names:
-    #     accuracy_file = "/home/mddo/stage/M2S4/output/{}/accuracy/{}/accuracy_{}_{}.csv".format(strain_name, session_name, type_data,folder_number)
-    #     create_folder("/home/mddo/stage/M2S4/images/{}".format(strain_name))
-    #     create_folder("/home/mddo/stage/M2S4/images/{}/acc_precision_recall/".format(strain_name))
-    #     save_figure = "/home/mddo/stage/M2S4/images/{}/acc_precision_recall/{}_{}.png".format(strain_name,type_data, folder_number)
-    #     accuracy_df = pd.read_csv(accuracy_file)
-    #     accuracy_df.columns = ["forest","accuracy","precision","recall","fscrore","total_tree"]
+    strain_names = ["FY"]
+    acc_df_total = pd.DataFrame()
+    pre_df_total = pd.DataFrame()
+    recall_df_total = pd.DataFrame()
+    session_name = "test"
+    type_data = "core_HFI_NI_PROM_NEW"
+    folder_number = 0
+    for strain_name in strain_names:
+        accuracy_file = "/home/mddo/stage/M2S4/output/{}/accuracy/{}/accuracy_{}_{}.csv".format(strain_name, session_name, type_data,folder_number)
+        create_folder("/home/mddo/stage/M2S4/images/{}".format(strain_name))
+        create_folder("/home/mddo/stage/M2S4/images/{}/acc_precision_recall/".format(strain_name))
+        save_figure = "/home/mddo/stage/M2S4/images/{}/acc_precision_recall/{}_{}.png".format(strain_name,type_data, folder_number)
+        accuracy_df = pd.read_csv(accuracy_file)
+        accuracy_df.columns = ["forest","accuracy","precision","recall","fscrore","total_tree"]
 
-    #     accuracy = accuracy_df["accuracy"]
-    #     precision = accuracy_df["precision"]
-    #     total_tree = accuracy_df["total_tree"]
-    #     acc_df_total["acc_{}".format(strain_name)] = accuracy_df["accuracy"]
-    #     pre_df_total["prec_{}".format(strain_name)] = accuracy_df["precision"]
-    #     recall_df_total["recall_{}".format(strain_name)] = accuracy_df["recall"]
-    # array = ["accuracy","precision","recall"]
-    # for key in array:
-    #     if key == "accuracy":
-    #         df_plot = acc_df_total
-    #     elif key == "precision":
-    #         df_plot = pre_df_total
-    #     else:
-    #         df_plot = recall_df_total
-    #     ax = plt.gca()
-    #     sns.set_style("whitegrid")
+        accuracy = accuracy_df["accuracy"]
+        precision = accuracy_df["precision"]
+        total_tree = accuracy_df["total_tree"]
+        acc_df_total["acc_{}".format(strain_name)] = accuracy_df["accuracy"]
+        pre_df_total["prec_{}".format(strain_name)] = accuracy_df["precision"]
+        recall_df_total["recall_{}".format(strain_name)] = accuracy_df["recall"]
+    array = ["accuracy","precision","recall"]
+    for key in array:
+        if key == "accuracy":
+            df_plot = acc_df_total
+        elif key == "precision":
+            df_plot = pre_df_total
+        else:
+            df_plot = recall_df_total
+        ax = plt.gca()
+        sns.set_style("whitegrid")
 
-    #     df_plot.plot(kind='line',ax=ax)
-    #     # accuracy_df.plot(kind='line',y='precision', color='red', ax=ax)
-    #     # accuracy_df = accuracy_df.drop(columns = ["total_tree"])
-    #     # accuracy_df.plot(kind="line")
+        df_plot.plot(kind='line',ax=ax)
+        # accuracy_df.plot(kind='line',y='precision', color='red', ax=ax)
+        # accuracy_df = accuracy_df.drop(columns = ["total_tree"])
+        # accuracy_df.plot(kind="line")
 
-    #     fig = matplotlib.pyplot.gcf()
-    #     fig.set_size_inches(18.5, 8.5)
-    #     plt.rcParams["figure.figsize"] = (10,2)
-    #     # plt.title("{} prediction accuracy and precision".format(strain_name), size = 20)
-    #     plt.xticks(size = 14)
-    #     plt.yticks(size = 14)
-    #     plt.xlabel("Iteration", size = 18)
-    #     plt.ylabel(key, size = 18)
-    #     # plt.xlim(0,60)
+        fig = matplotlib.pyplot.gcf()
+        fig.set_size_inches(18.5, 8.5)
+        plt.rcParams["figure.figsize"] = (10,2)
+        # plt.title("{} prediction accuracy and precision".format(strain_name), size = 20)
+        plt.xticks(size = 14)
+        plt.yticks(size = 14)
+        plt.xlabel("Iteration", size = 18)
+        plt.ylabel(key, size = 18)
+        # plt.xlim(0,60)
 
-    #     plt.savefig("/home/mddo/stage/M2S4/images/{}_{}_{}.png".format(key, session_name,type_data))
-    #     plt.clf()
+        plt.savefig("/home/mddo/stage/M2S4/images/{}_{}_{}_{}.png".format(key, session_name,type_data, folder_number))
+        plt.clf()
 
 ##--------------------#create accuracy table and predictions table #--------------------##
     # strain_names = ["FY","ABP","ACF","ACN","ACP","ADD","AND","APH","AVI","BBQ","BHH","BMK","CCD","CGQ","CHM","CIB","CLG","CNM","CNT","CPG","Sigma"]
