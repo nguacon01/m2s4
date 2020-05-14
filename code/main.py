@@ -305,9 +305,9 @@ def main():
 
 
 ##--------------------#Find false predictions #--------------------##
-    # strain_names = ["FY","ABP","ACF","ACN","ACP","ADD","AND","APH","AVI","BBQ","BHH","BMK","CCD","CGQ","CHM","CIB","CLG","CNM","CNT","CPG","Sigma"]
+    # strain_names = ["ABP","ACF","ADD","APH","BHH","BMK","CCD","CGQ","CLG"]
     # # strain_names = ["FY"]
-    # type_df = "imbalance_HFI_NI_PROM_NEW"
+    # type_df = "balance_HFI_NI_PROM_NEW"
     # type_session = "test"
     # folder_number = 0
     # find_false_positive(type_session,type_df,strain_names, folder_number)
@@ -325,21 +325,22 @@ def main():
     #     remove_fp_gene(df_path, param)
 
 ##--------------------#MEAN SCORE#--------------------##
-    # strain_names = ["FY","ABP","ACF","ACN","ACP","ADD","AND","APH","AVI","BBQ","BHH","BMK","CCD","CGQ","CHM","CIB","CLG","CNM","CNT","CPG","Sigma"]
-    # # strain_names = ["FY"]
-    # type_df = "core_HFI_NI_PROM_NEW"
-    # folder_number = 1
-    # session_name = "test"
-    # params = [strain_names, folder_number, session_name]
-    # mean_score(type_df, params)
+    strain_names = ["FY","ABP","ACF","ACN","ACP","ADD","AND","APH","AVI","BBQ","BHH","BMK","CCD","CGQ","CHM","CIB","CLG","CNM","CNT","CPG","Sigma"]
+    # strain_names = ["FY"]
+    type_df = "balance_HFI_NI_PROM_NEW"
+    folder_number = 0
+    session_name = "test"
+    params = [strain_names, folder_number, session_name]
+    mean_score(type_df, params)
 
 ##--------------------#COUNT ESSENTIAL PREDICTED GENES#--------------------##
-    # strain_names = ["FY","ABP","ACF","ACN","ACP","ADD","AND","APH","AVI","BBQ","BHH","BMK","CCD","CGQ","CHM","CIB","CLG","CNM","CNT","CPG","Sigma"]
-    # type_df = "core_HFI_NI_PROM_NEW"
-    # folder_number = 1
+    # strain_names = ["ABP","ACF","ADD","APH","BHH","BMK","CCD","CGQ","CLG"]
+    # type_df = "balance_HFI_NI_PROM_NEW"
+    # folder_number = 0
     # total_ess_array = []
     # for strain_name in strain_names:
-    #     folder_link = "/home/mddo/stage/M2S4/output/{}/predictions/test/{}_{}".format(strain_name, type_df, folder_number)
+    #     folder_link = "/home/mddo/stage/M2S4/output/{}/predictions/test/214k_{}_{}".format(strain_name, type_df, folder_number)
+    #     print(folder_link)
     #     files = glob.glob(folder_link+"/*.csv")
     #     count_file = 0
     #     total_ess_count = 0
@@ -353,7 +354,7 @@ def main():
     #     total_ess_array.append([strain_name,average_ess_count])
     # df = pd.DataFrame(total_ess_array)
     # df.columns = ["strain","qtt"]
-    # df.to_csv("/home/mddo/stage/M2S4/data/mean_score/total_ess_{}_{}.csv".format(type_df, folder_number), index=False)
+    # df.to_csv("/home/mddo/stage/M2S4/data/mean_score/total_ess_214k_{}_{}.csv".format(type_df, folder_number), index=False)
 
 ##--------------------#FIND CORE ESSENTIAL#--------------------##
 
@@ -371,7 +372,6 @@ def main():
 
 
     #     chosen_accuracy = accuracy_df.loc[accuracy_df["forest"] == forest_name, "accuracy"].values[0]
-    #     print(chosen_accuracy)
     #     prediction_file = "/home/mddo/stage/M2S4/output/{}/predictions/{}/{}_{}/predictions_{}_{}.csv".format(strain_name, session_name, type_df, folder_number, forest_name, round(chosen_accuracy*100))
     #     prediction_array[strain_name] = prediction_file
     # map_all_essential_genes(FY_df,prediction_array, type_df)
@@ -383,56 +383,56 @@ def main():
     # plot_accuracy_precision(strain_names, session_name, type_data, folder_number)
     
 ##--------------------#Create plot of accuracy and precision during training session or testing session--------------------##
-    # strain_names = ["FY","ABP","ACF","ACN","ACP","ADD","AND","APH","AVI","BBQ","BHH","BMK","CCD","CGQ","CHM","CIB","CLG","CNM","CNT","CPG","Sigma"]
-    strain_names = ["FY"]
-    acc_df_total = pd.DataFrame()
-    pre_df_total = pd.DataFrame()
-    recall_df_total = pd.DataFrame()
-    session_name = "test"
-    type_data = "core_HFI_NI_PROM_NEW"
-    folder_number = 0
-    for strain_name in strain_names:
-        accuracy_file = "/home/mddo/stage/M2S4/output/{}/accuracy/{}/accuracy_{}_{}.csv".format(strain_name, session_name, type_data,folder_number)
-        create_folder("/home/mddo/stage/M2S4/images/{}".format(strain_name))
-        create_folder("/home/mddo/stage/M2S4/images/{}/acc_precision_recall/".format(strain_name))
-        save_figure = "/home/mddo/stage/M2S4/images/{}/acc_precision_recall/{}_{}.png".format(strain_name,type_data, folder_number)
-        accuracy_df = pd.read_csv(accuracy_file)
-        accuracy_df.columns = ["forest","accuracy","precision","recall","fscrore","total_tree"]
+    # strain_names = ["FY","ABP","ACF","ACP","ADD","AND","APH","AVI","BBQ","BHH","BMK","CCD","CGQ","CHM","CIB","CLG","CNM","CNT","CPG","Sigma"]
+    # # strain_names = ["FY"]
+    # acc_df_total = pd.DataFrame()
+    # pre_df_total = pd.DataFrame()
+    # recall_df_total = pd.DataFrame()
+    # session_name = "test"
+    # type_data = "core_HFI_NI_PROM_NEW"
+    # folder_number = 0
+    # for strain_name in strain_names:
+    #     accuracy_file = "/home/mddo/stage/M2S4/output/{}/accuracy/{}/accuracy_{}_{}.csv".format(strain_name, session_name, type_data,folder_number)
+    #     create_folder("/home/mddo/stage/M2S4/images/{}".format(strain_name))
+    #     create_folder("/home/mddo/stage/M2S4/images/{}/acc_precision_recall/".format(strain_name))
+    #     save_figure = "/home/mddo/stage/M2S4/images/{}/acc_precision_recall/{}_{}.png".format(strain_name,type_data, folder_number)
+    #     accuracy_df = pd.read_csv(accuracy_file)
+    #     accuracy_df.columns = ["forest","accuracy","precision","recall","fscrore","total_tree"]
 
-        accuracy = accuracy_df["accuracy"]
-        precision = accuracy_df["precision"]
-        total_tree = accuracy_df["total_tree"]
-        acc_df_total["acc_{}".format(strain_name)] = accuracy_df["accuracy"]
-        pre_df_total["prec_{}".format(strain_name)] = accuracy_df["precision"]
-        recall_df_total["recall_{}".format(strain_name)] = accuracy_df["recall"]
-    array = ["accuracy","precision","recall"]
-    for key in array:
-        if key == "accuracy":
-            df_plot = acc_df_total
-        elif key == "precision":
-            df_plot = pre_df_total
-        else:
-            df_plot = recall_df_total
-        ax = plt.gca()
-        sns.set_style("whitegrid")
+    #     accuracy = accuracy_df["accuracy"]
+    #     precision = accuracy_df["precision"]
+    #     total_tree = accuracy_df["total_tree"]
+    #     acc_df_total["acc_{}".format(strain_name)] = accuracy_df["accuracy"]
+    #     pre_df_total["prec_{}".format(strain_name)] = accuracy_df["precision"]
+    #     recall_df_total["recall_{}".format(strain_name)] = accuracy_df["recall"]
+    # array = ["accuracy","precision","recall"]
+    # for key in array:
+    #     if key == "accuracy":
+    #         df_plot = acc_df_total
+    #     elif key == "precision":
+    #         df_plot = pre_df_total
+    #     else:
+    #         df_plot = recall_df_total
+    #     ax = plt.gca()
+    #     sns.set_style("whitegrid")
 
-        df_plot.plot(kind='line',ax=ax)
-        # accuracy_df.plot(kind='line',y='precision', color='red', ax=ax)
-        # accuracy_df = accuracy_df.drop(columns = ["total_tree"])
-        # accuracy_df.plot(kind="line")
+    #     df_plot.plot(kind='line',ax=ax)
+    #     # accuracy_df.plot(kind='line',y='precision', color='red', ax=ax)
+    #     # accuracy_df = accuracy_df.drop(columns = ["total_tree"])
+    #     # accuracy_df.plot(kind="line")
 
-        fig = matplotlib.pyplot.gcf()
-        fig.set_size_inches(18.5, 8.5)
-        plt.rcParams["figure.figsize"] = (10,2)
-        # plt.title("{} prediction accuracy and precision".format(strain_name), size = 20)
-        plt.xticks(size = 14)
-        plt.yticks(size = 14)
-        plt.xlabel("Iteration", size = 18)
-        plt.ylabel(key, size = 18)
-        # plt.xlim(0,60)
+    #     fig = matplotlib.pyplot.gcf()
+    #     fig.set_size_inches(18.5, 8.5)
+    #     plt.rcParams["figure.figsize"] = (10,2)
+    #     # plt.title("{} prediction accuracy and precision".format(strain_name), size = 20)
+    #     plt.xticks(size = 14)
+    #     plt.yticks(size = 14)
+    #     plt.xlabel("Iteration", size = 18)
+    #     plt.ylabel(key, size = 18)
+    #     # plt.xlim(0,60)
 
-        plt.savefig("/home/mddo/stage/M2S4/images/{}_{}_{}_{}.png".format(key, session_name,type_data, folder_number))
-        plt.clf()
+    #     plt.savefig("/home/mddo/stage/M2S4/images/{}_{}_{}_{}.png".format(key, session_name,type_data, folder_number))
+    #     plt.clf()
 
 ##--------------------#create accuracy table and predictions table #--------------------##
     # strain_names = ["FY","ABP","ACF","ACN","ACP","ADD","AND","APH","AVI","BBQ","BHH","BMK","CCD","CGQ","CHM","CIB","CLG","CNM","CNT","CPG","Sigma"]
@@ -461,6 +461,16 @@ def main():
     # for strain_name in strain_names:
     #     create_folder("/home/mddo/stage/M2S4/output/{}/214k_diploid".format(strain_name))
     
+
+
+
+
+
+    # strain_names = ["FY","ABP","ACF","ACN","ACP","ADD","AND","APH","AVI","BBQ","BHH","BMK","CCD","CGQ","CHM","CIB","CLG","CNM","CNT","CPG","Sigma"]
+    # type_df = "balance_HFI_NI_PROM_NEW"
+    # folder_number = 0
+    # map_common_FP_FN(strain_names, type_df, folder_number)
+
 
 if __name__ == "__main__":
     main()

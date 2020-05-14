@@ -12,6 +12,7 @@ import matplotlib
 import seaborn as sns
 import urllib.request
 import json
+from functools import reduce
 
 
 #create file and folder
@@ -356,7 +357,7 @@ def find_false_positive(type_session, type_df, strain_names, folder_number):
     
     # file_paths = glob.glob("/home/mddo/stage/M2S4/output/predictions/{}/{}/*.csv".format(type_session, type_df))
     for strain_name in strain_names:
-        accuracy_file_path = "/home/mddo/stage/M2S4/output/{}/accuracy/{}/accuracy_{}_{}.csv".format(strain_name, type_session, type_df, folder_number)
+        accuracy_file_path = "/home/mddo/stage/M2S4/output/{}/accuracy/{}/accuracy_214k_{}_{}.csv".format(strain_name, type_session, type_df, folder_number)
         with open (accuracy_file_path) as accuracy_file:
             df_array_FP = []
             df_array_FN = []
@@ -366,9 +367,9 @@ def find_false_positive(type_session, type_df, strain_names, folder_number):
                 acc_value = float(acc_elements[1])
                 total_tree = acc_elements[2]
                 if type_session == "test":
-                    report_path = "/home/mddo/stage/M2S4/output/{}/predictions/{}/{}_{}/predictions_{}_{}.0.csv".format(strain_name,type_session, type_df,folder_number, forest_name, round(acc_value*100))
+                    report_path = "/home/mddo/stage/M2S4/output/{}/predictions/{}/214k_{}_{}/predictions_{}_{}.0.csv".format(strain_name,type_session, type_df,folder_number, forest_name, round(acc_value*100))
                 else:
-                    report_path = "/home/mddo/stage/M2S4/output/{}/predictions/{}/{}_{}/predictions_{}.csv".format(strain_name,type_session, type_df,folder_number, forest_name)
+                    report_path = "/home/mddo/stage/M2S4/output/{}/predictions/{}/214k_{}_{}/predictions_{}.csv".format(strain_name,type_session, type_df,folder_number, forest_name)
                 
                 
                 df = pd.read_csv(report_path)
@@ -390,11 +391,11 @@ def find_false_positive(type_session, type_df, strain_names, folder_number):
 
             report_FP = result_df_FP["orf"].value_counts()
             report_FP_df = pd.DataFrame(report_FP)
-            report_FP_df.to_csv("/home/mddo/stage/M2S4/output/{}/error/{}/{}_{}_FP.csv".format(strain_name, type_session,type_df, folder_number))
+            report_FP_df.to_csv("/home/mddo/stage/M2S4/output/{}/error/{}/214k_{}_{}_FP.csv".format(strain_name, type_session,type_df, folder_number))
 
             report_FN = result_df_FN["orf"].value_counts()
             report_FN_df = pd.DataFrame(report_FN)
-            report_FN_df.to_csv("/home/mddo/stage/M2S4/output/{}/error/{}/{}_{}_FN.csv".format(strain_name, type_session,type_df, folder_number))
+            report_FN_df.to_csv("/home/mddo/stage/M2S4/output/{}/error/{}/214k_{}_{}_FN.csv".format(strain_name, type_session,type_df, folder_number))
 
 def frequency_false_positive():
     df = pd.read_csv("output/false_positive.out",sep = " ", header = None)
@@ -706,23 +707,24 @@ def map_all_essential_genes(FY_pre,prediction_array, type_df):
     fy_prediction_df = pd.read_csv(fy_prediction_file)
     map_df = pd.DataFrame()
     ## select all true positive, put it in new dataframe
-    fy_prediction_df = fy_prediction_df.loc[(fy_prediction_df["label"] == "ess")]
-    map_df["orf"] = fy_prediction_df["orf"]
-    map_df["label_FY"] = fy_prediction_df["label"]
+    type_genes = ["ess","non_ess"]
+    for type_gene in type_genes:
+        fy_prediction_df = fy_prediction_df.loc[(fy_prediction_df["label"] == type_gene)]
+        map_df["orf"] = fy_prediction_df["orf"]
+        map_df["label_FY"] = fy_prediction_df["label"]
 
-    for strain_name,prediction_file in prediction_array.items():
-        strain_prediction_df = pd.read_csv(prediction_file)
+        for strain_name,prediction_file in prediction_array.items():
+            strain_prediction_df = pd.read_csv(prediction_file)
 
-        ## Select True Positive in other strains prediction
-        map_TP_strain = pd.DataFrame()
-        strain_prediction_df = strain_prediction_df.loc[(strain_prediction_df["label"] == "ess") & (strain_prediction_df["label"] == strain_prediction_df["predictions"])]
-        map_TP_strain["orf"] = strain_prediction_df["orf"]
-        map_TP_strain["predictions"] = strain_prediction_df["predictions"]
-        map_df["predictions_{}".format(strain_name)] = map_df.orf.map(map_TP_strain.set_index("orf")["predictions"].to_dict())
-    # map_df = map_df.dropna(how="any")
-    map_df = map_df.replace(r'', np.na,inplace=True)
-    map_df = map_df.dropna(how="any")
-    map_df.to_csv("/home/mddo/stage/M2S4/data/core_ess_{}.csv".format(type_df), index = False)
+            ## Select True Positive in other strains prediction
+            map_TP_strain = pd.DataFrame()
+            strain_prediction_df = strain_prediction_df.loc[(strain_prediction_df["label"] == type_gene) & (strain_prediction_df["label"] == strain_prediction_df["predictions"])]
+            print(strain_prediction_df.shape)
+            map_TP_strain["orf"] = strain_prediction_df["orf"]
+            map_TP_strain["predictions"] = strain_prediction_df["predictions"]
+            map_df["predictions_{}".format(strain_name)] = map_df.orf.map(map_TP_strain.set_index("orf")["predictions"].to_dict())
+        map_df = map_df.dropna(how="any")
+        map_df.to_csv("/home/mddo/stage/M2S4/data/core_{}_{}.csv".format(type_gene,type_df), index = False)
 
 def create_data_haploid(strain_name):
     # #--------------------#BEGIN generate features HAPLOID#--------------------#
@@ -934,3 +936,65 @@ def get_json_from_SGD(strain_std_names):
     # with urllib.request.urlopen('http://python.org/') as response:
     # html = response.read()
 
+def map_common_FP_FN(strains_array, type_df, folder_number):
+    map_FN_df = pd.DataFrame()
+    map_FP_df = pd.DataFrame()
+    df = pd.DataFrame()
+    array_FP = []
+    array_FN = []
+    for strain_name in strains_array:
+        FP_file = "/home/mddo/stage/M2S4/output/{}/error/test/{}_{}_FP.csv".format(strain_name, type_df, folder_number)
+        FN_file = "/home/mddo/stage/M2S4/output/{}/error/test/{}_{}_FN.csv".format(strain_name, type_df, folder_number)
+
+        FP_df = pd.read_csv(FP_file)
+        FP_df.columns = ["orf","freq"]
+        FN_df = pd.read_csv(FN_file)
+        FN_df.columns = ["orf","freq"]
+
+        FP_df = FP_df.loc[FP_df["freq"] >= 90]
+        array_FP.append(FP_df)
+        
+        # FN_df = FN_df.loc[FN_df["freq"] >= 90]
+
+        # map_FN_df["FN_{}_orf".format(strain_name)] = FN_df["orf"]
+        # map_FP_df["FP_{}_orf".format(strain_name)] = FP_df["orf"]
+
+        
+    df = pd.concat(array_FP)
+    report_FP = df["orf"].value_counts()
+    print(report_FP)
+    # report_FP_df = pd.DataFrame(report_FP)
+    report_FP.to_csv("/home/mddo/stage/M2S4/data/maping_false_pridicted/core_FP_{}_{}.csv".format(type_df, folder_number))
+
+    # print(df.value_counts())
+    # map_FN_df.to_csv("/home/mddo/stage/M2S4/data/maping_false_pridicted/core_FN_{}_{}.csv".format(type_df, folder_number), index=False)
+    # df.to_csv("/home/mddo/stage/M2S4/data/maping_false_pridicted/core_FP_{}_{}.csv".format(type_df, folder_number), index=False)
+
+
+
+
+# pd.merge(FY_false_prediction_df, other_strain_false_prediction_df, how = "inner", on = ["orf"])
+
+
+    # fy_prediction_file = FY_pre
+    # fy_prediction_df = pd.read_csv(fy_prediction_file)
+    # map_df = pd.DataFrame()
+    # ## select all true positive, put it in new dataframe
+    # type_genes = ["ess","non_ess"]
+    # for type_gene in type_genes:
+    #     fy_prediction_df = fy_prediction_df.loc[(fy_prediction_df["label"] == type_gene)]
+    #     map_df["orf"] = fy_prediction_df["orf"]
+    #     map_df["label_FY"] = fy_prediction_df["label"]
+
+    #     for strain_name,prediction_file in prediction_array.items():
+    #         strain_prediction_df = pd.read_csv(prediction_file)
+
+    #         ## Select True Positive in other strains prediction
+    #         map_TP_strain = pd.DataFrame()
+    #         strain_prediction_df = strain_prediction_df.loc[(strain_prediction_df["label"] == type_gene) & (strain_prediction_df["label"] == strain_prediction_df["predictions"])]
+    #         print(strain_prediction_df.shape)
+    #         map_TP_strain["orf"] = strain_prediction_df["orf"]
+    #         map_TP_strain["predictions"] = strain_prediction_df["predictions"]
+    #         map_df["predictions_{}".format(strain_name)] = map_df.orf.map(map_TP_strain.set_index("orf")["predictions"].to_dict())
+    #     map_df = map_df.dropna(how="any")
+    #     map_df.to_csv("/home/mddo/stage/M2S4/data/core_{}_{}.csv".format(type_gene,type_df), index = False)
