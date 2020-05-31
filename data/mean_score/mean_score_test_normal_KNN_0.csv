@@ -1,0 +1,4 @@
+orf,mean_accuracy,mean_precision,mean_recall,mean_fscore
+CCD,86.84,57.22,35.58,43.87
+Sigma,86.73,54.72,47.84,51.05
+CHM,83.87,44.98,51.65,48.08

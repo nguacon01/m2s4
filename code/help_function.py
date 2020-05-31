@@ -3,7 +3,7 @@ import random
 import pandas as pd
 import numpy as np
 from sklearn.preprocessing import MinMaxScaler, StandardScaler
-from sklearn.metrics import confusion_matrix
+from sklearn.metrics import confusion_matrix, precision_recall_fscore_support
 # from sklearn.impute import KNNImputer
 import glob
 from knn_impute import knn_impute
@@ -586,6 +586,8 @@ def plot_confusion_matrix(type_session, type_df, strain_names, folder_number):
     count_FN_TT = 0
     count_TP_TT = 0
     count_TN_TT = 0
+    count_TPR_TT = 0
+    recall_TT = 0
     for strain_name in strain_names:
         accuracy_file_path = "/home/mddo/stage/M2S4/output/{}/accuracy/{}/accuracy_{}_{}.csv".format(strain_name, type_session, type_df, folder_number)
         
@@ -605,19 +607,34 @@ def plot_confusion_matrix(type_session, type_df, strain_names, folder_number):
                 labels = df["label"]
                 predictions = df["predictions"]
 
-                count_TN, count_FP, count_FN, count_TP = confusion_matrix(labels, predictions).ravel()
-                print([count_TN, count_FP, count_FN, count_TP])
+                precision_recall_fscore = precision_recall_fscore_support(labels, predictions,average = "binary", pos_label="ess")
+                precision = precision_recall_fscore[0]
+                recall = precision_recall_fscore[1]
+                fscore = precision_recall_fscore[2]
+                recall_TT += recall
+
+
+                count_TN, count_FN, count_FP, count_TP = confusion_matrix(labels, predictions).ravel()
                 count_FP_TT += count_FP
                 count_FN_TT += count_FN
                 count_TN_TT += count_TN
                 count_TP_TT += count_TP
+                count_TPR_TT += (count_TP / (count_TP+count_FN))
                 count += 1
+                # print("{}-{}-{}-{}".format(count_TN, count_FP, count_FN, count_TP))
             
             #export file TP - TN - FP - FN
             TP = round(count_TP_TT / count)
             TN = round(count_TN_TT / count)
             FP = round(count_FP_TT / count)
             FN = round(count_FN_TT / count)
+            TPR = count_TPR_TT / count
+            
+            FPR = FP / (FP+TN)
+            print(strain_name + ",{}".format(FPR))
+            # print(TPR)
+            # print(recall_TT / count)
+            # print(FPR)
             confusion_mtx = np.array([[TP, FN],[FP, TN]])
 
             sns.heatmap(confusion_mtx,
